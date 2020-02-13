@@ -46,7 +46,7 @@ public class Vars implements Loadable{
     /** global charset, since Android doesn't support the Charsets class */
     public static final Charset charset = Charset.forName("UTF-8");
     /** main application name, capitalized */
-    public static final String appName = "Mindustry";
+    public static final String appName = "iodustry";
     /** URL for itch.io donations. */
     public static final String donationURL = "https://anuke.itch.io/mindustry/purchase";
     /** URL for discord invite. */
@@ -147,7 +147,7 @@ public class Vars implements Loadable{
     /** save file extension */
     public static final String saveExtension = "msav";
     /** schematic file extension */
-    public static final String schematicExtension = "msch";
+    public static final String schematicExtension = "ioschem";
 
     /** list of all locales that can be switched to */
     public static Locale[] locales;

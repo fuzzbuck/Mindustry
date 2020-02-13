@@ -52,7 +52,7 @@ public class Pal{
     health = Color.valueOf("ff341c"),
     heal = Color.valueOf("98ffa9"),
     bar = Color.slate,
-    accent = Color.valueOf("ffd37f"),
+    accent = Color.valueOf("ffb47f"),
     stat = Color.valueOf("ffd37f"),
     gray = Color.valueOf("454545"),
     accentBack = Color.valueOf("d4816b"),

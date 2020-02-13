@@ -5,7 +5,7 @@ import mindustry.ctype.ContentList;
 import mindustry.type.Liquid;
 
 public class Liquids implements ContentList{
-    public static Liquid water, slag, oil, cryofluid;
+    public static Liquid water, steam, slag, oil, cryofluid;
 
     @Override
     public void load(){
@@ -13,6 +13,13 @@ public class Liquids implements ContentList{
         water = new Liquid("water", Color.valueOf("596ab8")){{
             heatCapacity = 0.4f;
             effect = StatusEffects.wet;
+        }};
+
+        steam = new Liquid("steam", Color.valueOf("ffffff")){{
+            heatCapacity = 1f;
+            temperature = 1f;
+            effect = StatusEffects.wet;
+            barColor = Color.valueOf("8e9094");
         }};
 
         slag = new Liquid("slag", Color.valueOf("ffa166")){{
