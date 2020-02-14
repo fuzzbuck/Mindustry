@@ -11,7 +11,7 @@ public class UnitTypes implements ContentList{
     public static UnitType
     draug, spirit, phantom,
     wraith, ghoul, revenant, lich, reaper,
-    dagger, crawler, titan, fortress, eruptor, chaosArray, eradicator;
+    dagger, crawler, kamikaze, titan, fortress, eruptor, chaosArray, eradicator;
 
     @Override
     public void load(){
@@ -109,6 +109,31 @@ public class UnitTypes implements ContentList{
                     instantDisappear = true;
                     splashDamage = 30f;
                     killShooter = true;
+                }};
+            }};
+        }};
+
+        kamikaze = new UnitType("kamikaze", FlyingUnit::new){{
+            maxVelocity = 1.3f;
+            speed = 0.3f;
+            drag = 0.2f;
+            hitsize = 8f;
+            flying=true;
+            mass = 1.75f;
+            health = 60;
+            weapon = new Weapon(){{
+                reload = 12f;
+                ejectEffect = Fx.none;
+                shootSound = Sounds.explosion;
+                bullet = new BombBulletType(2f, 3f, "clear"){{
+                    hitEffect = Fx.pulverize;
+                    lifetime = 30f;
+                    speed = 1.1f;
+                    splashDamageRadius = 55f;
+                    instantDisappear = true;
+                    splashDamage = 30f;
+                    killShooter = true;
+                    ignoreRotation = true;
                 }};
             }};
         }};
