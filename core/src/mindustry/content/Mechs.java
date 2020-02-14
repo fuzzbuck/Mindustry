@@ -11,12 +11,13 @@ import mindustry.entities.*;
 import mindustry.entities.bullet.*;
 import mindustry.entities.effect.*;
 import mindustry.entities.type.*;
+import mindustry.game.Team;
 import mindustry.gen.*;
 import mindustry.graphics.*;
 import mindustry.type.*;
 
 public class Mechs implements ContentList{
-    public static Mech alpha, delta, tau, omega, dart, javelin, trident, glaive;
+    public static Mech alpha, delta, kilo, tau, omega, dart, javelin, trident, sierra, glaive;
 
     public static Mech starter;
 
@@ -90,6 +91,51 @@ public class Mechs implements ContentList{
                     }
                 }
             }
+        };
+
+        kilo = new Mech("kilo-mech", false){
+            float fireRange = 60f;
+            float fireReload = 120f;
+            boolean wasBurned;
+
+            {
+                drillPower = 1;
+                mineSpeed = 1.5f;
+                mass = 1.2f;
+                speed = 0.5f;
+                itemCapacity = 40;
+                boostSpeed = 0.95f;
+                buildPower = 1.2f;
+                engineColor = Color.valueOf("ffd37f");
+                health = 500f;
+
+                weapon = new Weapon("flamethrower"){{
+                    length = 1f;
+                    reload = 12f;
+                    alternate = true;
+                    ejectEffect = Fx.none;
+                    bullet = Bullets.pyraFlame;
+                    shootSound = Sounds.flame;
+                }};
+            }
+
+            @Override
+            public void updateAlt(Player player){
+                if(player.timer.get(Player.timerAbility, fireReload)){
+                    wasBurned = false;
+
+                    Units.nearby(player.x, player.y, fireRange, unit -> {
+                        if(unit.getTeam() != player.getTeam()){
+                            unit.applyEffect(StatusEffects.burning, 60f * 10);
+                            wasBurned = true;
+                        }
+                    });
+                    if(wasBurned){
+                        Effects.effect(Fx.burnWave, player);
+                    }
+                }
+            }
+
         };
 
         tau = new Mech("tau-mech", false){
@@ -346,6 +392,30 @@ public class Mechs implements ContentList{
             @Override
             public boolean canShoot(Player player){
                 return player.velocity().len() > 1.2f;
+            }
+        };
+
+        sierra = new Mech("sierra-mech", false){
+            {
+                drillPower = 4; // can mine all ores except uranium
+                mineSpeed = 2.5f;
+                maxSpeed = 2f;
+                speed = 0.18f;
+                boostSpeed = 0.2f;
+                mass = 0.5f;
+                drag = 0.1f;
+                health = 300f;
+                itemCapacity = 100; // 100 item capacity useful for transportation
+                buildPower = 3f;
+
+                weapon = new Weapon(){{
+                    length = 1f;
+                    inaccuracy = 18f;
+                    lengthRand = 0.5f;
+                    reload = 1.8f;
+                    shootSound = Sounds.splash;
+                    bullet = Bullets.cryoShot;
+                }};
             }
         };
 
