@@ -57,13 +57,13 @@ public class Blocks implements ContentList{
     scrapWall, scrapWallLarge, scrapWallHuge, scrapWallGigantic, thruster, //ok, these names are getting ridiculous, but at least I don't have humongous walls yet
 
     //transport
-    conveyor, titaniumConveyor, armoredConveyor, distributor, junction, itemBridge, phaseConveyor, sorter, invertedSorter, router, overflowGate, underflowGate, massDriver,
+    conveyor, titaniumConveyor, armoredConveyor, surgeConveyor, distributor, junction, itemBridge, phaseConveyor, sorter, invertedSorter, router, overflowGate, underflowGate, massDriver,
 
     //liquid
     mechanicalPump, rotaryPump, thermalPump, conduit, pulseConduit, platedConduit, liquidRouter, liquidTank, liquidJunction, bridgeConduit, phaseConduit,
 
     //power
-    combustionGenerator, thermalGenerator, turbineGenerator, differentialGenerator, rtgGenerator, solarPanel, largeSolarPanel, thoriumReactor,
+    combustionGenerator, thermalGenerator, turbineGenerator, /*steamGenerator,*/ differentialGenerator, rtgGenerator, solarPanel, largeSolarPanel, thoriumReactor,
     impactReactor, battery, batteryLarge, powerNode, powerNodeLarge, surgeTower, diode,
 
     //production
@@ -76,11 +76,11 @@ public class Blocks implements ContentList{
     duo, scatter, scorch, hail, arc, wave, lancer, swarmer, salvo, fuse, ripple, cyclone, spectre, meltdown,
 
     //units
-    commandCenter, draugFactory, spiritFactory, phantomFactory, wraithFactory, ghoulFactory, revenantFactory, daggerFactory, crawlerFactory, titanFactory,
+    commandCenter, draugFactory, spiritFactory, phantomFactory, wraithFactory, ghoulFactory, revenantFactory, daggerFactory, crawlerFactory, kamikazeFactory, titanFactory,
     fortressFactory, repairPoint,
 
     //upgrades
-    dartPad, deltaPad, tauPad, omegaPad, javelinPad, tridentPad, glaivePad;
+    dartPad, deltaPad, kiloPad, tauPad, omegaPad, javelinPad, tridentPad, sierraPad, glaivePad;
 
     @Override
     public void load(){
@@ -920,6 +920,18 @@ public class Blocks implements ContentList{
             displayedSpeed = 10f;
         }};
 
+        surgeConveyor = new ElectricConveyor("surge-conveyor"){{
+            requirements(Category.distribution, ItemStack.with(Items.surgealloy, 2, Items.thorium, 1, Items.metaglass, 1, Items.plastanium, 1));
+            hasPower = true;
+            consumes.power(0.18f);
+            health = 200;
+            speed = 0f;
+            maxSpeed = 0.24f;
+            displayedSpeed = 30f;
+
+            entityType = ElectricConveyorEntity::new;
+        }};
+
         junction = new Junction("junction"){{
             requirements(Category.distribution, ItemStack.with(Items.copper, 2), true);
             speed = 26;
@@ -1118,6 +1130,17 @@ public class Blocks implements ContentList{
             hasLiquids = true;
             size = 2;
         }};
+
+        /*steamGenerator = new LiquidGenerator("steam-turbine"){{
+            requirements(Category.power, ItemStack.with(Items.copper, 70, Items.titanium, 50, Items.lead, 100, Items.silicon, 65, Items.metaglass, 50));
+            powerProduction = 6f;
+            liquidCapacity = 10f;
+            hasLiquids = true;
+            hasItems = false;
+
+            consumes.liquid(Liquids.steam, 0.05f);
+            size = 3;
+        }};*/
 
         differentialGenerator = new SingleTypeGenerator("differential-generator"){{
             requirements(Category.power, ItemStack.with(Items.copper, 70, Items.titanium, 50, Items.lead, 100, Items.silicon, 65, Items.metaglass, 50));
@@ -1739,6 +1762,16 @@ public class Blocks implements ContentList{
             consumes.items(new ItemStack(Items.coal, 10));
         }};
 
+        crawlerFactory = new UnitFactory("kamikaze-factory"){{
+            requirements(Category.units, ItemStack.with(Items.lead, 100, Items.silicon, 30, Items.titanium, 20));
+            unitType = UnitTypes.kamikaze;
+            produceTime = 200;
+            size = 2;
+            maxSpawn = 6;
+            consumes.power(0.5f);
+            consumes.items(new ItemStack(Items.silicon, 2), new ItemStack(Items.coal, 10));
+        }};
+
         titanFactory = new UnitFactory("titan-factory"){{
             requirements(Category.units, ItemStack.with(Items.graphite, 50, Items.lead, 50, Items.silicon, 45));
             unitType = UnitTypes.titan;
@@ -1782,6 +1815,13 @@ public class Blocks implements ContentList{
             consumes.power(0.7f);
         }};
 
+        kiloPad = new MechPad("kilo-mech-pad"){{
+            requirements(Category.upgrade, ItemStack.with(Items.copper, 1000, Items.lead, 750, Items.graphite, 150));
+            mech = Mechs.kilo;
+            size = 2;
+            consumes.power(1f);
+        }};
+
         tauPad = new MechPad("tau-mech-pad"){{
             requirements(Category.upgrade, ItemStack.with(Items.lead, 125, Items.titanium, 125, Items.copper, 125, Items.silicon, 125));
             mech = Mechs.tau;
@@ -1808,6 +1848,17 @@ public class Blocks implements ContentList{
             mech = Mechs.trident;
             size = 2;
             consumes.power(1f);
+        }};
+
+        sierraPad = new MechPad("sierra-mech-pad"){{
+            requirements(Category.upgrade, ItemStack.with(Items.lead, 200, Items.copper, 150, Items.metaglass, 50));
+            size = 2;
+            mech = Mechs.sierra;
+            consumes.power(1f);
+
+            hasLiquids = true;
+            liquidCapacity = 100f;
+            consumes.add((new ConsumeLiquid(Liquids.cryofluid, 0f)).optional(true, false));
         }};
 
         glaivePad = new MechPad("glaive-ship-pad"){{

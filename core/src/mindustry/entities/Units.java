@@ -175,6 +175,21 @@ public class Units{
         });
     }
 
+    /** Iterates over all units in a circle around this position. */
+    public static void nearby(float x, float y, float radius, Cons<Unit> cons){
+        unitGroup.intersect(x - radius, y - radius, radius*2f, radius*2f, unit -> {
+            if(unit.withinDst(x, y, radius)){
+                cons.get(unit);
+            }
+        });
+
+        playerGroup.intersect(x - radius, y - radius, radius*2f, radius*2f, unit -> {
+            if(unit.withinDst(x, y, radius)){
+                cons.get(unit);
+            }
+        });
+    }
+
     /** Iterates over all units in a rectangle. */
     public static void nearby(float x, float y, float width, float height, Cons<Unit> cons){
         unitGroup.intersect(x, y, width, height, cons);

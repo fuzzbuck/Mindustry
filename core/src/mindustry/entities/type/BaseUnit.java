@@ -1,6 +1,7 @@
 package mindustry.entities.type;
 
 import arc.*;
+import arc.struct.Array;
 import mindustry.annotations.Annotations.*;
 import arc.graphics.g2d.*;
 import arc.math.*;
@@ -176,6 +177,19 @@ public abstract class BaseUnit extends Unit implements ShooterTrait{
     public void targetClosestEnemyFlag(BlockFlag flag){
         Tile target = Geometry.findClosest(x, y, indexer.getEnemy(team, flag));
         if(target != null) this.target = target.entity;
+    }
+
+    public Tile getClosestEnemyPowerNode(){
+        Array<Tile> tiles = indexer.getEnemy(team, BlockFlag.powerNode);
+        for(Tile t : tiles){
+            if(t.ent() != null){
+                TileEntity entity = t.ent();
+                if(entity.power.status <= 0f){
+                    tiles.remove(t);
+                }
+            }
+        }
+        return Geometry.findClosest(x, y, tiles);
     }
 
     public void targetClosest(){

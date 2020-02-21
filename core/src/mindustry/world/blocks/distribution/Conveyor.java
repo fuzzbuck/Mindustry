@@ -17,6 +17,7 @@ import mindustry.type.*;
 import mindustry.ui.*;
 import mindustry.world.*;
 import mindustry.world.blocks.*;
+import mindustry.world.blocks.distribution.ElectricConveyor.ElectricConveyorEntity;
 import mindustry.world.meta.*;
 
 import java.io.*;
@@ -71,9 +72,14 @@ public class Conveyor extends Block implements Autotiler{
     @Override
     public void draw(Tile tile){
         ConveyorEntity entity = tile.ent();
+        ElectricConveyorEntity ee = null;
+        if(hasPower) {
+            ee = tile.ent();
+        }
         byte rotation = tile.rotation();
 
-        int frame = entity.clogHeat <= 0.5f ? (int)(((Time.time() * speed * 8f * entity.timeScale)) % 4) : 0;
+        //int frame = entity.clogHeat <= 0.5f ? (int)(((Time.time() * ((ee != null && ee.cons.valid()) ? ee.speed : speed*2) * 8f * entity.timeScale)) % 4) : 0;
+        int frame = entity.clogHeat <= 0.5f ? (int)(((Time.time() * ((ee != null) ? ee.speed : speed*2) * 8f * entity.timeScale)) % 4) : 0;
         Draw.rect(regions[Mathf.clamp(entity.blendbits, 0, regions.length - 1)][Mathf.clamp(frame, 0, regions[0].length - 1)], tile.drawx(), tile.drawy(),
         tilesize * entity.blendsclx, tilesize * entity.blendscly, rotation * 90);
     }
@@ -170,6 +176,11 @@ public class Conveyor extends Block implements Autotiler{
     @Override
     public void update(Tile tile){
         ConveyorEntity e = tile.ent();
+        ElectricConveyorEntity ee = null;
+        if(hasPower) {
+            ee = tile.ent();
+            e.noSleep();
+        }
         e.minitem = 1f;
         e.mid = 0;
 
@@ -184,13 +195,13 @@ public class Conveyor extends Block implements Autotiler{
 
         for(int i = e.len - 1; i >= 0; i--){
             float nextpos = (i == e.len - 1 ? 100f : e.ys[i + 1]) - itemSpace;
-            float maxmove = Mathf.clamp(nextpos - e.ys[i], 0, speed * e.delta());
+            float maxmove = Mathf.clamp(nextpos - e.ys[i], 0, ((ee != null) ? ee.speed : speed*2) * e.delta());
 
             e.ys[i] += maxmove;
 
             if(e.ys[i] > nextMax) e.ys[i] = nextMax;
             if(e.ys[i] > 0.5 && i > 0) e.mid = i - 1;
-            e.xs[i] = Mathf.approachDelta(e.xs[i], 0, speed*2);
+            e.xs[i] = Mathf.approachDelta(e.xs[i], 0, ((ee != null) ? ee.speed : speed*2));
 
             if(e.ys[i] >= 1f && offloadDir(tile, e.ids[i])){
                 //align X position if passing forwards

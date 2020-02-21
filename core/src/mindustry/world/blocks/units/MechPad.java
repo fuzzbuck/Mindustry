@@ -16,8 +16,11 @@ import mindustry.game.EventType.*;
 import mindustry.gen.*;
 import mindustry.graphics.*;
 import mindustry.type.*;
+import mindustry.ui.Bar;
 import mindustry.world.*;
 import mindustry.world.blocks.*;
+import mindustry.world.blocks.production.Drill;
+import mindustry.world.consumers.ConsumeType;
 import mindustry.world.meta.*;
 
 import java.io.*;
@@ -38,6 +41,7 @@ public class MechPad extends Block{
         entityType = MechFactoryEntity::new;
     }
 
+
     @Override
     public void setStats(){
         super.setStats();
@@ -52,6 +56,10 @@ public class MechPad extends Block{
         MechFactoryEntity entity = tile.ent();
 
         if(!entity.cons.valid()) return;
+        Log.info(tile.entity.liquids.total());
+        Log.info(tile.block().liquidCapacity);
+        if(tile.block().hasLiquids && tile.entity.liquids.total() + 1f < tile.block().liquidCapacity) return;
+        if(tile.block().hasLiquids) entity.liquids.clear();
         player.beginRespawning(entity);
         entity.sameMech = false;
     }
@@ -138,6 +146,7 @@ public class MechPad extends Block{
     public class MechFactoryEntity extends TileEntity implements SpawnerTrait{
         Player player;
         boolean sameMech;
+        boolean hasLiquids;
         float progress;
         float time;
         float heat;

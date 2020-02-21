@@ -19,7 +19,7 @@ public class Fx implements ContentList{
     public static Effect
 
     none, placeBlock, breakBlock, smoke, spawn, tapBlock, select,
-    vtolHover, unitDrop, unitPickup, unitLand, pickup, healWave, heal, landShock, reactorsmoke, nuclearsmoke, nuclearcloud,
+    vtolHover, unitDrop, unitPickup, unitLand, pickup, healWave, burnWave, heal, landShock, reactorsmoke, nuclearsmoke, nuclearcloud,
     redgeneratespark, generatespark, fuelburn, plasticburn, pulverize, pulverizeRed, pulverizeRedder, pulverizeSmall, pulverizeMedium,
     producesmoke, smeltsmoke, formsmoke, blastsmoke, lava, doorclose, dooropen, dooropenlarge, doorcloselarge, purify, purifyoil, purifystone, generate,
     mine, mineBig, mineHuge, smelt, teleportActivate, teleport, teleportOut, ripple, bubble, launch,
@@ -148,6 +148,12 @@ public class Fx implements ContentList{
 
         healWave = new Effect(22, e -> {
             Draw.color(Pal.heal);
+            Lines.stroke(e.fout() * 2f);
+            Lines.circle(e.x, e.y, 4f + e.finpow() * 60f);
+        });
+
+        burnWave = new Effect(22, e -> {
+            Draw.color(Pal.lightFlame);
             Lines.stroke(e.fout() * 2f);
             Lines.circle(e.x, e.y, 4f + e.finpow() * 60f);
         });

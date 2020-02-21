@@ -35,6 +35,7 @@ public class PowerNode extends PowerBlock{
         configurable = true;
         consumesPower = false;
         outputsPower = false;
+        flags = EnumSet.of(BlockFlag.powerNode);
     }
 
     @Override

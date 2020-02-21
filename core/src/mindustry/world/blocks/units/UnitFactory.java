@@ -160,7 +160,7 @@ public class UnitFactory extends Block{
         }
 
         if(entity.cons.valid() || tile.isEnemyCheat()){
-            entity.time += entity.delta() * entity.speedScl * Vars.state.rules.unitBuildSpeedMultiplier * entity.efficiency();
+            entity.time += entity.delta() * entity.speedScl * Vars.state.rules.unitBuildSpeedMultiplier * Mathf.clamp(entity.efficiency(), 0.1f, 1f);
             entity.buildTime += entity.delta() * entity.efficiency() * Vars.state.rules.unitBuildSpeedMultiplier;
             entity.speedScl = Mathf.lerpDelta(entity.speedScl, 1f, 0.05f);
         }else{
