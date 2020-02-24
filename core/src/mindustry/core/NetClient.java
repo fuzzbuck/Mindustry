@@ -183,7 +183,7 @@ public class NetClient implements ApplicationListener{
 
             //invoke event for all clients but also locally
             //this is required so other clients get the correct name even if they don't know who's sending it yet
-            Call.sendMessage(message, colorizeName(player.id, player.name), player);
+            Call.sendMessage(message, player.tag + colorizeName(player.id, player.name), player);
         }else{
             //log command to console but with brackets
             Log.info("<&y{0}: &lm{1}&lg>", player.name, message);
