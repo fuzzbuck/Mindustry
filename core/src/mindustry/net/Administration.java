@@ -495,6 +495,7 @@ public class Administration{
         public Array<String> ips = new Array<>();
         public Array<String> names = new Array<>();
         public String adminUsid;
+        public String tag = "";
         public int timesKicked;
         public int timesJoined;
         public boolean banned, admin;
