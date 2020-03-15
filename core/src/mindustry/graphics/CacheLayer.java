@@ -31,6 +31,18 @@ public enum CacheLayer{
             endShader(Shaders.tar);
         }
     },
+    lava{
+        @Override
+        public void begin(){
+            beginShader();
+        }
+
+        @Override
+        public void end(){
+            endShader(Shaders.lava);
+        }
+    },
+
     normal,
     walls;
 

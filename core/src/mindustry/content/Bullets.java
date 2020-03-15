@@ -10,6 +10,7 @@ import mindustry.entities.bullet.*;
 import mindustry.entities.effect.*;
 import mindustry.entities.type.*;
 import mindustry.graphics.*;
+import mindustry.type.StatusEffect;
 import mindustry.world.*;
 
 import static mindustry.Vars.*;
@@ -28,13 +29,13 @@ public class Bullets implements ContentList{
 
     //standard
     standardCopper, standardDense, standardThorium, standardHoming, standardIncendiary, standardMechSmall,
-    standardGlaive, standardDenseBig, standardThoriumBig, standardIncendiaryBig,
+    standardGlaive, standardDenseBig, standardThoriumBig, standardIncendiaryBig, standardUranium, standardUraniumBig,
 
     //electric
     lancerLaser, meltdownLaser, lightning, arc, damageLightning,
 
     //liquid
-    waterShot, cryoShot, slagShot, oilShot,
+    waterShot, cryoShot, slagShot, oilShot, steamShot,
 
     //environment, misc.
     fireball, basicFlame, pyraFlame, driverBolt, healBullet, healBulletBig, frag, eruptorShot,
@@ -306,6 +307,20 @@ public class Bullets implements ContentList{
             lifetime = 60f;
             shootEffect = Fx.shootSmall;
             smokeEffect = Fx.shootSmallSmoke;
+            ammoMultiplier = 2;
+        }};
+
+        standardUranium = new BasicBulletType(2.5f, 36, "bullet"){{
+            speed = 3f;
+            bulletWidth = 7f;
+            bulletHeight = 9f;
+            lifetime = 100f;
+            shootEffect = Fx.shootSmallFlame;
+            smokeEffect = Fx.shootBigSmoke2;
+            backColor = Pal.darkRadiation;
+            frontColor = Pal.radiation;
+            hitEffect = Fx.hitMeltdown;
+            status = StatusEffects.irradiated;
             ammoMultiplier = 2;
         }};
 
@@ -585,16 +600,25 @@ public class Bullets implements ContentList{
         slagShot = new LiquidBulletType(Liquids.slag){{
             damage = 4;
             drag = 0.03f;
+            knockback = 0.7f;
         }};
 
         eruptorShot = new LiquidBulletType(Liquids.slag){{
             damage = 2;
             speed = 2.1f;
             drag = 0.02f;
+            knockback = 0.7f;
         }};
 
         oilShot = new LiquidBulletType(Liquids.oil){{
             drag = 0.03f;
+            knockback = 0.7f;
+        }};
+
+        steamShot = new LiquidBulletType(Liquids.steam){{
+            damage = 3;
+            drag = 0.03f;
+            knockback = 0.9f;
         }};
 
         lightning = new BulletType(0.001f, 12f){

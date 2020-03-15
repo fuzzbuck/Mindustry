@@ -40,6 +40,8 @@ public class LegacyColorMapper implements ContentList{
         map("161616", Blocks.stone, Blocks.air, Blocks.oreCoal);
         map("6277bc", Blocks.stone, Blocks.air, Blocks.oreTitanium);
         map("83bc58", Blocks.stone, Blocks.air, Blocks.oreThorium);
+        map("eb4034", Blocks.lava);
+        map("53e650", Blocks.oreUranium);
     }
 
     private void map(String color, Block block, Block wall, Block ore){

@@ -17,7 +17,7 @@ public class Shaders{
     public static FogShader fog;
     public static MenuShader menu;
     public static LightShader light;
-    public static SurfaceShader water, tar;
+    public static SurfaceShader water, tar, lava;
 
     public static void init(){
         shadow = new Shadow();
@@ -35,6 +35,7 @@ public class Shaders{
         light = new LightShader();
         water = new SurfaceShader("water");
         tar = new SurfaceShader("tar");
+        lava = new SurfaceShader("lava");
     }
 
     public static class LightShader extends LoadShader{

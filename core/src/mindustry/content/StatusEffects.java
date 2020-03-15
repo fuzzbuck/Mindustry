@@ -9,7 +9,7 @@ import mindustry.type.StatusEffect;
 import static mindustry.Vars.*;
 
 public class StatusEffects implements ContentList{
-    public static StatusEffect none, burning, freezing, wet, melting, tarred, overdrive, shielded, shocked, corroded, boss;
+    public static StatusEffect none, burning, irradiated, freezing, wet, melting, tarred, overdrive, shielded, shocked, corroded, boss;
 
     @Override
     public void load(){
@@ -28,6 +28,13 @@ public class StatusEffects implements ContentList{
                     result.set(this, Math.min(time + newTime, 300f));
                 }));
             });
+        }};
+
+        irradiated = new StatusEffect("irradiated"){{
+            damage = 0.1f;
+            speedMultiplier = 1.2f;
+
+            effect = Fx.radiating;
         }};
 
         freezing = new StatusEffect("freezing"){{

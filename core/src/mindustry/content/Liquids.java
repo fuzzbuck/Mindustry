@@ -18,6 +18,7 @@ public class Liquids implements ContentList{
         steam = new Liquid("steam", Color.valueOf("ffffff")){{
             heatCapacity = 1f;
             temperature = 1f;
+            viscosity = 0.1f;
             effect = StatusEffects.wet;
             barColor = Color.valueOf("8e9094");
         }};

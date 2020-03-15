@@ -170,7 +170,11 @@ public class Puddle extends SolidEntity implements SaveTrait, Poolable, DrawTrai
             //update code
             float addSpeed = accepting > 0 ? 3f : 0f;
 
-            amount -= Time.delta() * (1f - liquid.viscosity) / (5f + addSpeed);
+            if(liquid != Liquids.steam) {
+                amount -= Time.delta() * (1f - liquid.viscosity) / (5f + addSpeed);
+            }else{
+                amount -= Time.delta();
+            }
 
             amount += accepting;
             accepting = 0f;
@@ -226,14 +230,23 @@ public class Puddle extends SolidEntity implements SaveTrait, Poolable, DrawTrai
         float smag = onLiquid ? 0.8f : 0f;
         float sscl = 20f;
 
-        Draw.color(tmp.set(liquid.color).shiftValue(-0.05f));
-        Fill.circle(x + Mathf.sin(Time.time() + seeds * 532, sscl, smag), y + Mathf.sin(Time.time() + seeds * 53, sscl, smag), f * 8f);
-        Angles.randLenVectors(id, 3, f * 6f, (ex, ey) -> {
-            Fill.circle(x + ex + Mathf.sin(Time.time() + seeds * 532, sscl, smag),
-            y + ey + Mathf.sin(Time.time() + seeds * 53, sscl, smag), f * 5f);
-            seeds++;
-        });
-        Draw.color();
+        if(liquid != Liquids.steam) {
+            Draw.color(tmp.set(liquid.color).shiftValue(-0.05f));
+            Fill.circle(x + Mathf.sin(Time.time() + seeds * 532, sscl, smag), y + Mathf.sin(Time.time() + seeds * 53, sscl, smag), f * 8f);
+            Angles.randLenVectors(id, 3, f * 6f, (ex, ey) -> {
+                Fill.circle(x + ex + Mathf.sin(Time.time() + seeds * 532, sscl, smag),
+                        y + ey + Mathf.sin(Time.time() + seeds * 53, sscl, smag), f * 5f);
+                seeds++;
+            });
+            Draw.color();
+        } else{
+            if(Mathf.chance(0.2f)){
+                Effects.effect(Fx.steam, x, y);
+                if(Mathf.chance(0.4f)){
+                    Effects.effect(Fx.steam, x + Mathf.range(5f), y + Mathf.range(5f));
+                }
+            }
+        }
 
         if(liquid.lightColor.a > 0.001f && f > 0){
             Color color = liquid.lightColor;

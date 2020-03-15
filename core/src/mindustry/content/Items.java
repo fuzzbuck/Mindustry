@@ -2,11 +2,12 @@ package mindustry.content;
 
 import arc.graphics.Color;
 import mindustry.ctype.ContentList;
+import mindustry.graphics.Pal;
 import mindustry.type.Item;
 import mindustry.type.ItemType;
 
 public class Items implements ContentList{
-    public static Item scrap, copper, lead, graphite, coal, titanium, thorium, silicon, plastanium, phasefabric, surgealloy,
+    public static Item scrap, copper, lead, graphite, coal, titanium, thorium, silicon, plastanium, phasefabric, surgealloy, uranium, uraniumCell,
     sporePod, sand, blastCompound, pyratite, metaglass;
 
     @Override
@@ -82,6 +83,19 @@ public class Items implements ContentList{
 
         surgealloy = new Item("surge-alloy", Color.valueOf("f3e979")){{
             type = ItemType.material;
+        }};
+
+        uranium = new Item("uranium", Pal.darkRadiation){{
+            type = ItemType.material;
+            explosiveness = 0.5f;
+            hardness = 5;
+            radioactivity = 1f;
+            cost = 1f;
+        }};
+
+        uraniumCell = new Item("uranium-cell", Pal.radiation){{
+            explosiveness = 1f;
+            radioactivity = 1f;
         }};
 
         sporePod = new Item("spore-pod", Color.valueOf("7457ce")){{

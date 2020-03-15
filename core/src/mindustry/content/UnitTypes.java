@@ -102,7 +102,7 @@ public class UnitTypes implements ContentList{
                 ejectEffect = Fx.none;
                 shootSound = Sounds.explosion;
                 bullet = new BombBulletType(2f, 3f, "clear"){{
-                    hitEffect = Fx.pulverize;
+                    hitEffect = Fx.explosion;
                     lifetime = 30f;
                     speed = 1.1f;
                     splashDamageRadius = 55f;
@@ -114,24 +114,26 @@ public class UnitTypes implements ContentList{
         }};
 
         kamikaze = new UnitType("kamikaze", FlyingUnit::new){{
-            maxVelocity = 1.3f;
+
             speed = 0.3f;
-            drag = 0.2f;
+            maxVelocity = 1.9f;
+            drag = 0.01f;
+            mass = 1.5f;
             hitsize = 8f;
-            flying=true;
-            mass = 1.75f;
-            health = 60;
+            flying = true;
+            health = 50;
+            range = 400f;
             weapon = new Weapon(){{
                 reload = 12f;
                 ejectEffect = Fx.none;
                 shootSound = Sounds.explosion;
                 bullet = new BombBulletType(2f, 3f, "clear"){{
-                    hitEffect = Fx.pulverize;
+                    hitEffect = Fx.explosion;
                     lifetime = 30f;
                     speed = 1.1f;
                     splashDamageRadius = 55f;
                     instantDisappear = true;
-                    splashDamage = 30f;
+                    splashDamage = 40f;
                     killShooter = true;
                     ignoreRotation = true;
                 }};

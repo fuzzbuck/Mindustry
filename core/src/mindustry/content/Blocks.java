@@ -34,7 +34,7 @@ public class Blocks implements ContentList{
     public static Block
 
     //environment
-    air, spawn, deepwater, water, taintedWater, tar, stone, craters, charr, sand, darksand, ice, snow, darksandTaintedWater,
+    air, spawn, deepwater, water, taintedWater, lava, tar, stone, craters, charr, sand, darksand, ice, snow, darksandTaintedWater,
     holostone, rocks, sporerocks, icerocks, cliffs, sporePine, snowPine, pine, shrubs, whiteTree, whiteTreeDead, sporeCluster,
     iceSnow, sandWater, darksandWater, duneRocks, sandRocks, moss, sporeMoss, shale, shaleRocks, shaleBoulder, sandBoulder, grass, salt,
     metalFloor, metalFloorDamaged, metalFloor2, metalFloor3, metalFloor5, ignarock, magmarock, hotrock, snowrocks, rock, snowrock, saltRocks,
@@ -42,7 +42,7 @@ public class Blocks implements ContentList{
     pebbles, tendrils,
 
     //ores
-    oreCopper, oreLead, oreScrap, oreCoal, oreTitanium, oreThorium,
+    oreCopper, oreLead, oreScrap, oreCoal, oreTitanium, oreThorium, oreUranium,
 
     //crafting
     siliconSmelter, kiln, graphitePress, plastaniumCompressor, multiPress, phaseWeaver, surgeSmelter, pyratiteMixer, blastMixer, cryofluidMixer,
@@ -199,6 +199,17 @@ public class Blocks implements ContentList{
             speedMultiplier = 0.19f;
             variants = 0;
             liquidDrop = Liquids.oil;
+            isLiquid = true;
+            cacheLayer = CacheLayer.tar;
+        }};
+
+        lava = new Floor("lava"){{
+            drownTime = 30f;
+            status = StatusEffects.melting;
+            statusDuration = 240f;
+            speedMultiplier = 0.1f;
+            variants = 0;
+            liquidDrop = Liquids.slag;
             isLiquid = true;
             cacheLayer = CacheLayer.tar;
         }};
@@ -428,6 +439,12 @@ public class Blocks implements ContentList{
             oreDefault = true;
             oreThreshold = 0.882f;
             oreScale = 25.380953f;
+        }};
+
+        oreUranium = new OreBlock(Items.uranium){{
+            oreDefault = true;
+            oreThreshold = 0.962f;
+            oreScale = 25.380923f;
         }};
 
         //endregion
@@ -923,10 +940,10 @@ public class Blocks implements ContentList{
         surgeConveyor = new ElectricConveyor("surge-conveyor"){{
             requirements(Category.distribution, ItemStack.with(Items.surgealloy, 2, Items.thorium, 1, Items.metaglass, 1, Items.plastanium, 1));
             hasPower = true;
-            consumes.power(0.18f);
+            consumes.power(0.08f);
             health = 200;
             speed = 0f;
-            maxSpeed = 0.24f;
+            maxSpeed = 0.32f;
             displayedSpeed = 30f;
 
             entityType = ElectricConveyorEntity::new;
@@ -1433,7 +1450,8 @@ public class Blocks implements ContentList{
             Liquids.water, Bullets.waterShot,
             Liquids.slag, Bullets.slagShot,
             Liquids.cryofluid, Bullets.cryoShot,
-            Liquids.oil, Bullets.oilShot
+            Liquids.oil, Bullets.oilShot,
+            Liquids.steam, Bullets.steamShot
             );
             size = 2;
             recoil = 0f;
@@ -1477,7 +1495,7 @@ public class Blocks implements ContentList{
             rotatespeed = 8f;
             powerUse = 1.5f;
             targetAir = false;
-            range = 90f;
+            range = 60f;
             shootEffect = Fx.lightningShoot;
             heatColor = Color.red;
             recoil = 1f;
@@ -1493,7 +1511,7 @@ public class Blocks implements ContentList{
             Items.pyratite, Bullets.missileIncendiary,
             Items.surgealloy, Bullets.missileSurge
             );
-            reload = 40f;
+            reload = 20f;
             shots = 4;
             burstSpacing = 5;
             inaccuracy = 10f;
@@ -1511,7 +1529,8 @@ public class Blocks implements ContentList{
             Items.graphite, Bullets.standardDense,
             Items.pyratite, Bullets.standardIncendiary,
             Items.silicon, Bullets.standardHoming,
-            Items.thorium, Bullets.standardThorium
+            Items.thorium, Bullets.standardThorium,
+            Items.uranium, Bullets.standardUranium
             );
 
             size = 2;
@@ -1634,7 +1653,8 @@ public class Blocks implements ContentList{
             ammo(
             Items.graphite, Bullets.standardDenseBig,
             Items.pyratite, Bullets.standardIncendiaryBig,
-            Items.thorium, Bullets.standardThoriumBig
+            Items.thorium, Bullets.standardThoriumBig,
+            Items.uranium, Bullets.standardUranium
             );
             reload = 6f;
             coolantMultiplier = 0.5f;

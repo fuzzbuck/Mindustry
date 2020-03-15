@@ -56,8 +56,6 @@ public class MechPad extends Block{
         MechFactoryEntity entity = tile.ent();
 
         if(!entity.cons.valid()) return;
-        Log.info(tile.entity.liquids.total());
-        Log.info(tile.block().liquidCapacity);
         if(tile.block().hasLiquids && tile.entity.liquids.total() + 1f < tile.block().liquidCapacity) return;
         if(tile.block().hasLiquids) entity.liquids.clear();
         player.beginRespawning(entity);

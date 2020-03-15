@@ -25,7 +25,7 @@ public class Fx implements ContentList{
     mine, mineBig, mineHuge, smelt, teleportActivate, teleport, teleportOut, ripple, bubble, launch,
     healBlock, healBlockFull, healWaveMend, overdriveWave, overdriveBlockFull, shieldBreak, hitBulletSmall, hitFuse,
     hitBulletBig, hitFlameSmall, hitLiquid, hitLaser, hitLancer, hitMeltdown, despawn, flakExplosion, blastExplosion,
-    plasticExplosion, artilleryTrail, incendTrail, missileTrail, absorb, flakExplosionBig, plasticExplosionFlak, burning, fire,
+    plasticExplosion, artilleryTrail, incendTrail, missileTrail, absorb, flakExplosionBig, plasticExplosionFlak, burning, radiating, fire,
     fireSmoke, steam, fireballsmoke, ballfire, freezing, melting, wet, oily, overdriven, dropItem, shockwave,
     bigShockwave, nuclearShockwave, explosion, blockExplosion, blockExplosionSmoke, shootSmall, shootHeal, shootSmallSmoke, shootBig, shootBig2, shootBigSmoke,
     shootBigSmoke2, shootSmallFlame, shootPyraFlame, shootLiquid, shellEjectSmall, shellEjectMedium,
@@ -415,6 +415,14 @@ public class Fx implements ContentList{
                 Fill.circle(e.x + x, e.y + y, 0.1f + e.fout() * 1.4f);
             });
 
+        });
+
+        radiating = new Effect(35f, e -> {
+            Draw.color(Pal.radiation, Pal.darkRadiation, e.fin());
+
+            Angles.randLenVectors(e.id, 3, 2f + e.fin() * 32f, (x, y) -> {
+                Fill.square(e.x + x, e.y + y, 0.1f + e.fout() * 0.2f);
+            });
         });
 
         fire = new Effect(50f, e -> {
