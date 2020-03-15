@@ -24,56 +24,41 @@ import static mindustry.Vars.*;
  */
 public class LiquidGenerator extends PowerGenerator{
 
-    public float minLiquidEfficiency = 0.2f;
     /** Maximum liquid used per frame. */
     public float maxLiquidGenerate = 0.4f;
 
     /** How fast it warms up to rotate faster */
-    public float rotateWarmupSpeed = 0.2f;
+    public float rotateWarmupSpeed = 0.001f;
 
     /** Maximum degrees per frame it can rotate */
-    public float maxRotateSpeed = 20f;
+    public float maxRotateSpeed = 4.2f;
 
-    public Effect generateEffect = Fx.generatespark;
+    public Effect generateEffect = Fx.steam;
 
-    public TextureRegion bottomRegion, spinRegion, topRegion;
+    public TextureRegion spinRegion;
 
     public boolean defaults = false;
 
     public LiquidGenerator(String name){
         super(name);
         this.entityType = LiquidGeneratorEntity::new;
-        setDefaults();
-    }
-
-    protected void setDefaults(){
-        if(hasLiquids){
-            consumes.add(new ConsumeLiquidFilter(liquid -> getLiquidEfficiency(liquid) >= minLiquidEfficiency, maxLiquidGenerate)).update(false).optional(true, false);
-        }
-
-        defaults = true;
     }
 
     @Override
     public void init(){
-        if(!defaults){
-            setDefaults();
-        }
         super.init();
     }
 
     @Override
     public void load(){
         super.load();
-        bottomRegion = Core.atlas.find(name + "-bottom");
-        spinRegion = Core.atlas.find(name + "-spin");
-        topRegion = Core.atlas.find(name + "-top");
+        spinRegion = Core.atlas.find(name + "-spinner");
     }
 
-    @Override
+    /*@Override
     public TextureRegion[] generateIcons(){
-        return new TextureRegion[]{Core.atlas.find(name + "-bottom"), Core.atlas.find(name + "-spin"), Core.atlas.find(name + "-top")};
-    }
+        return new TextureRegion[]{region};
+    }*/
 
     @Override
     public void setStats(){
@@ -94,42 +79,32 @@ public class LiquidGenerator extends PowerGenerator{
         //Power amount is delta'd by PowerGraph class already.
         float calculationDelta = entity.delta();
 
-        if(!entity.cons.valid()){
-            Log.info("consumes are invalid");
-            entity.productionEfficiency = 0.0f;
-            return;
-        }
+        Liquid liquid = entity.liquids.current();
 
-        Liquid liquid = Liquids.steam;
-
-        if(hasLiquids && liquid != null && entity.liquids.get(liquid) >= 0.001f){
-            float baseLiquidEfficiency = getLiquidEfficiency(liquid);
+        if(hasLiquids && liquid != null && entity.liquids.get(liquid) >= 0.1f){
             float maximumPossible = maxLiquidGenerate * calculationDelta;
             float used = Math.min(entity.liquids.get(liquid) * calculationDelta, maximumPossible);
 
             entity.rotateSpeed = Mathf.lerpDelta(entity.rotateSpeed, maxRotateSpeed, rotateWarmupSpeed);
-            entity.rotation += entity.rotateSpeed;
-
             entity.liquids.remove(liquid, used * entity.power.graph.getUsageFraction());
-            entity.productionEfficiency = baseLiquidEfficiency * used / maximumPossible;
 
-            if(used > 0.001f && Mathf.chance(0.05 * entity.delta())){
-                Effects.effect(generateEffect, tile.drawx() + Mathf.range(3f), tile.drawy() + Mathf.range(3f));
+            if(used > 0.001f && Mathf.chance(0.2 * entity.delta())){
+                Effects.effect(generateEffect, tile.drawx() + Mathf.range(4f), tile.drawy() + Mathf.range(4f));
             }
         } else{
             entity.rotateSpeed = Mathf.lerpDelta(entity.rotateSpeed, 0f, rotateWarmupSpeed / 2); // slow down 2x slower
         }
+        entity.productionEfficiency = entity.rotateSpeed / maxRotateSpeed;
+        entity.rotation += entity.rotateSpeed;
     }
 
     @Override
     public void draw(Tile tile){
         super.draw(tile);
-
         LiquidGeneratorEntity entity = tile.ent();
 
-        Draw.rect(bottomRegion, tile.drawx(), tile.drawy());
+        Draw.rect(region, tile.drawx(), tile.drawy());
         Draw.rect(spinRegion, tile.drawx(), tile.drawy(), entity.rotation);
-        Draw.rect(topRegion, tile.drawx(), tile.drawy());
     }
 
     @Override
@@ -137,10 +112,6 @@ public class LiquidGenerator extends PowerGenerator{
         LiquidGeneratorEntity entity = tile.ent();
 
         renderer.lights.add(tile.drawx(), tile.drawy(), (20f + Mathf.absin(10f, 5f)) * entity.productionEfficiency * size, Color.white, 0.5f);
-    }
-
-    protected float getLiquidEfficiency(Liquid liquid){
-        return 0.0f;
     }
 
     public static class LiquidGeneratorEntity extends GeneratorEntity{

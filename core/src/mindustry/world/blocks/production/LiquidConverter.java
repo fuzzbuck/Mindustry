@@ -1,5 +1,7 @@
 package mindustry.world.blocks.production;
 
+import arc.math.Mathf;
+import mindustry.entities.Effects;
 import mindustry.world.Tile;
 import mindustry.world.consumers.ConsumeLiquidBase;
 import mindustry.world.consumers.ConsumeType;
@@ -53,6 +55,10 @@ public class LiquidConverter extends GenericCrafter{
             if(entity.progress >= 1f){
                 entity.cons.trigger();
                 entity.progress = 0f;
+            }
+
+            if (Mathf.chance(0.1 * entity.delta())){
+                Effects.effect(craftEffect, tile.drawx() + Mathf.range(3f), tile.drawy() + Mathf.range(3f));
             }
         }
 

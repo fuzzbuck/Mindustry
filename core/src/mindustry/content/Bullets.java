@@ -35,7 +35,7 @@ public class Bullets implements ContentList{
     lancerLaser, meltdownLaser, lightning, arc, damageLightning,
 
     //liquid
-    waterShot, cryoShot, slagShot, oilShot, steamShot,
+    waterShot, cryoShot, slagShot, oilShot, steamShot, acidShot,
 
     //environment, misc.
     fireball, basicFlame, pyraFlame, driverBolt, healBullet, healBulletBig, frag, eruptorShot,
@@ -310,8 +310,7 @@ public class Bullets implements ContentList{
             ammoMultiplier = 2;
         }};
 
-        standardUranium = new BasicBulletType(2.5f, 36, "bullet"){{
-            speed = 3f;
+        standardUranium = new BasicBulletType(5f, 36, "bullet"){{
             bulletWidth = 7f;
             bulletHeight = 9f;
             lifetime = 100f;
@@ -618,6 +617,12 @@ public class Bullets implements ContentList{
         steamShot = new LiquidBulletType(Liquids.steam){{
             damage = 3;
             drag = 0.03f;
+            knockback = 0.9f;
+        }};
+
+        acidShot = new LiquidBulletType(Liquids.steam){{
+            damage = 16;
+            drag = 0.05f;
             knockback = 0.9f;
         }};
 

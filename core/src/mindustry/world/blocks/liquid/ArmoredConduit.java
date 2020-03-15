@@ -14,6 +14,7 @@ public class ArmoredConduit extends Conduit{
     public ArmoredConduit(String name){
         super(name);
         leakResistance = 10f;
+        acidResistance = true;
     }
 
     @Override

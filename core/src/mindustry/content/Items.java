@@ -7,7 +7,7 @@ import mindustry.type.Item;
 import mindustry.type.ItemType;
 
 public class Items implements ContentList{
-    public static Item scrap, copper, lead, graphite, coal, titanium, thorium, silicon, plastanium, phasefabric, surgealloy, uranium, uraniumCell,
+    public static Item scrap, copper, lead, graphite, coal, titanium, thorium, silicon, concrete, plastanium, phasefabric, surgealloy, uranium, uraniumCell,
     sporePod, sand, blastCompound, pyratite, metaglass;
 
     @Override
@@ -68,6 +68,11 @@ public class Items implements ContentList{
             cost = 0.8f;
         }};
 
+        concrete = new Item("concrete", Color.valueOf("808080")){{
+            type = ItemType.material;
+            cost = 0.8f;
+        }};
+
         plastanium = new Item("plastanium", Color.valueOf("cbd97f")){{
             type = ItemType.material;
             flammability = 0.1f;
@@ -88,7 +93,7 @@ public class Items implements ContentList{
         uranium = new Item("uranium", Pal.darkRadiation){{
             type = ItemType.material;
             explosiveness = 0.5f;
-            hardness = 5;
+            hardness = 6;
             radioactivity = 1f;
             cost = 1f;
         }};

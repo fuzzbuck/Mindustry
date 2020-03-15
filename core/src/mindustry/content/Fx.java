@@ -421,7 +421,7 @@ public class Fx implements ContentList{
             Draw.color(Pal.radiation, Pal.darkRadiation, e.fin());
 
             Angles.randLenVectors(e.id, 3, 2f + e.fin() * 32f, (x, y) -> {
-                Fill.square(e.x + x, e.y + y, 0.1f + e.fout() * 0.2f);
+                Fill.square(e.x + x, e.y + y, 0.35f + e.fout() * 0.2f);
             });
         });
 
@@ -701,7 +701,6 @@ public class Fx implements ContentList{
 
         shootPyraFlame = new Effect(33f, e -> {
             Draw.color(Pal.lightPyraFlame, Pal.darkPyraFlame, Color.gray, e.fin());
-
             Angles.randLenVectors(e.id, 10, e.finpow() * 70f, e.rotation, 10f, (x, y) -> {
                 Fill.circle(e.x + x, e.y + y, 0.65f + e.fout() * 1.6f);
             });

@@ -8,6 +8,7 @@ import arc.math.geom.*;
 import arc.struct.*;
 import arc.util.*;
 import mindustry.content.*;
+import mindustry.entities.Effects;
 import mindustry.entities.traits.BuilderTrait.*;
 import mindustry.entities.type.*;
 import mindustry.type.*;
@@ -21,6 +22,7 @@ public class Conduit extends LiquidBlock implements Autotiler{
     public TextureRegion[] botRegions = new TextureRegion[7];
 
     public float leakResistance = 1.5f;
+    public boolean acidResistance = false;
 
     public Conduit(String name){
         super(name);
@@ -111,6 +113,12 @@ public class Conduit extends LiquidBlock implements Autotiler{
 
         if(tile.entity.liquids.total() > 0.001f && tile.entity.timer.get(timerFlow, 1)){
             tryMoveLiquid(tile, tile.getNearby(tile.rotation()), leakResistance, tile.entity.liquids.current());
+            if(!acidResistance && tile.entity.liquids.current() == Liquids.acid){
+                entity.damage(Mathf.random(0.001f, 0.1f));
+                if(Mathf.chance(0.03f)){
+                    Effects.effect(Fx.radiating, tile.drawx(), tile.drawy());
+                }
+            }
             entity.noSleep();
         }else{
             entity.sleep();

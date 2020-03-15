@@ -94,7 +94,7 @@ public class Mechs implements ContentList{
         };
 
         kilo = new Mech("kilo-mech", false){
-            float fireRange = 60f;
+            float fireRange = 120f;
             float fireReload = 120f;
             boolean wasBurned;
 
@@ -111,7 +111,7 @@ public class Mechs implements ContentList{
 
                 weapon = new Weapon("flamethrower"){{
                     length = 1f;
-                    reload = 12f;
+                    reload = 18f;
                     alternate = true;
                     ejectEffect = Fx.none;
                     bullet = Bullets.pyraFlame;
