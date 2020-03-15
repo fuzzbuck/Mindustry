@@ -29,6 +29,7 @@ public class UnitType extends UnlockableContent{
     public float shootCone = 15f;
     public float mass = 1f;
     public boolean flying;
+    public boolean swimming;
     public boolean targetAir = true;
     public boolean rotateWeapon = false;
     public float drag = 0.1f;

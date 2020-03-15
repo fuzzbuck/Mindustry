@@ -568,7 +568,7 @@ public class Blocks implements ContentList{
 
             consumes.items(new ItemStack(Items.lead, 1), new ItemStack(Items.sand, 1));
             consumes.power(1.2f);
-            consumes.liquid(Liquids.acid, 0.1f);
+            consumes.liquid(Liquids.acid, 0.06f);
         }};
 
         plastaniumCompressor = new GenericCrafter("plastanium-compressor"){{
@@ -1178,7 +1178,7 @@ public class Blocks implements ContentList{
             health = 500;
         }};
 
-        platedLiquidTank = new LiquidTank("plated-liquid-tank"){{
+        platedLiquidTank = new LiquidTank("liquid-plated-tank", true){{
             requirements(Category.liquid, ItemStack.with(Items.titanium, 25, Items.metaglass, 25, Items.plastanium, 25, Items.thorium, 50));
             size = 2;
             liquidCapacity = 1000f;
@@ -1278,11 +1278,11 @@ public class Blocks implements ContentList{
             craftEffect = Fx.steam;
 
             consumes.item(Items.coal);
-            consumes.liquid(Liquids.water, 0.1f);
+            consumes.liquid(Liquids.water, 0.2f);
 
             int liquidRegion = reg("-liquid"), topRegion = reg("-top");
 
-            drawIcons = () -> new TextureRegion[]{region, Core.atlas.find(name + "-top")};
+            drawIcons = () -> new TextureRegion[]{Core.atlas.find(name)};
 
             drawer = tile -> {
                 GenericCrafterEntity ent = tile.ent();
@@ -1937,10 +1937,9 @@ public class Blocks implements ContentList{
             consumes.items(new ItemStack(Items.coal, 10));
         }};
 
-        crawlerFactory = new UnitFactory("kamikaze-factory"){{
+        kamikazeFactory = new UnitFactory("kamikaze-factory"){{
             requirements(Category.units, ItemStack.with(Items.lead, 100, Items.silicon, 30, Items.titanium, 20));
-            unitType = UnitTypes.kamikaze;
-            produceTime = 200;
+            unitType = UnitTypes.kamikaze;            produceTime = 200;
             size = 2;
             maxSpawn = 6;
             consumes.power(0.5f);

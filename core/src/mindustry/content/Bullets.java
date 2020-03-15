@@ -615,12 +615,13 @@ public class Bullets implements ContentList{
         }};
 
         steamShot = new LiquidBulletType(Liquids.steam){{
+            speed = 8f;
             damage = 3;
             drag = 0.03f;
             knockback = 0.9f;
         }};
 
-        acidShot = new LiquidBulletType(Liquids.steam){{
+        acidShot = new LiquidBulletType(Liquids.acid){{
             damage = 16;
             drag = 0.05f;
             knockback = 0.9f;

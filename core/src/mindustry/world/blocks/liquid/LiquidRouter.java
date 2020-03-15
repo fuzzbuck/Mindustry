@@ -20,7 +20,7 @@ public class LiquidRouter extends LiquidBlock{
 
         if(tile.entity.liquids.total() > 0.01f){
             tryDumpLiquid(tile, tile.entity.liquids.current());
-            if(tile.entity.liquids.current() == Liquids.acid){
+            if(!acidResistance && tile.entity.liquids.current() == Liquids.acid){
                 tile.entity.damage(Mathf.random(0.001f, 0.1f));
                 if(Mathf.chance(0.05f)){
                     Effects.effect(Fx.radiating, tile.drawx(), tile.drawy());

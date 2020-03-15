@@ -170,6 +170,7 @@ public class Vars implements Loadable{
     public static WaveSpawner spawner;
     public static BlockIndexer indexer;
     public static Pathfinder pathfinder;
+    public static Pathfinder waterpathfinder;
 
     public static Control control;
     public static Logic logic;

@@ -48,6 +48,8 @@ public abstract class Unit extends DestructibleEntity implements SaveTrait, Targ
     protected Team team = Team.sharded;
     protected float drownTime, hitTime;
 
+    protected boolean isWaterUnit = false;
+
     @Override
     public boolean collidesGrid(int x, int y){
         return !isFlying();
@@ -303,13 +305,20 @@ public abstract class Unit extends DestructibleEntity implements SaveTrait, Targ
                 }
             }
 
-            if(onLiquid && floor.drownTime > 0){
+            if(!isWaterUnit && onLiquid && floor.drownTime > 0){
                 drownTime += Time.delta() * 1f / floor.drownTime;
                 if(Mathf.chance(Time.delta() * 0.05f)){
                     Effects.effect(floor.drownUpdateEffect, floor.color, x, y);
                 }
             }else{
                 drownTime = Mathf.lerpDelta(drownTime, 0f, 0.03f);
+            }
+
+            if(isWaterUnit && floor.drownTime <= 0){
+                drownTime += Time.delta() * 1f / floor.drownTime;
+                if(Mathf.chance(Time.delta() * 0.05f)){
+                    Effects.effect(Fx.smeltsmoke, floor.color, x, y);
+                }
             }
 
             drownTime = Mathf.clamp(drownTime);
