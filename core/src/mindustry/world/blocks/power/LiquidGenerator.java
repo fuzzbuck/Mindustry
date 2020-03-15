@@ -55,10 +55,10 @@ public class LiquidGenerator extends PowerGenerator{
         spinRegion = Core.atlas.find(name + "-spinner");
     }
 
-    /*@Override
+    @Override
     public TextureRegion[] generateIcons(){
-        return new TextureRegion[]{region};
-    }*/
+        return new TextureRegion[]{region, spinRegion};
+    }
 
     @Override
     public void setStats(){
