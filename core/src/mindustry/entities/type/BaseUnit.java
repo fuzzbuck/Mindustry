@@ -197,29 +197,21 @@ public abstract class BaseUnit extends Unit implements ShooterTrait{
     }
 
     public void targetClosest(){
-        TargetTrait newTarget = null;
-        if(type.targetGround) {
-            newTarget = Units.closestTarget(team, x, y, Math.max(getWeapon().bullet.range(), type.range), u -> !u.isFlying());
-        } else{
-            newTarget = Units.closestTarget(team, x, y, Math.max(getWeapon().bullet.range(), type.range), Unit::isFlying);
-        }
+        TargetTrait newTarget = Units.closestTarget(team, x, y, Math.max(getWeapon().bullet.range(), type.range), u -> type.targetAir || !u.isFlying());
         if(newTarget != null){
             target = newTarget;
         }
     }
 
     public @Nullable Tile getClosest(BlockFlag flag){
-        if(!type.targetGround) return null;
         return Geometry.findClosest(x, y, indexer.getAllied(team, flag));
     }
 
     public @Nullable Tile getClosestSpawner(){
-        if(!type.targetGround) return null;
         return Geometry.findClosest(x, y, Vars.spawner.getGroundSpawns());
     }
 
     public @Nullable TileEntity getClosestEnemyCore(){
-        if(!type.targetGround) return null;
         return Vars.state.teams.closestEnemyCore(x, y, team);
     }
 

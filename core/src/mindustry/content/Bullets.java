@@ -9,6 +9,7 @@ import mindustry.entities.*;
 import mindustry.entities.bullet.*;
 import mindustry.entities.effect.*;
 import mindustry.entities.type.*;
+import mindustry.gen.Sounds;
 import mindustry.graphics.*;
 import mindustry.type.StatusEffect;
 import mindustry.world.*;
@@ -206,9 +207,12 @@ public class Bullets implements ContentList{
         flakHighlyExplosive = new FlakBulletType(6f, 16){{
             splashDamage = 12f;
             splashDamageRadius = 66f;
-            bulletWidth = 4f;
-            bulletHeight = 20f;
+            bulletWidth = 14f;
+            bulletHeight = 22f;
+            homingPower = 10f;
             hitEffect = Fx.flakExplosionGigantic;
+            hitSound = Sounds.artillery;
+            hitShake = 3f;
             shootEffect = Fx.shootBig2;
         }};
 

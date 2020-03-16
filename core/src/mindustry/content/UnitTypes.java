@@ -213,15 +213,13 @@ public class UnitTypes implements ContentList{
             hitsize = 10f;
             rotatespeed = 0.3f;
             targetAir = true;
-            targetGround = false;
             repairRadius = 150f;
             repairSpeed = 0.8f;
             health = 1000;
             weapon = new Weapon("flak"){{
-                range = 10f;
-                length = 0.2f;
+                length = 1f;
                 reload = 50f;
-                width = 8f;
+                width = 16f;
                 alternate = true;
                 recoil = 8f;
                 shake = 2f;

@@ -2027,8 +2027,8 @@ public class Blocks implements ContentList{
             produceTime = 3500;
             size = 3;
             maxSpawn = 1;
-            consumes.power(3f);
-            consumes.items(new ItemStack(Items.silicon, 20), new ItemStack(Items.graphite, 10), new ItemStack(Items.concrete, 5));
+            consumes.power(6f);
+            consumes.items(new ItemStack(Items.silicon, 40), new ItemStack(Items.graphite, 20), new ItemStack(Items.concrete, 10), new ItemStack(Items.surgealloy, 5));
         }};
 
         repairPoint = new RepairPoint("repair-point"){{
