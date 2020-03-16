@@ -38,6 +38,7 @@ public class CachedTile extends Tile{
             n.block = block;
             if(block.hasItems) n.items = new ItemModule();
             if(block.hasLiquids) n.liquids = new LiquidModule();
+            if(block.hasHeat) n.heatmod = new HeatModule();
             if(block.hasPower) n.power = new PowerModule();
             entity = n;
         }

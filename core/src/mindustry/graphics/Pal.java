@@ -18,6 +18,8 @@ public class Pal{
 
     meltdownHit = Color.valueOf("ffb98b"),
 
+    heat = Color.valueOf("ff5029"),
+
     plastaniumBack = Color.valueOf("d8d97f"),
     plastaniumFront = Color.valueOf("fffac6"),
 

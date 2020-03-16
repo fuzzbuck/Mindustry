@@ -107,11 +107,13 @@ public class Mechs implements ContentList{
                 boostSpeed = 0.95f;
                 buildPower = 1.2f;
                 engineColor = Color.valueOf("ffd37f");
-                health = 500f;
+                health = 600f;
 
                 weapon = new Weapon("flamethrower"){{
+                    shots = 2;
+                    width = 6f;
                     length = 1f;
-                    reload = 18f;
+                    reload = 16f;
                     alternate = true;
                     ejectEffect = Fx.none;
                     bullet = Bullets.pyraFlame;

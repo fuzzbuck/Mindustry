@@ -555,6 +555,12 @@ public class Block extends BlockStorage{
                     () -> current.get(entity).barColor(), () -> entity.liquids.get(current.get(entity)) / liquidCapacity));
         }
 
+        if(hasHeat){
+            if((consumes.has(ConsumeType.heat) && consumes.get(ConsumeType.heat) instanceof ConsumeHeat) || outputsHeat){
+                bars.add("heat", entity -> new Bar(() -> entity.heatmod.currentAmount() <= 0.001f ? Core.bundle.get("bar.heat") : "Heat", () -> Pal.lightOrange, () -> entity.heatmod.smoothAmount() / heatCapacity));
+            }
+        }
+
         if(hasPower && consumes.hasPower()){
             ConsumePower cons = consumes.getPower();
             boolean buffered = cons.buffered;

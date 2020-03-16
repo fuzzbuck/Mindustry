@@ -38,6 +38,10 @@ public class Consumers{
         return add(new ConsumeLiquid(liquid, amount));
     }
 
+    public ConsumeHeat heat(float amount){
+        return add(new ConsumeHeat(amount));
+    }
+
     /**
      * Creates a consumer which directly uses power without buffering it.
      * @param powerPerTick The amount of power which is required each tick for 100% efficiency.

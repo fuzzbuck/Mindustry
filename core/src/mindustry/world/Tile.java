@@ -462,6 +462,7 @@ public class Tile implements Position, TargetTrait{
             entity.cons = new ConsumeModule(entity);
             if(block.hasItems) entity.items = new ItemModule();
             if(block.hasLiquids) entity.liquids = new LiquidModule();
+            if(block.hasHeat) entity.heatmod = new HeatModule();
             if(block.hasPower){
                 entity.power = new PowerModule();
                 entity.power.graph.add(this);

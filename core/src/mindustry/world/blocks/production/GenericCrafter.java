@@ -19,6 +19,7 @@ import java.io.*;
 public class GenericCrafter extends Block{
     public ItemStack outputItem;
     public LiquidStack outputLiquid;
+    public HeatStack outputHeat;
 
     public float craftTime = 80;
     public Effect craftEffect = Fx.none;
@@ -57,6 +58,9 @@ public class GenericCrafter extends Block{
         if(outputLiquid != null){
             stats.add(BlockStat.output, outputLiquid.liquid, outputLiquid.amount, false);
         }
+        if(outputHeat != null){
+            stats.add(BlockStat.output,outputHeat.amount * 60, true);
+        }
     }
 
     @Override
@@ -67,6 +71,7 @@ public class GenericCrafter extends Block{
     @Override
     public void init(){
         outputsLiquid = outputLiquid != null;
+        outputsHeat = outputHeat != null;
         super.init();
     }
 
@@ -116,6 +121,13 @@ public class GenericCrafter extends Block{
                 handleLiquid(tile, tile, outputLiquid.liquid, outputLiquid.amount);
             }
 
+            Log.info(outputHeat);
+
+            if(outputHeat != null){
+                Log.info("Handling heat");
+                handleHeat(tile, tile, outputHeat.amount);
+            }
+
             Effects.effect(craftEffect, tile.drawx(), tile.drawy());
             entity.progress = 0f;
         }
@@ -127,6 +139,10 @@ public class GenericCrafter extends Block{
         if(outputLiquid != null){
             tryDumpLiquid(tile, outputLiquid.liquid);
         }
+
+        if(outputHeat != null){
+            tryDumpHeat(tile);
+        }
     }
 
     @Override
@@ -135,7 +151,7 @@ public class GenericCrafter extends Block{
     }
 
     @Override
-    public boolean shouldConsume(Tile tile){
+    public boolean shouldConsume(Tile tile){ // return outputHeat != null && tile.entity.heatmod.currentAmount() < heatCapacity;
         if(outputItem != null && tile.entity.items.get(outputItem.item) >= itemCapacity){
             return false;
         }

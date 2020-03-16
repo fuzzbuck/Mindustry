@@ -30,6 +30,9 @@ import mindustry.world.consumers.*;
 import mindustry.world.meta.*;
 import mindustry.world.modules.*;
 
+import static arc.math.Mathf.dst;
+import static arc.math.Mathf.random;
+
 public class Blocks implements ContentList{
     public static Block
 
@@ -64,7 +67,7 @@ public class Blocks implements ContentList{
 
     //power
     combustionGenerator, thermalGenerator, turbineGenerator, steamTurbineGenerator, differentialGenerator, rtgGenerator, solarPanel, largeSolarPanel, thoriumReactor,
-    impactReactor, battery, batteryLarge, powerNode, powerNodeLarge, surgeTower, diode,
+    impactReactor, nuclearReactor, battery, batteryLarge, powerNode, powerNodeLarge, surgeTower, diode,
 
     //production
     mechanicalDrill, pneumaticDrill, laserDrill, blastDrill, deepDrill, waterExtractor, oilExtractor, cultivator,
@@ -1404,6 +1407,71 @@ public class Blocks implements ContentList{
             consumes.liquid(Liquids.cryofluid, 0.25f);
         }};
 
+        nuclearReactor = new GenericHeatCrafter("nuclear-reactor"){{
+            requirements(Category.power, ItemStack.with(Items.concrete, 1200, Items.lead, 500, Items.silicon, 400, Items.graphite, 300, Items.concrete, 500, Items.surgealloy, 150, Items.thorium, 150, Items.metaglass, 200, Items.plastanium, 100));
+            heatCapacity = 1000f;
+            craftTime = 60f * 6;
+            outputHeat = new HeatStack(0.1f);
+            size = 5;
+            health = 3200;
+            hasHeat = true;
+            hasPower = false;
+            craftEffect = Fx.activeRadiation;
+
+            consumes.item(Items.uraniumCell, 1);
+
+
+            int botRegion = reg("-bottom");
+            int topRegion = reg("-top");
+            int plasmaRegions[];
+            int plasmas = 4;
+
+            int particleSpeed = 40;
+            float particleRange = 16f;
+
+            plasmaRegions = new int[plasmas];
+            for(int i = 0; i < plasmas; i++){
+                plasmaRegions[i] = reg("-anim-" + i);
+            }
+
+            drawIcons = () -> new TextureRegion[]{Core.atlas.find(name + "-bottom"), Core.atlas.find(name + "-top")};
+            drawer = tile -> {
+                GenericCrafterEntity entity = tile.ent();
+
+                // draw bottom
+                Draw.rect(reg(botRegion), tile.drawx(), tile.drawy());
+
+                // draw plasmas
+                for(int i = 0; i < plasmas; i++){
+                    float r = 29f + Mathf.absin(Time.time(), 2f + i * 1f, 5f - i * 0.5f);
+                    Draw.alpha((0.3f + Mathf.absin(Time.time(), 2f + i * 2f, 0.3f + i * 0.05f)) * entity.warmup);
+                    Draw.blend(Blending.additive);
+                    Draw.rect(reg(plasmaRegions[i]), tile.drawx(), tile.drawy(), r, r, Time.time() * (12 + i * 6f) * entity.warmup);
+                    Draw.blend();
+                }
+                Draw.reset();
+
+                if(entity.cons.valid()) {
+                    random.setSeed(tile.pos());
+                    for (int i = 0; i < 264; i++) {
+                        float offset = random.nextFloat() * 999999f;
+                        float x = random.range(8f), y = random.range(8f);
+                        float rx = tile.drawx() + random.range(22f), ry = tile.drawy() + random.range(22f);
+                        float life = 1f - (((Time.time() + offset) / 150f) % 2f); // recurrence = 59f;    50f
+
+                        float cx = rx + x * (particleSpeed * 1f - particleSpeed * life), cy = ry + y * (particleSpeed * 1f - particleSpeed * life);
+                        float dst = Mathf.dst(tile.drawx(), tile.drawy(), cx, cy);
+                        if (life > 0 && dst < particleRange) {
+                            Drawf.square(cx, cy, life, Pal.radiation);
+                        }
+                    }
+                }
+
+                Draw.rect(reg(topRegion), tile.drawx(), tile.drawy());
+                Draw.reset();
+            };
+        }};
+
         //endregion power
         //region production
 
@@ -2025,7 +2093,7 @@ public class Blocks implements ContentList{
             requirements(Category.units, ItemStack.with(Items.thorium, 80, Items.lead, 150, Items.silicon, 250, Items.graphite, 200, Items.concrete, 150));
             unitType = UnitTypes.mothership;
             produceTime = 3500;
-            size = 3;
+            size = 5;
             maxSpawn = 1;
             consumes.power(6f);
             consumes.items(new ItemStack(Items.silicon, 40), new ItemStack(Items.graphite, 20), new ItemStack(Items.concrete, 10), new ItemStack(Items.uraniumCell, 1));

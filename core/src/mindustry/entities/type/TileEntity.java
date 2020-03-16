@@ -38,6 +38,7 @@ public class TileEntity extends BaseEntity implements TargetTrait, HealthTrait{
     public PowerModule power;
     public ItemModule items;
     public LiquidModule liquids;
+    public HeatModule heatmod;
     public @Nullable ConsumeModule cons;
 
     /** List of (cached) tiles with entities in proximity, used for outputting to */

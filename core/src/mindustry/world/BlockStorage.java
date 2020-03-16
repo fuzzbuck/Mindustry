@@ -20,14 +20,18 @@ import mindustry.world.meta.BlockStats;
 public abstract class BlockStorage extends UnlockableContent{
     public boolean hasItems;
     public boolean hasLiquids;
+    public boolean hasHeat;
     public boolean hasPower;
 
     public boolean outputsLiquid = false;
+    public boolean outputsHeat = false;
+    public boolean consumesHeat = false;
     public boolean consumesPower = true;
     public boolean outputsPower = false;
 
     public int itemCapacity = 10;
     public float liquidCapacity = 10f;
+    public float heatCapacity = 10f;
     public float liquidPressure = 1f;
 
     public final BlockStats stats = new BlockStats();
@@ -103,8 +107,16 @@ public abstract class BlockStorage extends UnlockableContent{
         return hasLiquids && tile.entity.liquids.get(liquid) + amount < liquidCapacity && consumes.liquidfilters.get(liquid.id);
     }
 
+    public boolean acceptHeat(Tile tile, Tile source, float amount){
+        return hasHeat && tile.entity.heatmod.currentAmount() + amount < heatCapacity;
+    }
+
     public void handleLiquid(Tile tile, Tile source, Liquid liquid, float amount){
         tile.entity.liquids.add(liquid, amount);
+    }
+
+    public void handleHeat(Tile tile, Tile source, float amount){
+        tile.entity.heatmod.add(amount);
     }
 
     public void tryDumpLiquid(Tile tile, Liquid liquid){
@@ -128,8 +140,40 @@ public abstract class BlockStorage extends UnlockableContent{
 
     }
 
+    public void tryDumpHeat(Tile tile){
+        Array<Tile> proximity = tile.entity.proximity();
+        int dump = tile.rotation();
+
+        for(int i = 0; i < proximity.size; i++){
+            incrementDump(tile, proximity.size);
+            Tile other = proximity.get((i + dump) % proximity.size);
+            Tile in = Edges.getFacingEdge(tile, other);
+
+            if(other != null && other.getTeam() == tile.getTeam() && other.block().hasHeat && other.entity.heatmod != null){
+                float ofract = other.entity.heatmod.currentAmount() / other.block().heatCapacity;
+                float fract = tile.entity.heatmod.currentAmount() / heatCapacity;
+
+                if(ofract < fract) tryMoveHeat(tile, in, other, (fract - ofract) * heatCapacity / 2f);
+            }
+        }
+
+    }
+
+    public boolean canDumpHeat(Tile tile, Tile to){
+        return true;
+    }
+
     public boolean canDumpLiquid(Tile tile, Tile to, Liquid liquid){
         return true;
+    }
+
+    public void tryMoveHeat(Tile tile, Tile tileSource, Tile next, float amount){
+        float flow = Math.min(next.block().heatCapacity - next.entity.heatmod.currentAmount() - 0.001f, amount);
+
+        if(next.block().acceptHeat(next, tileSource, flow)){
+            next.block().handleHeat(next, tileSource, flow);
+            tile.entity.heatmod.remove(flow);
+        }
     }
 
     public void tryMoveLiquid(Tile tile, Tile tileSource, Tile next, float amount, Liquid liquid){

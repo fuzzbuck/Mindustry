@@ -38,6 +38,11 @@ public class BlockStats{
         add(stat, new LiquidValue(liquid, amount, perSecond));
     }
 
+    /** Adds an item value. */
+    public void add(BlockStat stat, float amount, boolean perSecond){
+        add(stat, new HeatValue(amount, perSecond));
+    }
+
     public void add(BlockStat stat, Attribute attr){
         for(Block block : Vars.content.blocks()){
             if(!block.isFloor() || Mathf.zero(block.asFloor().attributes.get(attr))) continue;
