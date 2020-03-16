@@ -204,12 +204,11 @@ public class Bullets implements ContentList{
             shootEffect = Fx.shootBig;
         }};
 
-        flakHighlyExplosive = new FlakBulletType(6f, 16){{
-            splashDamage = 12f;
+        flakHighlyExplosive = new FlakBulletType(6f, 34){{
+            splashDamage = 23f;
             splashDamageRadius = 66f;
-            bulletWidth = 14f;
-            bulletHeight = 22f;
-            homingPower = 10f;
+            bulletWidth = 6f;
+            bulletHeight = 20f;
             hitEffect = Fx.flakExplosionGigantic;
             hitSound = Sounds.artillery;
             hitShake = 3f;

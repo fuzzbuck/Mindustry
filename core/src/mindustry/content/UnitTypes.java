@@ -207,15 +207,15 @@ public class UnitTypes implements ContentList{
 
         mothership = new UnitType("mothership", GroundUnit::new){{
             maxVelocity = 0.78f;
-            speed = 0.15f;
+            speed = 0.13f;
             drag = 0.4f;
             mass = 5f;
-            hitsize = 10f;
+            hitsize = 16f;
             rotatespeed = 0.3f;
             targetAir = true;
             repairRadius = 150f;
             repairSpeed = 0.8f;
-            health = 1000;
+            health = 3000;
             weapon = new Weapon("flak"){{
                 length = 1f;
                 reload = 50f;
