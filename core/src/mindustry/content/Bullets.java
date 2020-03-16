@@ -29,7 +29,7 @@ public class Bullets implements ContentList{
     missileExplosive, missileIncendiary, missileSurge, missileJavelin, missileSwarm, missileRevenant,
 
     //standard
-    standardCopper, standardDense, standardThorium, standardHoming, standardIncendiary, standardMechSmall,
+    standardCopper, microCopper, standardDense, standardThorium, standardHoming, standardIncendiary, standardMechSmall,
     standardGlaive, standardDenseBig, standardThoriumBig, standardIncendiaryBig, standardUranium, standardUraniumBig,
 
     //electric
@@ -320,6 +320,25 @@ public class Bullets implements ContentList{
             shootEffect = Fx.shootSmall;
             smokeEffect = Fx.shootSmallSmoke;
             ammoMultiplier = 2;
+        }};
+
+        microCopper = new MissileBulletType(1.5f, 3, "bullet"){{
+            inaccuracy = 15f;
+            homingPower = 20f;
+            homingRange = 80f;
+            bulletWidth = 4f;
+            bulletHeight = 4f;
+            bulletShrink = 0f;
+            drag = -0.01f;
+            splashDamageRadius = 5f;
+            splashDamage = 6f;
+            ammoMultiplier = 8f;
+            lifetime = 100f;
+            hitEffect = Fx.pulverizeSmall;
+            shootEffect = Fx.shootSmallSmoke;
+            hitSound = Sounds.none;
+            hitShake = 0f;
+            trailEnabled = false;
         }};
 
         standardUranium = new BasicBulletType(5f, 36, "bullet"){{

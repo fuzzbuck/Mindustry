@@ -33,6 +33,10 @@ public class UnitType extends UnlockableContent{
     public boolean flying;
     public boolean swimming;
     public boolean targetAir = true;
+    public boolean spawnsUnits = false;
+    public UnitType unitSpawner = UnitTypes.dagger;
+    public int maxUnitsSpawned = 10;
+    public int unitSpawnerInterval = 10;
     public boolean rotateWeapon = false;
     public float drag = 0.1f;
     public float maxVelocity = 5f;

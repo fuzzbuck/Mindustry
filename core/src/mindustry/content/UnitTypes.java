@@ -11,7 +11,7 @@ public class UnitTypes implements ContentList{
     public static UnitType
     draug, spirit, phantom,
     wraith, ghoul, revenant, lich, reaper,
-    dagger, crawler, kamikaze, titan, fortress, eruptor, mothership, chaosArray, eradicator;
+    dagger, crawler, kamikaze, minion, titan, fortress, eruptor, mothership, chaosArray, eradicator;
 
     @Override
     public void load(){
@@ -140,6 +140,24 @@ public class UnitTypes implements ContentList{
             }};
         }};
 
+        minion = new UnitType("minion", GroundUnit::new){{
+            maxVelocity = 1.1f;
+            speed = 0.2f;
+            drag = 0.4f;
+            hitsize = 8f;
+            mass = 1.75f;
+            health = 50;
+            weapon = new Weapon("chain-blaster"){{
+                length = 0.75f;
+                reload = 14f;
+                width = 2.6f;
+                alternate = true;
+                ejectEffect = Fx.shellEjectSmall;
+                shootSound = Sounds.shoot;
+                bullet = Bullets.microCopper;
+            }};
+        }};
+
         titan = new UnitType("titan", GroundUnit::new){{
             maxVelocity = 0.8f;
             speed = 0.22f;
@@ -216,6 +234,10 @@ public class UnitTypes implements ContentList{
             repairRadius = 150f;
             repairSpeed = 0.8f;
             health = 3000;
+            spawnsUnits = true;
+            maxUnitsSpawned = 15;
+            unitSpawner = UnitTypes.minion;
+            unitSpawnerInterval = 10;
             weapon = new Weapon("flak"){{
                 length = 1f;
                 reload = 50f;

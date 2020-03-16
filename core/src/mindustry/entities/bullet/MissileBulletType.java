@@ -11,6 +11,7 @@ import mindustry.graphics.Pal;
 
 public class MissileBulletType extends BasicBulletType{
     protected Color trailColor = Pal.missileYellowBack;
+    protected boolean trailEnabled = true;
 
     protected float weaveScale = 0f;
     protected float weaveMag = -1f;
@@ -31,7 +32,7 @@ public class MissileBulletType extends BasicBulletType{
     public void update(Bullet b){
         super.update(b);
 
-        if(Mathf.chance(Time.delta() * 0.2)){
+        if(trailEnabled && Mathf.chance(Time.delta() * 0.2)){
             Effects.effect(Fx.missileTrail, trailColor, b.x, b.y, 2f);
         }
 

@@ -40,15 +40,18 @@ public abstract class BaseUnit extends Unit implements ShooterTrait{
     protected static final int timerTarget = timerIndex++;
     protected static final int timerTarget2 = timerIndex++;
     protected static final int timerTarget3 = timerIndex++;
+    protected static final int timerTarget4 = timerIndex++;
     protected static final int timerShootLeft = timerIndex++;
     protected static final int timerShootRight = timerIndex++;
 
     protected boolean loaded;
     protected UnitType type;
-    protected Interval timer = new Interval(5);
+    protected Interval timer = new Interval(6);
     protected StateMachine state = new StateMachine();
     protected TargetTrait target;
     protected Unit repairTarget;
+    protected int unitsSpawned = 0;
+    protected BaseUnit parentShip = null;
 
     protected int spawner = noSpawner;
 
@@ -330,6 +333,19 @@ public abstract class BaseUnit extends Unit implements ShooterTrait{
             }
         }
 
+        if(type.spawnsUnits){
+            if(timer.get(timerTarget4, 60 * type.unitSpawnerInterval)){
+                if(unitsSpawned < type.maxUnitsSpawned) {
+                    unitsSpawned++;
+                    BaseUnit minion = type.unitSpawner.create(getTeam());
+                    minion.set(x, y);
+                    minion.parentShip = this;
+                    minion.add();
+                    Effects.effect(Fx.unitSpawn, x, y);
+                }
+            }
+        }
+
         updateTargeting();
 
         state.update();
@@ -370,6 +386,9 @@ public abstract class BaseUnit extends Unit implements ShooterTrait{
 
     @Override
     public void onDeath(){
+        if(parentShip != null){
+            parentShip.unitsSpawned--;
+        }
         Call.onUnitDeath(this);
     }
 
