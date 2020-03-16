@@ -2090,7 +2090,7 @@ public class Blocks implements ContentList{
         }};
 
         mothershipFactory = new UnitFactory("mothership-factory"){{
-            requirements(Category.units, ItemStack.with(Items.thorium, 80, Items.lead, 150, Items.silicon, 250, Items.graphite, 200, Items.concrete, 150));
+            requirements(Category.units, ItemStack.with(Items.thorium, 80, Items.lead, 150, Items.silicon, 250, Items.graphite, 200, Items.concrete, 150, Items.surgealloy, 100));
             unitType = UnitTypes.mothership;
             produceTime = 3500;
             size = 5;

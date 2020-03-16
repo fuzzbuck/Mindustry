@@ -237,7 +237,7 @@ public class UnitTypes implements ContentList{
             spawnsUnits = true;
             maxUnitsSpawned = 15;
             unitSpawner = UnitTypes.minion;
-            unitSpawnerInterval = 10;
+            unitSpawnerInterval = 6;
             weapon = new Weapon("flak"){{
                 length = 1f;
                 reload = 50f;

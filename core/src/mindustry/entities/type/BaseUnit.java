@@ -327,7 +327,7 @@ public abstract class BaseUnit extends Unit implements ShooterTrait{
             if(timer.get(timerTarget3, 20)){
                 repairTarget = Units.closest(getTeam(), x, y, type.repairRadius,
                         unit -> unit.health < unit.maxHealth() && unit != this);
-                if(Mathf.chance(0.15f)){
+                if(Mathf.chance(0.05f)){
                     Effects.effect(Fx.healWave, x, y);
                 }
             }
