@@ -91,7 +91,6 @@ public class Items implements ContentList{
         }};
 
         uranium = new Item("uranium", Pal.darkRadiation){{
-            type = ItemType.material;
             explosiveness = 0.5f;
             hardness = 6;
             radioactivity = 1f;
@@ -99,8 +98,8 @@ public class Items implements ContentList{
         }};
 
         uraniumCell = new Item("uranium-cell", Pal.radiation){{
-            explosiveness = 1f;
-            radioactivity = 1f;
+            explosiveness = 5f;
+            radioactivity = 5f;
         }};
 
         sporePod = new Item("spore-pod", Color.valueOf("7457ce")){{
