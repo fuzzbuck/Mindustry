@@ -11,7 +11,7 @@ public class UnitTypes implements ContentList{
     public static UnitType
     draug, spirit, phantom,
     wraith, ghoul, revenant, lich, reaper,
-    dagger, crawler, kamikaze, titan, fortress, eruptor, chaosArray, eradicator;
+    dagger, crawler, kamikaze, titan, fortress, eruptor, mothership, chaosArray, eradicator;
 
     @Override
     public void load(){
@@ -202,6 +202,32 @@ public class UnitTypes implements ContentList{
                 recoil = 1f;
                 width = 7f;
                 shootSound = Sounds.flame;
+            }};
+        }};
+
+        mothership = new UnitType("mothership", GroundUnit::new){{
+            maxVelocity = 0.78f;
+            speed = 0.15f;
+            drag = 0.4f;
+            mass = 5f;
+            hitsize = 10f;
+            rotatespeed = 0.3f;
+            targetAir = true;
+            targetGround = false;
+            repairRadius = 150f;
+            repairSpeed = 0.8f;
+            health = 1000;
+            weapon = new Weapon("flak"){{
+                range = 10f;
+                length = 0.2f;
+                reload = 50f;
+                width = 8f;
+                alternate = true;
+                recoil = 8f;
+                shake = 2f;
+                ejectEffect = Fx.shellEjectBig;
+                bullet = Bullets.flakHighlyExplosive;
+                shootSound = Sounds.shootBig;
             }};
         }};
 

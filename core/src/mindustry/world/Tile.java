@@ -15,6 +15,8 @@ import mindustry.type.*;
 import mindustry.world.blocks.*;
 import mindustry.world.modules.*;
 
+import java.util.List;
+
 import static mindustry.Vars.*;
 
 public class Tile implements Position, TargetTrait{

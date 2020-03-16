@@ -57,7 +57,7 @@ public class LiquidGenerator extends PowerGenerator{
 
     @Override
     public TextureRegion[] generateIcons(){
-        return new TextureRegion[]{region, spinRegion};
+        return new TextureRegion[]{Core.atlas.find(name), Core.atlas.find(name + "-spinner")};
     }
 
     @Override

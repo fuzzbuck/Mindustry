@@ -12,5 +12,7 @@ public enum Layer{
     /** Power lasers. */
     power,
     /** Extra layer that's always on top.*/
-    lights
+    lights,
+    /** Super mega extreme layer, on top all the time.*/
+    high
 }

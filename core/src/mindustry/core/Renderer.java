@@ -269,6 +269,8 @@ public class Renderer implements ApplicationListener{
 
         drawAllTeams(true);
 
+        blocks.drawBlocks(Layer.high);
+
         Draw.flush();
         if(bloom != null){
             bloom.capture();

@@ -194,6 +194,7 @@ public class Block extends BlockStorage{
                 other.entity.power.graph.add(entity.power.graph);
             }
         }
+        tile.getNearby(1);
     }
 
     protected void powerGraphRemoved(Tile tile){

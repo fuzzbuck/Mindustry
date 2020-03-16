@@ -1,6 +1,7 @@
 package mindustry.world.blocks;
 
 import arc.graphics.g2d.Draw;
+import arc.graphics.g2d.TextureRegion;
 import arc.math.Mathf;
 import mindustry.graphics.Layer;
 import mindustry.world.Block;

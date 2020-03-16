@@ -22,7 +22,7 @@ public class Bullets implements ContentList{
     artilleryDense, artilleryPlastic, artilleryPlasticFrag, artilleryHoming, artilleryIncendiary, artilleryExplosive, artilleryUnit,
 
     //flak
-    flakScrap, flakLead, flakPlastic, flakExplosive, flakSurge, flakGlass, glassFrag,
+    flakScrap, flakLead, flakPlastic, flakExplosive, flakHighlyExplosive, flakSurge, flakGlass, glassFrag,
 
     //missiles
     missileExplosive, missileIncendiary, missileSurge, missileJavelin, missileSwarm, missileRevenant,
@@ -203,6 +203,15 @@ public class Bullets implements ContentList{
             shootEffect = Fx.shootBig;
         }};
 
+        flakHighlyExplosive = new FlakBulletType(6f, 16){{
+            splashDamage = 12f;
+            splashDamageRadius = 66f;
+            bulletWidth = 4f;
+            bulletHeight = 20f;
+            hitEffect = Fx.flakExplosionGigantic;
+            shootEffect = Fx.shootBig2;
+        }};
+
         missileExplosive = new MissileBulletType(2.7f, 10, "missile"){{
             bulletWidth = 8f;
             bulletHeight = 8f;
@@ -318,7 +327,20 @@ public class Bullets implements ContentList{
             smokeEffect = Fx.shootBigSmoke2;
             backColor = Pal.darkRadiation;
             frontColor = Pal.radiation;
-            hitEffect = Fx.hitMeltdown;
+            hitEffect = Fx.radiating;
+            status = StatusEffects.irradiated;
+            ammoMultiplier = 2;
+        }};
+
+        standardUraniumBig = new BasicBulletType(6f, 86, "bullet"){{
+            bulletWidth = 12f;
+            bulletHeight = 28f;
+            lifetime = 100f;
+            shootEffect = Fx.shootPyraFlame;
+            smokeEffect = Fx.shootBigSmoke;
+            backColor = Pal.radiation;
+            frontColor = Pal.radiation;
+            hitEffect = Fx.radiating;
             status = StatusEffects.irradiated;
             ammoMultiplier = 2;
         }};

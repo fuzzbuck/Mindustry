@@ -35,8 +35,8 @@ public class Blocks implements ContentList{
 
     //environment
     air, spawn, deepwater, water, taintedWater, lava, tar, stone, craters, charr, sand, darksand, ice, snow, darksandTaintedWater,
-    holostone, rocks, sporerocks, icerocks, cliffs, sporePine, snowPine, pine, shrubs, whiteTree, whiteTreeDead, sporeCluster,
-    iceSnow, sandWater, darksandWater, duneRocks, sandRocks, moss, sporeMoss, shale, shaleRocks, shaleBoulder, sandBoulder, grass, salt,
+    holostone, rocks, sporerocks, icerocks, cliffs, sporePine, snowPine, pine, shrubs, whiteTree, whiteTreeDead, reaperRuins, sporeCluster,
+    iceSnow, sandWater, darksandWater, duneRocks, sandRocks, moss, scraps, blueGrass, path, sporeMoss, shale, shaleRocks, shaleBoulder, sandBoulder, grass, salt,
     metalFloor, metalFloorDamaged, metalFloor2, metalFloor3, metalFloor5, ignarock, magmarock, hotrock, snowrocks, rock, snowrock, saltRocks,
     darkPanel1, darkPanel2, darkPanel3, darkPanel4, darkPanel5, darkPanel6, darkMetal,
     pebbles, tendrils,
@@ -45,7 +45,7 @@ public class Blocks implements ContentList{
     oreCopper, oreLead, oreScrap, oreCoal, oreTitanium, oreThorium, oreUranium,
 
     //crafting
-    siliconSmelter, advancedSiliconSmelter, kiln, advancedKiln, graphitePress, concreteMixer, plastaniumCompressor, multiPress, phaseWeaver, surgeSmelter, pyratiteMixer, blastMixer, cryofluidMixer, acidMixer,
+    siliconSmelter, advancedSiliconSmelter, kiln, advancedKiln, graphitePress, concreteMixer, plastaniumCompressor, multiPress, phaseWeaver, surgeSmelter, uraniumCentrifuge, pyratiteMixer, blastMixer, cryofluidMixer, acidMixer,
     melter, separator, sporePress, pulverizer, incinerator, coalCentrifuge,
 
     //sandbox
@@ -67,7 +67,7 @@ public class Blocks implements ContentList{
     impactReactor, battery, batteryLarge, powerNode, powerNodeLarge, surgeTower, diode,
 
     //production
-    mechanicalDrill, pneumaticDrill, laserDrill, blastDrill, waterExtractor, oilExtractor, cultivator,
+    mechanicalDrill, pneumaticDrill, laserDrill, blastDrill, deepDrill, waterExtractor, oilExtractor, cultivator,
 
     //storage
     coreShard, coreFoundation, coreNucleus, vault, container, unloader, launchPad, launchPadLarge,
@@ -77,7 +77,7 @@ public class Blocks implements ContentList{
 
     //units
     commandCenter, draugFactory, spiritFactory, phantomFactory, wraithFactory, ghoulFactory, revenantFactory, daggerFactory, crawlerFactory, kamikazeFactory, titanFactory,
-    fortressFactory, repairPoint,
+    fortressFactory, mothershipFactory, repairPoint,
 
     //upgrades
     dartPad, deltaPad, kiloPad, tauPad, omegaPad, javelinPad, tridentPad, sierraPad, glaivePad;
@@ -339,6 +339,9 @@ public class Blocks implements ContentList{
         whiteTreeDead = new TreeBlock("white-tree-dead"){{
         }};
 
+        reaperRuins = new RuinsBlock("reaper-ruins"){{
+        }};
+
         whiteTree = new TreeBlock("white-tree"){{
         }};
 
@@ -366,6 +369,18 @@ public class Blocks implements ContentList{
         moss = new Floor("moss"){{
             variants = 3;
             attributes.set(Attribute.spores, 0.15f);
+        }};
+
+        scraps = new Floor("scraps"){{
+            variants = 2;
+        }};
+
+        blueGrass = new Floor("bluegrass"){{
+            variants = 0;
+        }};
+
+        path = new Floor("path"){{
+            variants = 2;
         }};
 
         sporeMoss = new Floor("spore-moss"){{
@@ -647,6 +662,30 @@ public class Blocks implements ContentList{
 
             consumes.power(4f);
             consumes.items(new ItemStack(Items.copper, 3), new ItemStack(Items.lead, 4), new ItemStack(Items.titanium, 2), new ItemStack(Items.silicon, 3));
+        }};
+
+        uraniumCentrifuge = new GenericCrafter("uranium-centrifuge"){{
+            requirements(Category.crafting, ItemStack.with(Items.silicon, 175, Items.lead, 180, Items.thorium, 100, Items.concrete, 150, Items.surgealloy, 50, Items.plastanium, 100, Items.graphite, 200));
+            craftEffect = Fx.radiating;
+            outputItem = new ItemStack(Items.uraniumCell, 1);
+            craftTime = 480f;
+            size = 4;
+            hasPower = true;
+
+            consumes.items(new ItemStack(Items.uranium, 10), new ItemStack(Items.phasefabric, 2));
+            consumes.power(10f);
+            itemCapacity = 10;
+
+            int bottomRegion = reg("-bottom"), topRegion = reg("-top");
+
+            drawIcons = () -> new TextureRegion[]{Core.atlas.find(name + "-top")};
+
+            drawer = tile -> {
+                GenericCrafterEntity entity = tile.ent();
+
+                Draw.rect(reg(bottomRegion), tile.drawx(), tile.drawy(), entity.totalProgress * 2.5f);
+                Draw.rect(reg(topRegion), tile.drawx(), tile.drawy());
+            };
         }};
 
         cryofluidMixer = new LiquidConverter("cryofluidmixer"){{
@@ -1012,10 +1051,10 @@ public class Blocks implements ContentList{
         }};
 
         shockMine = new ShockMine("shock-mine"){{
-            requirements(Category.effect, ItemStack.with(Items.lead, 25, Items.silicon, 12));
+            requirements(Category.effect, ItemStack.with(Items.lead, 25, Items.thorium, 12));
             hasShadow = false;
             health = 40;
-            damage = 11;
+            damage = 124;
             tileDamage = 7f;
             length = 10;
             tendrils = 5;
@@ -1310,7 +1349,7 @@ public class Blocks implements ContentList{
             liquidCapacity = 10f;
             hasLiquids = true;
 
-            consumes.liquid(Liquids.steam, 0.02f);
+            consumes.liquid(Liquids.steam, 0.04f);
         }};
 
         differentialGenerator = new SingleTypeGenerator("differential-generator"){{
@@ -1400,7 +1439,7 @@ public class Blocks implements ContentList{
         }};
 
         blastDrill = new Drill("blast-drill"){{
-            requirements(Category.production, ItemStack.with(Items.copper, 65, Items.silicon, 60, Items.titanium, 50, Items.thorium, 75));
+            requirements(Category.production, ItemStack.with(Items.copper, 65, Items.silicon, 60, Items.titanium, 50, Items.thorium, 75, Items.concrete, 25));
             drillTime = 280;
             size = 4;
             drawRim = true;
@@ -1414,6 +1453,23 @@ public class Blocks implements ContentList{
 
             consumes.power(3f);
             consumes.liquid(Liquids.water, 0.1f).boost();
+        }};
+
+        deepDrill = new Drill("deep-drill"){{
+            requirements(Category.production, ItemStack.with(Items.copper, 165, Items.silicon, 120, Items.titanium, 100, Items.thorium, 100, Items.concrete, 125, Items.surgealloy, 25));
+            drillTime = 150;
+            size = 3;
+            drawRim = true;
+            hasPower = true;
+            tier = 6;
+            updateEffect = Fx.pulverizeSmall;
+            updateEffectChance = 0.03f;
+            drillEffect = Fx.radiating;
+            rotateSpeed = 6f;
+            warmupSpeed = 0.001f;
+
+            consumes.power(6f);
+            consumes.liquid(Liquids.acid, 0.1f);
         }};
 
         waterExtractor = new SolidPump("water-extractor"){{
@@ -1809,7 +1865,7 @@ public class Blocks implements ContentList{
             Items.graphite, Bullets.standardDenseBig,
             Items.pyratite, Bullets.standardIncendiaryBig,
             Items.thorium, Bullets.standardThoriumBig,
-            Items.uranium, Bullets.standardUranium
+            Items.uranium, Bullets.standardUraniumBig
             );
             reload = 6f;
             coolantMultiplier = 0.5f;
@@ -1956,13 +2012,23 @@ public class Blocks implements ContentList{
         }};
 
         fortressFactory = new UnitFactory("fortress-factory"){{
-            requirements(Category.units, ItemStack.with(Items.thorium, 40, Items.lead, 110, Items.silicon, 75));
+            requirements(Category.units, ItemStack.with(Items.thorium, 40, Items.lead, 110, Items.silicon, 75, Items.concrete, 50));
             unitType = UnitTypes.fortress;
             produceTime = 2000;
             size = 3;
             maxSpawn = 3;
             consumes.power(1.4f);
             consumes.items(new ItemStack(Items.silicon, 20), new ItemStack(Items.graphite, 10));
+        }};
+
+        mothershipFactory = new UnitFactory("mothership-factory"){{
+            requirements(Category.units, ItemStack.with(Items.thorium, 80, Items.lead, 150, Items.silicon, 250, Items.graphite, 200, Items.concrete, 150));
+            unitType = UnitTypes.mothership;
+            produceTime = 3500;
+            size = 3;
+            maxSpawn = 1;
+            consumes.power(3f);
+            consumes.items(new ItemStack(Items.silicon, 20), new ItemStack(Items.graphite, 10), new ItemStack(Items.concrete, 5));
         }};
 
         repairPoint = new RepairPoint("repair-point"){{

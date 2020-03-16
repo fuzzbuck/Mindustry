@@ -3,8 +3,11 @@ package mindustry.world.blocks.defense;
 import arc.graphics.g2d.Draw;
 import arc.graphics.g2d.Fill;
 import arc.math.Mathf;
+import mindustry.content.Fx;
+import mindustry.entities.Effects;
 import mindustry.entities.effect.Lightning;
 import mindustry.entities.type.Unit;
+import mindustry.gen.Sounds;
 import mindustry.graphics.Layer;
 import mindustry.graphics.Pal;
 import mindustry.world.Block;
@@ -53,8 +56,10 @@ public class ShockMine extends Block{
         if(unit.getTeam() != tile.getTeam() && tile.entity.timer.get(timerDamage, cooldown)){
             for(int i = 0; i < tendrils; i++){
                 Lightning.create(tile.getTeam(), Pal.lancerLaser, damage, tile.drawx(), tile.drawy(), Mathf.random(360f), length);
+                Effects.effect(Fx.explosion, tile);
+                Sounds.explosion.at(tile);
             }
-            tile.entity.damage(tileDamage);
+            tile.entity.kill();
         }
     }
 }

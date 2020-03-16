@@ -12,6 +12,7 @@ import mindustry.entities.bullet.*;
 import mindustry.entities.type.*;
 import mindustry.entities.units.*;
 import mindustry.game.*;
+import mindustry.graphics.Drawf;
 import mindustry.type.*;
 import mindustry.world.*;
 import mindustry.world.blocks.*;
@@ -162,6 +163,17 @@ public class GroundUnit extends BaseUnit{
         }
 
         Draw.mixcol();
+        Draw.color();
+        if(repairTarget != null){
+            float ang = angleTo(repairTarget);
+            float len = 5f;
+
+            Draw.color(Color.valueOf("e8ffd7"));
+            Drawf.laser(laser, laserEnd,
+                    x + Angles.trnsx(ang, len), y + Angles.trnsy(ang, len),
+                    repairTarget.x, repairTarget.y, 1f - dst(repairTarget) / type.repairRadius);
+            Draw.color();
+        }
     }
 
     @Override

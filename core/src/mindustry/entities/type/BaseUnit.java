@@ -1,6 +1,7 @@
 package mindustry.entities.type;
 
 import arc.*;
+import arc.graphics.Color;
 import arc.struct.Array;
 import mindustry.annotations.Annotations.*;
 import arc.graphics.g2d.*;
@@ -17,6 +18,7 @@ import mindustry.entities.units.*;
 import mindustry.game.EventType.*;
 import mindustry.game.*;
 import mindustry.gen.*;
+import mindustry.graphics.Drawf;
 import mindustry.type.*;
 import mindustry.type.TypeID;
 import mindustry.ui.Cicon;
@@ -37,6 +39,7 @@ public abstract class BaseUnit extends Unit implements ShooterTrait{
 
     protected static final int timerTarget = timerIndex++;
     protected static final int timerTarget2 = timerIndex++;
+    protected static final int timerTarget3 = timerIndex++;
     protected static final int timerShootLeft = timerIndex++;
     protected static final int timerShootRight = timerIndex++;
 
@@ -45,6 +48,7 @@ public abstract class BaseUnit extends Unit implements ShooterTrait{
     protected Interval timer = new Interval(5);
     protected StateMachine state = new StateMachine();
     protected TargetTrait target;
+    protected Unit repairTarget;
 
     protected int spawner = noSpawner;
 
@@ -193,21 +197,29 @@ public abstract class BaseUnit extends Unit implements ShooterTrait{
     }
 
     public void targetClosest(){
-        TargetTrait newTarget = Units.closestTarget(team, x, y, Math.max(getWeapon().bullet.range(), type.range), u -> type.targetAir || !u.isFlying());
+        TargetTrait newTarget = null;
+        if(type.targetGround) {
+            newTarget = Units.closestTarget(team, x, y, Math.max(getWeapon().bullet.range(), type.range), u -> !u.isFlying());
+        } else{
+            newTarget = Units.closestTarget(team, x, y, Math.max(getWeapon().bullet.range(), type.range), Unit::isFlying);
+        }
         if(newTarget != null){
             target = newTarget;
         }
     }
 
     public @Nullable Tile getClosest(BlockFlag flag){
+        if(!type.targetGround) return null;
         return Geometry.findClosest(x, y, indexer.getAllied(team, flag));
     }
 
     public @Nullable Tile getClosestSpawner(){
+        if(!type.targetGround) return null;
         return Geometry.findClosest(x, y, Vars.spawner.getGroundSpawns());
     }
 
     public @Nullable TileEntity getClosestEnemyCore(){
+        if(!type.targetGround) return null;
         return Vars.state.teams.closestEnemyCore(x, y, team);
     }
 
@@ -307,6 +319,23 @@ public abstract class BaseUnit extends Unit implements ShooterTrait{
 
         if(spawner != noSpawner && (world.tile(spawner) == null || !(world.tile(spawner).entity instanceof UnitFactoryEntity))){
             kill();
+        }
+
+        if(type.repairRadius > 0){
+            if(repairTarget != null && (repairTarget.isDead() || repairTarget.health >= repairTarget.maxHealth())){ //  || repairTarget.dst(lastPosition()) > type.repairRadius
+                repairTarget = null;
+            }else if(repairTarget != null){
+                repairTarget.health += type.repairSpeed * Time.delta();
+                repairTarget.clampHealth();
+            }
+
+            if(timer.get(timerTarget3, 20)){
+                repairTarget = Units.closest(getTeam(), x, y, type.repairRadius,
+                        unit -> unit.health < unit.maxHealth() && unit != this);
+                if(Mathf.chance(0.15f)){
+                    Effects.effect(Fx.healWave, x, y);
+                }
+            }
         }
 
         updateTargeting();

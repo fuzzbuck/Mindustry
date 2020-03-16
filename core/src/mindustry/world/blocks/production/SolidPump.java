@@ -162,5 +162,6 @@ public class SolidPump extends Pump{
         public float pumpTime;
         public float boost;
         public float lastPump;
+        public float efficiency;
     }
 }

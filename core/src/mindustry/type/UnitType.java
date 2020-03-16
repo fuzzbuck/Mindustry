@@ -19,6 +19,8 @@ public class UnitType extends UnlockableContent{
     public @NonNull TypeID typeID;
     public @NonNull Prov<? extends BaseUnit> constructor;
 
+    public float repairRadius = 0f;
+    public float repairSpeed = 0.3f;
     public float health = 60;
     public float hitsize = 7f;
     public float hitsizeTile = 4f;
@@ -31,6 +33,7 @@ public class UnitType extends UnlockableContent{
     public boolean flying;
     public boolean swimming;
     public boolean targetAir = true;
+    public boolean targetGround = true;
     public boolean rotateWeapon = false;
     public float drag = 0.1f;
     public float maxVelocity = 5f;

@@ -25,7 +25,7 @@ public class Fx implements ContentList{
     mine, mineBig, mineHuge, smelt, teleportActivate, teleport, teleportOut, ripple, bubble, launch,
     healBlock, healBlockFull, healWaveMend, overdriveWave, overdriveBlockFull, shieldBreak, hitBulletSmall, hitFuse,
     hitBulletBig, hitFlameSmall, hitLiquid, hitLaser, hitLancer, hitMeltdown, despawn, flakExplosion, blastExplosion,
-    plasticExplosion, artilleryTrail, incendTrail, missileTrail, absorb, flakExplosionBig, plasticExplosionFlak, burning, radiating, fire,
+    plasticExplosion, artilleryTrail, incendTrail, missileTrail, absorb, flakExplosionBig, flakExplosionGigantic, plasticExplosionFlak, burning, radiating, fire,
     fireSmoke, steam, fireballsmoke, ballfire, freezing, melting, wet, oily, overdriven, dropItem, shockwave,
     bigShockwave, nuclearShockwave, explosion, blockExplosion, blockExplosionSmoke, shootSmall, shootHeal, shootSmallSmoke, shootBig, shootBig2, shootBigSmoke,
     shootBigSmoke2, shootSmallFlame, shootPyraFlame, shootLiquid, shellEjectSmall, shellEjectMedium,
@@ -290,6 +290,29 @@ public class Fx implements ContentList{
 
             Angles.randLenVectors(e.id + 1, 4, 1f + 23f * e.finpow(), (x, y) -> {
                 Lines.lineAngle(e.x + x, e.y + y, Mathf.angle(x, y), 1f + e.fout() * 3f);
+            });
+
+        });
+
+        flakExplosionGigantic = new Effect(40, e -> {
+
+            Draw.color(Pal.bulletYellow);
+            e.scaled(6, i -> {
+                Lines.stroke(5f * i.fout());
+                Lines.circle(e.x, e.y, 6f + i.fin() * 15f);
+            });
+
+            Draw.color(Color.gray);
+
+            Angles.randLenVectors(e.id, 10, 8f + 23f * e.finpow(), (x, y) -> {
+                Fill.circle(e.x + x, e.y + y, e.fout() * 12f + 0.5f);
+            });
+
+            Draw.color(Pal.lighterOrange);
+            Lines.stroke(1f * e.fout());
+
+            Angles.randLenVectors(e.id + 1, 14, 5f + 23f * e.finpow(), (x, y) -> {
+                Lines.lineAngle(e.x + x, e.y + y, Mathf.angle(x, y), 1f + e.fout() * 12f);
             });
 
         });
