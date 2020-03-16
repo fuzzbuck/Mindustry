@@ -672,7 +672,7 @@ public class Blocks implements ContentList{
             size = 4;
             hasPower = true;
 
-            consumes.items(new ItemStack(Items.uranium, 10), new ItemStack(Items.phasefabric, 2));
+            consumes.items(new ItemStack(Items.uranium, 10), new ItemStack(Items.phasefabric, 2), new ItemStack(Items.surgealloy, 2));
             consumes.power(10f);
             itemCapacity = 10;
 
@@ -1314,7 +1314,7 @@ public class Blocks implements ContentList{
             solid = true;
             outputsLiquid = true;
 
-            craftEffect = Fx.steam;
+            craftEffect = Fx.pulverizeSmall;
 
             consumes.item(Items.coal);
             consumes.liquid(Liquids.water, 0.2f);
