@@ -67,7 +67,7 @@ public class Blocks implements ContentList{
 
     //power
     combustionGenerator, thermalGenerator, turbineGenerator, steamTurbineGenerator, differentialGenerator, rtgGenerator, solarPanel, largeSolarPanel, thoriumReactor,
-    impactReactor, nuclearReactor, battery, batteryLarge, powerNode, powerNodeLarge, surgeTower, diode,
+    impactReactor, nuclearReactor, heatPipe, battery, batteryLarge, powerNode, powerNodeLarge, surgeTower, diode,
 
     //production
     mechanicalDrill, pneumaticDrill, laserDrill, blastDrill, deepDrill, waterExtractor, oilExtractor, cultivator,
@@ -76,7 +76,7 @@ public class Blocks implements ContentList{
     coreShard, coreFoundation, coreNucleus, vault, container, unloader, launchPad, launchPadLarge,
 
     //turrets
-    duo, scatter, scorch, hail, arc, wave, lancer, swarmer, salvo, fuse, ripple, cyclone, spectre, meltdown,
+    duo, scatter, scorch, hail, arc, tesla, wave, lancer, swarmer, salvo, fuse, ripple, cyclone, spectre, meltdown,
 
     //units
     commandCenter, draugFactory, spiritFactory, phantomFactory, wraithFactory, ghoulFactory, revenantFactory, daggerFactory, crawlerFactory, kamikazeFactory, titanFactory,
@@ -1410,8 +1410,8 @@ public class Blocks implements ContentList{
         nuclearReactor = new GenericHeatCrafter("nuclear-reactor"){{
             requirements(Category.power, ItemStack.with(Items.concrete, 1200, Items.lead, 500, Items.silicon, 400, Items.graphite, 300, Items.concrete, 500, Items.surgealloy, 150, Items.thorium, 150, Items.metaglass, 200, Items.plastanium, 100));
             heatCapacity = 1000f;
-            craftTime = 60f * 6;
-            outputHeat = new HeatStack(0.1f);
+            craftTime = 60f * 8;
+            outputHeat = new HeatStack(2f);
             size = 5;
             health = 3200;
             hasHeat = true;
@@ -1419,7 +1419,6 @@ public class Blocks implements ContentList{
             craftEffect = Fx.activeRadiation;
 
             consumes.item(Items.uraniumCell, 1);
-
 
             int botRegion = reg("-bottom");
             int topRegion = reg("-top");
@@ -1470,6 +1469,11 @@ public class Blocks implements ContentList{
                 Draw.rect(reg(topRegion), tile.drawx(), tile.drawy());
                 Draw.reset();
             };
+        }};
+
+        heatPipe = new HeatRouter("heat-pipe"){{
+            requirements(Category.power, ItemStack.with(Items.titanium, 10, Items.graphite, 15, Items.concrete, 5, Items.thorium, 5));
+            heatCapacity = 20f;
         }};
 
         //endregion power
@@ -1783,6 +1787,24 @@ public class Blocks implements ContentList{
             shootSound = Sounds.spark;
         }};
 
+        tesla = new PowerTurret("tesla"){{
+            requirements(Category.turret, ItemStack.with(Items.copper, 35, Items.lead, 50, Items.concrete, 15, Items.graphite, 25));
+            shootType = Bullets.tesla;
+            reload = 22f;
+            shootCone = 15f;
+            rotatespeed = 16f;
+            powerUse = 2f;
+            targetAir = true;
+            targetGround = false;
+            range = 180f;
+            shootEffect = Fx.lightningShoot;
+            heatColor = Color.red;
+            recoil = 4f;
+            size = 1;
+            health = 460;
+            shootSound = Sounds.spark;
+        }};
+
         swarmer = new BurstTurret("swarmer"){{
             requirements(Category.turret, ItemStack.with(Items.graphite, 35, Items.titanium, 35, Items.plastanium, 45, Items.silicon, 30));
             ammo(
@@ -2063,11 +2085,12 @@ public class Blocks implements ContentList{
 
         kamikazeFactory = new UnitFactory("kamikaze-factory"){{
             requirements(Category.units, ItemStack.with(Items.lead, 100, Items.silicon, 30, Items.titanium, 20));
-            unitType = UnitTypes.kamikaze;            produceTime = 200;
+            unitType = UnitTypes.kamikaze;
+            produceTime = 400;
             size = 2;
             maxSpawn = 6;
             consumes.power(0.5f);
-            consumes.items(new ItemStack(Items.silicon, 2), new ItemStack(Items.coal, 10));
+            consumes.items(new ItemStack(Items.silicon, 2), new ItemStack(Items.blastCompound, 1));
         }};
 
         titanFactory = new UnitFactory("titan-factory"){{
@@ -2092,7 +2115,7 @@ public class Blocks implements ContentList{
         mothershipFactory = new UnitFactory("mothership-factory"){{
             requirements(Category.units, ItemStack.with(Items.thorium, 80, Items.lead, 150, Items.silicon, 250, Items.graphite, 200, Items.concrete, 150, Items.surgealloy, 100));
             unitType = UnitTypes.mothership;
-            produceTime = 3500;
+            produceTime = 6500;
             size = 5;
             maxSpawn = 1;
             consumes.power(6f);

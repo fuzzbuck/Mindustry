@@ -33,7 +33,7 @@ public class Bullets implements ContentList{
     standardGlaive, standardDenseBig, standardThoriumBig, standardIncendiaryBig, standardUranium, standardUraniumBig,
 
     //electric
-    lancerLaser, meltdownLaser, lightning, arc, damageLightning,
+    lancerLaser, meltdownLaser, lightning, arc, tesla, damageLightning,
 
     //liquid
     waterShot, cryoShot, slagShot, oilShot, steamShot, acidShot,
@@ -710,6 +710,23 @@ public class Bullets implements ContentList{
             @Override
             public void init(Bullet b){
                 Lightning.create(b.getTeam(), Pal.lancerLaser, damage, b.x, b.y, b.rot(), 25);
+            }
+        };
+
+        tesla = new BulletType(0.001f, 6){
+            {
+                lifetime = 1;
+                despawnEffect = Fx.none;
+                hitEffect = Fx.hitLancer;
+            }
+
+            @Override
+            public void draw(Bullet b){
+            }
+
+            @Override
+            public void init(Bullet b){
+                Lightning.create(b.getTeam(), Pal.lighting, damage, b.x, b.y, b.rot(), 45);
             }
         };
 

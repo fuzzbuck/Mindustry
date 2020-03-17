@@ -50,7 +50,6 @@ public class GenericHeatCrafter extends GenericCrafter{
             entity.warmup = Mathf.lerpDelta(entity.warmup, 1f, 0.02f);
 
             handleHeat(tile, tile, outputHeat.amount);
-            entity.heatmod.update();
 
             if(Mathf.chance(Time.delta() * updateEffectChance)){
                 Effects.effect(updateEffect, entity.x + Mathf.range(size * 4f), entity.y + Mathf.range(size * 4));
@@ -72,9 +71,7 @@ public class GenericHeatCrafter extends GenericCrafter{
         if(outputLiquid != null){
             tryDumpLiquid(tile, outputLiquid.liquid);
         }
-
-        if(outputHeat != null){
-            tryDumpHeat(tile);
-        }
+        tryDumpHeat(tile);
+        entity.heatmod.update();
     }
 }

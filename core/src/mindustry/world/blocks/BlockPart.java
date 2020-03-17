@@ -47,9 +47,21 @@ public class BlockPart extends Block{
     }
 
     @Override
+    public void handleHeat(Tile tile, Tile source, float amount){
+        Block block = tile.link().block();
+        block.handleHeat(tile.link(), source, amount);
+    }
+
+    @Override
     public boolean acceptLiquid(Tile tile, Tile source, Liquid liquid, float amount){
         Block block = tile.link().block();
         return block.hasLiquids && block.acceptLiquid(tile.link(), source, liquid, amount);
+    }
+
+    @Override
+    public boolean acceptHeat(Tile tile, Tile source, float amount){
+        Block block = tile.link().block();
+        return block.hasHeat && block.acceptHeat(tile.link(), source, amount);
     }
 
     @Override

@@ -121,7 +121,7 @@ public class UnitTypes implements ContentList{
             mass = 1.5f;
             hitsize = 8f;
             flying = true;
-            health = 50;
+            health = 30;
             range = 400f;
             weapon = new Weapon(){{
                 reload = 12f;
@@ -306,7 +306,7 @@ public class UnitTypes implements ContentList{
             drag = 0.01f;
             mass = 1.5f;
             flying = true;
-            health = 75;
+            health = 120;
             engineOffset = 5.5f;
             range = 140f;
             weapon = new Weapon(){{
@@ -320,7 +320,7 @@ public class UnitTypes implements ContentList{
         }};
 
         ghoul = new UnitType("ghoul", FlyingUnit::new){{
-            health = 220;
+            health = 350;
             speed = 0.2f;
             maxVelocity = 1.4f;
             mass = 3f;
@@ -344,7 +344,7 @@ public class UnitTypes implements ContentList{
         }};
 
         revenant = new UnitType("revenant", HoverUnit::new){{
-            health = 1000;
+            health = 750;
             mass = 5f;
             hitsize = 20f;
             speed = 0.1f;

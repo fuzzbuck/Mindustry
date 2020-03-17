@@ -121,10 +121,7 @@ public class GenericCrafter extends Block{
                 handleLiquid(tile, tile, outputLiquid.liquid, outputLiquid.amount);
             }
 
-            Log.info(outputHeat);
-
             if(outputHeat != null){
-                Log.info("Handling heat");
                 handleHeat(tile, tile, outputHeat.amount);
             }
 

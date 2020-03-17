@@ -51,6 +51,8 @@ public class Pal{
 
     lancerLaser = Color.valueOf("a9d8ff"),
 
+    lighting = Color.valueOf("fcfc77"),
+
     stoneGray = Color.valueOf("8f8f8f"),
     engine = Color.valueOf("ffbb64"),
 
