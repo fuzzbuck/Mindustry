@@ -41,6 +41,8 @@ import static mindustry.Vars.*;
 public class Block extends BlockStorage{
     public static final int crackRegions = 8, maxCrackSize = 5;
 
+    //** Input liquid for this block */
+    protected Liquid outputLiquidBar;
     /** whether this block has a tile entity that updates */
     public boolean update;
     /** whether this block has health and can be destroyed */
@@ -554,6 +556,11 @@ public class Block extends BlockStorage{
             }
             bars.add("liquid", entity -> new Bar(() -> entity.liquids.get(current.get(entity)) <= 0.001f ? Core.bundle.get("bar.liquid") : current.get(entity).localizedName,
                     () -> current.get(entity).barColor(), () -> entity.liquids.get(current.get(entity)) / liquidCapacity));
+        }
+
+        if(outputLiquidBar != null){
+            bars.add("liquid2", entity -> new Bar(() -> outputLiquidBar.localizedName,
+                    () -> outputLiquidBar.barColor(), () -> entity.liquids.get(outputLiquidBar) / liquidCapacity));
         }
 
         if(hasHeat){

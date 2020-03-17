@@ -71,7 +71,10 @@ public class GenericHeatCrafter extends GenericCrafter{
         if(outputLiquid != null){
             tryDumpLiquid(tile, outputLiquid.liquid);
         }
-        tryDumpHeat(tile);
+
+        if(outputHeat != null) {
+            tryDumpHeat(tile);
+        }
         entity.heatmod.update();
     }
 }

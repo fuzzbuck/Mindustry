@@ -23,12 +23,14 @@ import static mindustry.Vars.*;
  * Liquids will take priority over items.
  */
 public class LiquidGenerator extends PowerGenerator{
+    /** Liquid percent necessary for the startup process. */
+    public float liquidRequired = 0.5f;
 
     /** Maximum liquid used per frame. */
-    public float maxLiquidGenerate = 0.4f;
+    public float maxLiquidGenerate = 0.2f;
 
     /** How fast it warms up to rotate faster */
-    public float rotateWarmupSpeed = 0.001f;
+    public float rotateWarmupSpeed = 0.004f;
 
     /** Maximum degrees per frame it can rotate */
     public float maxRotateSpeed = 4.2f;
@@ -75,20 +77,14 @@ public class LiquidGenerator extends PowerGenerator{
     public void update(Tile tile){
         LiquidGeneratorEntity entity = tile.ent();
 
-        //Note: Do not use this delta when calculating the amount of power or the power efficiency, but use it for resource consumption if necessary.
-        //Power amount is delta'd by PowerGraph class already.
-        float calculationDelta = entity.delta();
-
         Liquid liquid = entity.liquids.current();
 
-        if(hasLiquids && liquid != null && entity.liquids.get(liquid) >= 0.1f){
-            float maximumPossible = maxLiquidGenerate * calculationDelta;
-            float used = Math.min(entity.liquids.get(liquid) * calculationDelta, maximumPossible);
+        if(liquid != null && entity.liquids.get(liquid) / liquidCapacity > liquidRequired){
 
             entity.rotateSpeed = Mathf.lerpDelta(entity.rotateSpeed, maxRotateSpeed, rotateWarmupSpeed);
-            entity.liquids.remove(liquid, used * entity.power.graph.getUsageFraction());
+            entity.liquids.remove(liquid, maxLiquidGenerate);
 
-            if(used > 0.001f && Mathf.chance(0.2 * entity.delta())){
+            if(Mathf.chance(0.2 * entity.delta())){
                 Effects.effect(generateEffect, tile.drawx() + Mathf.range(4f), tile.drawy() + Mathf.range(4f));
             }
         } else{

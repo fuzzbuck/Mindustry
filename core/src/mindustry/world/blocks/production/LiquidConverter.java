@@ -1,8 +1,15 @@
 package mindustry.world.blocks.production;
 
+import arc.Core;
+import arc.func.Func;
 import arc.math.Mathf;
+import arc.util.Log;
 import mindustry.entities.Effects;
+import mindustry.entities.type.TileEntity;
+import mindustry.type.Liquid;
+import mindustry.ui.Bar;
 import mindustry.world.Tile;
+import mindustry.world.consumers.ConsumeLiquid;
 import mindustry.world.consumers.ConsumeLiquidBase;
 import mindustry.world.consumers.ConsumeType;
 import mindustry.world.meta.BlockStat;
@@ -52,9 +59,12 @@ public class LiquidConverter extends GenericCrafter{
             useContent(tile, outputLiquid.liquid);
             entity.progress += use / cl.amount / craftTime;
             entity.liquids.add(outputLiquid.liquid, use);
-            if(entity.progress >= 1f){
+            if(!consumesHeat && entity.progress >= 1f){
                 entity.cons.trigger();
                 entity.progress = 0f;
+            }
+            if(consumesHeat){
+                entity.cons.trigger();
             }
 
             if (Mathf.chance(0.1 * entity.delta())){

@@ -433,7 +433,7 @@ public class UnitTypes implements ContentList{
                 inaccuracy = 3f;
                 alternate = true;
                 ejectEffect = Fx.none;
-                bullet = new BasicBulletType(7f, 42, "bullet"){
+                bullet = new BasicBulletType(7f, 64, "bullet"){
                     {
                         bulletWidth = 15f;
                         bulletHeight = 21f;

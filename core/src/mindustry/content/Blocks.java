@@ -48,7 +48,7 @@ public class Blocks implements ContentList{
     oreCopper, oreLead, oreScrap, oreCoal, oreTitanium, oreThorium, oreUranium,
 
     //crafting
-    siliconSmelter, advancedSiliconSmelter, kiln, advancedKiln, graphitePress, concreteMixer, plastaniumCompressor, multiPress, phaseWeaver, surgeSmelter, uraniumCentrifuge, pyratiteMixer, blastMixer, cryofluidMixer, acidMixer,
+    siliconSmelter, advancedSiliconSmelter, kiln, advancedKiln, graphitePress, concreteMixer, plastaniumCompressor, multiPress, phaseWeaver, surgeSmelter, uraniumCentrifuge, heatExchanger, pyratiteMixer, blastMixer, cryofluidMixer, acidMixer,
     melter, separator, sporePress, pulverizer, incinerator, coalCentrifuge,
 
     //sandbox
@@ -692,9 +692,56 @@ public class Blocks implements ContentList{
             };
         }};
 
+        //
+        heatExchanger = new LiquidHeatConverter("heat-exchanger"){{
+            requirements(Category.crafting, ItemStack.with(Items.silicon, 100, Items.lead, 180, Items.thorium, 75, Items.concrete, 150, Items.titanium, 100, Items.surgealloy, 15));
+            outputLiquid = new LiquidStack(Liquids.steam, 0.4f);
+            outputLiquidBar = Liquids.steam;
+            craftTime = 120f;
+            size = 3;
+            solid = true;
+            outputsLiquid = true;
+            heatCapacity = 100f;
+            liquidCapacity = 300f;
+
+            craftEffect = Fx.redgeneratespark;
+
+            consumes.heat(0.4f);
+            consumes.liquid(Liquids.water, 0.4f);
+            Liquid inputLiquid = Liquids.water;
+
+            int liquidRegion = reg("-liquid"), topRegion = reg("-top"), spinRegion = reg("-spin"), heatRegion = reg("-heat");
+
+            drawIcons = () -> new TextureRegion[]{Core.atlas.find(name), Core.atlas.find(name + "-spin"), Core.atlas.find(name + "-top")};
+
+            drawer = tile -> {
+                LiquidModule mod = tile.entity.liquids;
+                HeatModule heatmod = tile.entity.heatmod;
+                GenericCrafterEntity entity = tile.ent();
+
+                Draw.rect(region, tile.drawx(), tile.drawy());
+
+                if(mod.get(inputLiquid) > 0.001f){
+                    Draw.color(inputLiquid.color);
+                    Draw.alpha(mod.get(inputLiquid) / liquidCapacity);
+                    Draw.rect(reg(liquidRegion), tile.drawx(), tile.drawy());
+                    Draw.color();
+                }
+                Draw.rect(reg(spinRegion), tile.drawx(), tile.drawy(), entity.progress * 360);
+
+                Draw.color(Pal.lightOrange);
+                Draw.alpha(heatmod.smoothAmount() / heatCapacity);
+                Draw.rect(reg(heatRegion), tile.drawx(), tile.drawy(), entity.progress * 360);
+                Draw.color();
+
+                Draw.rect(reg(topRegion), tile.drawx(), tile.drawy());
+            };
+        }};
+
         cryofluidMixer = new LiquidConverter("cryofluidmixer"){{
             requirements(Category.crafting, ItemStack.with(Items.lead, 65, Items.silicon, 40, Items.titanium, 60));
             outputLiquid = new LiquidStack(Liquids.cryofluid, 0.2f);
+            outputLiquidBar = Liquids.cryofluid;
             craftTime = 120f;
             size = 2;
             hasPower = true;
@@ -735,6 +782,7 @@ public class Blocks implements ContentList{
         acidMixer = new LiquidConverter("acidmixer"){{
             requirements(Category.crafting, ItemStack.with(Items.lead, 65, Items.silicon, 40, Items.titanium, 60, Items.graphite, 50, Items.metaglass, 50));
             outputLiquid = new LiquidStack(Liquids.acid, 0.2f);
+            outputLiquidBar = Liquids.acid;
             craftTime = 120f;
             size = 2;
             hasPower = true;
@@ -1310,7 +1358,7 @@ public class Blocks implements ContentList{
 
         turbineGenerator = new LiquidConverter("turbine-generator"){{
             requirements(Category.power, ItemStack.with(Items.copper, 35, Items.graphite, 25, Items.lead, 40, Items.silicon, 30));
-            outputLiquid = new LiquidStack(Liquids.steam, 0.58f);
+            outputLiquid = new LiquidStack(Liquids.steam, 0.1f);
             craftTime = 90f;
             size = 2;
             hasPower = false;
@@ -1323,7 +1371,7 @@ public class Blocks implements ContentList{
             craftEffect = Fx.pulverizeSmall;
 
             consumes.item(Items.coal);
-            consumes.liquid(Liquids.water, 0.2f);
+            consumes.liquid(Liquids.water, 0.1f);
 
             int liquidRegion = reg("-liquid"), topRegion = reg("-top");
 
@@ -1351,11 +1399,13 @@ public class Blocks implements ContentList{
             requirements(Category.power, ItemStack.with(Items.copper, 70, Items.lead, 100, Items.titanium, 50, Items.silicon, 45, Items.concrete, 50));
             size = 3;
             generateEffect = Fx.steam;
-            powerProduction = 10f;
-            liquidCapacity = 10f;
+            powerProduction = 16f;
+            liquidCapacity = 100f;
+            liquidRequired = 0.25f;
             hasLiquids = true;
 
-            consumes.liquid(Liquids.steam, 0.04f);
+            consumes.liquid(Liquids.steam, 0.08f);
+            maxLiquidGenerate = 0.08f;
         }};
 
         differentialGenerator = new SingleTypeGenerator("differential-generator"){{
@@ -1416,7 +1466,7 @@ public class Blocks implements ContentList{
             craftTime = 60f * 8;
             outputHeat = new HeatStack(2f);
             size = 5;
-            health = 3200;
+            health = 4200;
             hasHeat = true;
             hasPower = false;
             craftEffect = Fx.activeRadiation;
@@ -1425,6 +1475,7 @@ public class Blocks implements ContentList{
 
             int botRegion = reg("-bottom");
             int topRegion = reg("-top");
+            int glowRegion = reg("-glow");
             int plasmaRegions[];
             int plasmas = 4;
 
@@ -1470,12 +1521,16 @@ public class Blocks implements ContentList{
                 }
 
                 Draw.rect(reg(topRegion), tile.drawx(), tile.drawy());
+                Draw.color(Pal.lightOrange);
+                Draw.alpha(entity.heatmod.smoothAmount() / entity.block.heatCapacity);
+                Draw.rect(reg(glowRegion), tile.drawx(), tile.drawy());
+                Draw.color();
                 Draw.reset();
             };
         }};
 
         heatPipe = new HeatRouter("heat-pipe"){{
-            requirements(Category.power, ItemStack.with(Items.titanium, 10, Items.graphite, 15, Items.concrete, 5, Items.thorium, 5));
+            requirements(Category.power, ItemStack.with(Items.titanium, 10, Items.graphite, 15, Items.concrete, 5, Items.thorium, 5, Items.surgealloy, 1));
             heatCapacity = 20f;
         }};
 
@@ -1550,7 +1605,7 @@ public class Blocks implements ContentList{
         waterExtractor = new SolidPump("water-extractor"){{
             requirements(Category.production, ItemStack.with(Items.copper, 25, Items.graphite, 25, Items.lead, 20));
             result = Liquids.water;
-            pumpAmount = 0.13f;
+            pumpAmount = 0.7f;
             size = 2;
             liquidCapacity = 30f;
             rotateSpeed = 1.4f;
@@ -1857,7 +1912,7 @@ public class Blocks implements ContentList{
 
             reload = 35f;
             shootShake = 4f;
-            range = 90f;
+            range = 130f;
             recoil = 5f;
             shots = 3;
             spread = 20f;
