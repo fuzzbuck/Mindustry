@@ -141,11 +141,11 @@ public class UnitTypes implements ContentList{
         }};
 
         minion = new UnitType("minion", GroundUnit::new){{
-            maxVelocity = 1.1f;
+            maxVelocity = 1.2f;
             speed = 0.2f;
-            drag = 0.4f;
-            hitsize = 8f;
-            mass = 1.75f;
+            drag = 0.3f;
+            hitsize = 5f;
+            mass = 0.75f;
             health = 50;
             weapon = new Weapon("chain-blaster"){{
                 length = 0.75f;
@@ -311,7 +311,7 @@ public class UnitTypes implements ContentList{
             range = 140f;
             weapon = new Weapon(){{
                 length = 1.5f;
-                reload = 28f;
+                reload = 12f;
                 alternate = true;
                 ejectEffect = Fx.shellEjectSmall;
                 bullet = Bullets.standardCopper;

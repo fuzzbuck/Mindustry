@@ -679,14 +679,15 @@ public class Blocks implements ContentList{
             consumes.power(10f);
             itemCapacity = 10;
 
-            int bottomRegion = reg("-bottom"), topRegion = reg("-top");
+            int bottomRegion = reg("-bottom"), spinRegion = reg("-spinner"), topRegion = reg("-top");
 
-            drawIcons = () -> new TextureRegion[]{Core.atlas.find(name + "-top")};
+            drawIcons = () -> new TextureRegion[]{Core.atlas.find(name + "-bottom"), Core.atlas.find(name + "-spinner"), Core.atlas.find(name + "-top")};
 
             drawer = tile -> {
                 GenericCrafterEntity entity = tile.ent();
 
-                Draw.rect(reg(bottomRegion), tile.drawx(), tile.drawy(), entity.totalProgress * 2.5f);
+                Draw.rect(reg(bottomRegion), tile.drawx(), tile.drawy());
+                Draw.rect(reg(spinRegion), tile.drawx(), tile.drawy(), entity.totalProgress * 2.5f);
                 Draw.rect(reg(topRegion), tile.drawx(), tile.drawy());
             };
         }};
@@ -1289,10 +1290,11 @@ public class Blocks implements ContentList{
             itemDuration = 120f;
         }};
 
-        thermalGenerator = new ThermalGenerator("thermal-generator"){{
+        thermalGenerator = new HeatGenerator("thermal-generator"){{
             requirements(Category.power, ItemStack.with(Items.copper, 40, Items.graphite, 35, Items.lead, 50, Items.silicon, 35, Items.metaglass, 40));
             powerProduction = 1.8f;
             generateEffect = Fx.redgeneratespark;
+            consumes.heat(0.1f);
             size = 2;
         }};
 
@@ -1452,7 +1454,7 @@ public class Blocks implements ContentList{
 
                 if(entity.cons.valid()) {
                     random.setSeed(tile.pos());
-                    for (int i = 0; i < 264; i++) {
+                    for (int i = 0; i < 64; i++) {
                         float offset = random.nextFloat() * 999999f;
                         float x = random.range(8f), y = random.range(8f);
                         float rx = tile.drawx() + random.range(22f), ry = tile.drawy() + random.range(22f);
@@ -1461,7 +1463,7 @@ public class Blocks implements ContentList{
                         float cx = rx + x * (particleSpeed * 1f - particleSpeed * life), cy = ry + y * (particleSpeed * 1f - particleSpeed * life);
                         float dst = Mathf.dst(tile.drawx(), tile.drawy(), cx, cy);
                         if (life > 0 && dst < particleRange) {
-                            Drawf.square(cx, cy, life, Pal.radiation);
+                            Drawf.square(cx, cy, 0.2f, Pal.radiation);
                         }
                     }
                 }
