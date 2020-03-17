@@ -16,6 +16,7 @@ public enum BlockStat{
     launchTime(StatCategory.items),
 
     liquidCapacity(StatCategory.liquids),
+    heatCapacity(StatCategory.power),
 
     powerCapacity(StatCategory.power),
     powerUse(StatCategory.power),

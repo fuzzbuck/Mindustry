@@ -1156,12 +1156,13 @@ public class Blocks implements ContentList{
         }};
 
         massDriver = new MassDriver("mass-driver"){{
-            requirements(Category.distribution, ItemStack.with(Items.titanium, 125, Items.silicon, 75, Items.lead, 125, Items.thorium, 50));
+            requirements(Category.distribution, ItemStack.with(Items.titanium, 125, Items.silicon, 75, Items.lead, 125, Items.thorium, 50, Items.concrete, 50));
             size = 3;
-            itemCapacity = 120;
+            itemCapacity = 200;
+            liquidCapacity = 400;
             reloadTime = 200f;
             range = 440f;
-            consumes.power(1.75f);
+            consumes.power(2f);
         }};
 
         //endregion

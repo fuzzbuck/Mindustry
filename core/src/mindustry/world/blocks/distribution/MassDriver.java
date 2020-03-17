@@ -39,6 +39,7 @@ public class MassDriver extends Block{
         posConfig = true;
         configurable = true;
         hasItems = true;
+        hasLiquids = true;
         layer = Layer.turret;
         hasPower = true;
         outlineIcon = true;
@@ -68,6 +69,8 @@ public class MassDriver extends Block{
         Tile link = world.tile(entity.link);
         boolean hasLink = linkValid(tile);
 
+        tile.entity.liquids.update();
+
         //reload regardless of state
         if(entity.reload > 0f){
             entity.reload = Mathf.clamp(entity.reload - entity.delta() / reloadTime * entity.efficiency());
@@ -81,7 +84,7 @@ public class MassDriver extends Block{
         //switch states
         if(entity.state == DriverState.idle){
             //start accepting when idle and there's space
-            if(!entity.waitingShooters.isEmpty() && (itemCapacity - entity.items.total() >= minDistribute)){
+            if(!entity.waitingShooters.isEmpty() && ((itemCapacity - entity.items.total() >= minDistribute) || (liquidCapacity - entity.liquids.total() >= minDistribute))){
                 entity.state = DriverState.accepting;
             }else if(hasLink){ //switch to shooting if there's a valid link.
                 entity.state = DriverState.shooting;
@@ -91,6 +94,7 @@ public class MassDriver extends Block{
         //dump when idle or accepting
         if(entity.state == DriverState.idle || entity.state == DriverState.accepting){
             tryDump(tile);
+            tryDumpLiquid(tile, tile.entity.liquids.current());
         }
 
         //skip when there's no power
@@ -100,7 +104,7 @@ public class MassDriver extends Block{
 
         if(entity.state == DriverState.accepting){
             //if there's nothing shooting at this, bail - OR, items full
-            if(entity.currentShooter() == null || (itemCapacity - entity.items.total() < minDistribute)){
+            if(entity.currentShooter() == null || (itemCapacity - entity.items.total() < minDistribute) || (liquidCapacity - entity.liquids.total() < minDistribute)){
                 entity.state = DriverState.idle;
                 return;
             }
@@ -109,7 +113,7 @@ public class MassDriver extends Block{
             entity.rotation = Mathf.slerpDelta(entity.rotation, tile.angleTo(entity.currentShooter()), rotateSpeed * entity.efficiency());
         }else if(entity.state == DriverState.shooting){
             //if there's nothing to shoot at OR someone wants to shoot at this thing, bail
-            if(!hasLink || (!entity.waitingShooters.isEmpty() && (itemCapacity - entity.items.total() >= minDistribute))){
+            if(!hasLink || (!entity.waitingShooters.isEmpty() && ((itemCapacity - entity.items.total() >= minDistribute) || (liquidCapacity - entity.liquids.total() < minDistribute)))){
                 entity.state = DriverState.idle;
                 return;
             }
@@ -117,8 +121,10 @@ public class MassDriver extends Block{
             float targetRotation = tile.angleTo(link);
 
             if(
-                tile.entity.items.total() >= minDistribute && //must shoot minimum amount of items
-                link.block().itemCapacity - link.entity.items.total() >= minDistribute //must have minimum amount of space
+                    (tile.entity.items.total() >= minDistribute && //must shoot minimum amount of items
+                link.block().itemCapacity - link.entity.items.total() >= minDistribute) //must have minimum amount of space
+                || (tile.entity.liquids.total() >= minDistribute && // or has liquids and has minimum amount of space
+                link.block().liquidCapacity - link.entity.liquids.total() >= minDistribute)
             ){
                 MassDriverEntity other = link.ent();
                 other.waitingShooters.add(tile);
@@ -229,6 +235,11 @@ public class MassDriver extends Block{
         return tile.entity.items.total() < itemCapacity && linkValid(tile);
     }
 
+    @Override
+    public boolean acceptLiquid(Tile tile, Tile source, Liquid liquid, float amount){
+        return tile.entity.liquids.total() < liquidCapacity && linkValid(tile);
+    }
+
     protected void fire(Tile tile, Tile target){
         MassDriverEntity entity = tile.ent();
         MassDriverEntity other = target.ent();
@@ -247,6 +258,10 @@ public class MassDriver extends Block{
             entity.items.remove(content.item(i), maxTransfer);
         }
 
+        float maxTransfer = Math.min(entity.liquids.currentAmount(), ((MassDriver)tile.block()).liquidCapacity);
+        data.liquid = new LiquidStack(entity.liquids.current(), maxTransfer);
+        entity.liquids.clear();
+
         float angle = tile.angleTo(target);
 
         Bullet.create(Bullets.driverBolt, entity, entity.getTeam(),
@@ -264,6 +279,7 @@ public class MassDriver extends Block{
 
     protected void handlePayload(MassDriverEntity entity, Bullet bullet, DriverBulletData data){
         int totalItems = entity.items.total();
+        float totalLiquids = entity.liquids.total();
 
         //add all the items possible
         for(int i = 0; i < data.items.length; i++){
@@ -276,6 +292,10 @@ public class MassDriver extends Block{
                 break;
             }
         }
+
+        //add the liquid
+        float maxAdd = Math.min(data.liquid.amount, liquidCapacity);
+        entity.liquids.add(data.liquid.liquid, maxAdd);
 
         Effects.shake(shake, shake, entity);
         Effects.effect(recieveEffect, bullet);
@@ -304,6 +324,7 @@ public class MassDriver extends Block{
     public static class DriverBulletData implements Poolable{
         public MassDriverEntity from, to;
         public int[] items = new int[content.items().size];
+        public LiquidStack liquid;
 
         @Override
         public void reset(){

@@ -38,6 +38,6 @@ public class ConsumeHeat extends ConsumeHeatBase{
 
     @Override
     public void display(BlockStats stats){
-        stats.add(booster ? BlockStat.booster : BlockStat.input, "Heat", amount * timePeriod, timePeriod == 60);
+        stats.add(booster ? BlockStat.booster : BlockStat.input,amount * timePeriod, true);
     }
 }

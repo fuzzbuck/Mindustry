@@ -538,6 +538,7 @@ public class Block extends BlockStorage{
         // Note: Power stats are added by the consumers.
         if(hasLiquids) stats.add(BlockStat.liquidCapacity, liquidCapacity, StatUnit.liquidUnits);
         if(hasItems) stats.add(BlockStat.itemCapacity, itemCapacity, StatUnit.items);
+        if(hasHeat) stats.add(BlockStat.heatCapacity, heatCapacity, StatUnit.heat);
     }
 
     public void setBars(){

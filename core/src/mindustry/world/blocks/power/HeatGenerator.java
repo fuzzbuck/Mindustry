@@ -28,9 +28,9 @@ import static mindustry.Vars.renderer;
 public class HeatGenerator extends PowerGenerator{
 
     /** Maximum heat used per frame. */
-    public float maxHeatGenerate = 0.1f;
+    public float maxHeatGenerate = 0.02f;
 
-    public float baseFloorHeatGeneration = 0.2f;
+    public float baseFloorHeatGeneration = 0.08f;
 
     public Attribute attribute = Attribute.heat;
 
@@ -44,6 +44,7 @@ public class HeatGenerator extends PowerGenerator{
         super(name);
         hasHeat = true;
         consumesHeat = true;
+        outputsHeat = true;
         this.entityType = HeatGeneratorEntity::new;
     }
 
@@ -73,7 +74,6 @@ public class HeatGenerator extends PowerGenerator{
     @Override
     public void setStats(){
         super.setStats();
-        stats.add(BlockStat.tiles, attribute);
     }
 
     @Override
@@ -85,6 +85,10 @@ public class HeatGenerator extends PowerGenerator{
     @Override
     public void update(Tile tile){
         HeatGeneratorEntity entity = tile.ent();
+
+        if(entity.productionEfficiency > 0.1f && Mathf.chance(0.01)){
+            Effects.effect(generateEffect, tile.drawx() + Mathf.range(4f), tile.drawy() + Mathf.range(4f));
+        }
 
         if(entity.floorHeatGeneration > 0) {
             if (entity.heatmod.currentAmount() + baseFloorHeatGeneration < heatCapacity) {
@@ -103,18 +107,19 @@ public class HeatGenerator extends PowerGenerator{
             float used = Math.min(entity.heatmod.currentAmount() * calculationDelta, maximumPossible);
 
             entity.heatmod.remove(used * entity.power.graph.getUsageFraction());
-
-            if(Mathf.chance(0.1 * entity.delta())){
-                Effects.effect(generateEffect, tile.drawx() + Mathf.range(4f), tile.drawy() + Mathf.range(4f));
-            }
         }
         tile.entity.heatmod.update();
         entity.productionEfficiency = tile.entity.heatmod.smoothAmount() / heatCapacity;
+
+        if(entity.heatmod.currentAmount() >= 0.01f) {
+            tryDumpHeat(tile);
+        }
     }
 
     @Override
     public void draw(Tile tile){
         super.draw(tile);
+        HeatGeneratorEntity entity = tile.ent();
 
         Draw.rect(region, tile.drawx(), tile.drawy());
         Draw.color(Pal.lightOrange);
@@ -125,7 +130,7 @@ public class HeatGenerator extends PowerGenerator{
 
     @Override
     public void drawPlace(int x, int y, int rotation, boolean valid){
-        drawPlaceText(Core.bundle.formatFloat("bar.efficiency", sumAttribute(attribute, x, y) * 100, 1), x, y, valid);
+        drawPlaceText(Core.bundle.formatFloat("bar.floorheat", sumAttribute(attribute, x, y) * baseFloorHeatGeneration * 60, 1), x, y, valid);
     }
 
     @Override

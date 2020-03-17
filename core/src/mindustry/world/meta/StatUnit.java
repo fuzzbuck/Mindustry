@@ -13,6 +13,8 @@ public enum StatUnit{
     liquidSecond,
     itemsSecond,
     liquidUnits,
+    heatUnits,
+    heat,
     powerUnits,
     degrees,
     seconds,
