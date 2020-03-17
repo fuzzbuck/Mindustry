@@ -3,6 +3,7 @@ package mindustry.world.blocks.liquid;
 import arc.*;
 import arc.graphics.g2d.*;
 import arc.math.*;
+import arc.util.*;
 import mindustry.content.*;
 import mindustry.entities.*;
 import mindustry.entities.traits.BuilderTrait.*;
@@ -76,10 +77,10 @@ public class HeatRouter extends HeatBlock implements Autotiler{
         blendresult[0] = blendresult[3] = 0;
         blendresult[1] = blendresult[2] = 1;
 
-        boolean right = blends(tile, 0, 0),
-                up    = blends(tile, 0, 1),
-                left  = blends(tile, 0, 2),
-                down  = blends(tile, 0, 3);
+        boolean right = blends(tile, 0, directional, 0, true),
+                up    = blends(tile, 0, directional, 1, true),
+                left  = blends(tile, 0, directional, 2, true),
+                down  = blends(tile, 0, directional, 3, true);
 
         int num = -1;
 
@@ -149,6 +150,16 @@ public class HeatRouter extends HeatBlock implements Autotiler{
             Draw.rect(blendbitsTop[entity.blendbits], tile.drawx(), tile.drawy(), tilesize * entity.blendsclx, tilesize * entity.blendscly, entity.blendsclr * 90);
             Draw.color();
         }
+    }
+
+    @Override
+    public void drawRequestRegion(BuildRequest req, Eachable<BuildRequest> list){
+        int[] bits = getTiling(req, list);
+
+        if(bits == null) return;
+
+        TextureRegion region = blendbits[bits[0]];
+        Draw.rect(region, req.drawx(), req.drawy(), region.getWidth() * bits[1] * Draw.scl * req.animScale, region.getHeight() * bits[2] * Draw.scl * req.animScale, bits[3] * 90);
     }
 
     @Override
