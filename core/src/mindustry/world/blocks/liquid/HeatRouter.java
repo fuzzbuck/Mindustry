@@ -107,32 +107,26 @@ public class HeatRouter extends HeatBlock implements Autotiler{
 
     @Override
     public void transformCase(int num, int[] bits){
+        if(num > 5 && 10 > num) bits[0] = 2;
+        if(num > 1 && 6  > num) bits[0] = 1;
+
         if(num == 1){
             bits[0] = 0;
             bits[3] = 1;
         }else if(num == 2){
-            bits[0] = 1;
             bits[2] = -1;
-        }else if(num == 3){
-            bits[0] = 1;
         }else if(num == 4){
-            bits[0] = 1;
             bits[1] = -1;
         }else if(num == 5){
-            bits[0] = 1;
             bits[1] = -1;
             bits[2] = -1;
         }else if(num == 6){
-            bits[0] = 2;
             bits[3] = 0;
         }else if(num == 7){
-            bits[0] = 2;
             bits[3] = 2;
         }else if(num == 8){
-            bits[0] = 2;
             bits[3] = 1;
         }else if(num == 9){
-            bits[0] = 2;
             bits[3] = 3;
         }else if(num == 10){
             bits[0] = 3;
