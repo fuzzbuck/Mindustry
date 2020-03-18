@@ -313,15 +313,15 @@ public class Bullets implements ContentList{
             weaveMag = 1f;
         }};
 
-        missileNuclear = new MissileBulletType(2.2f, 284, "missile"){{
+        missileNuclear = new MissileBulletType(2.2f, 384, "missile"){{
             bulletWidth = 20f;
             bulletHeight = 20f;
             bulletShrink = 0f;
             drag = -0.003f;
             homingPower = 15f;
             homingRange = 40f;
-            splashDamageRadius = 90f;
-            splashDamage = 230f;
+            splashDamageRadius = 110f;
+            splashDamage = 280f;
             lifetime = 340f;
             trailColor = Pal.radiation;
             backColor = Pal.darkRadiation;
