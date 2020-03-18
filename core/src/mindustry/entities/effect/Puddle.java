@@ -92,9 +92,12 @@ public class Puddle extends SolidEntity implements SaveTrait, Poolable, DrawTrai
         }else if(p.liquid == liquid){
             p.accepting = Math.max(amount, p.accepting);
 
-            if(generation == 0 && p.lastRipple <= Time.time() - 40f && p.amount >= maxLiquid / 2f){
+            if(p.liquid != Liquids.steam && generation == 0 && p.lastRipple <= Time.time() - 40f && p.amount >= maxLiquid / 2f){
                 Effects.effect(Fx.ripple, p.liquid.color, (tile.worldx() + source.worldx()) / 2f, (tile.worldy() + source.worldy()) / 2f);
                 p.lastRipple = Time.time();
+            }
+            if(p.liquid == Liquids.steam && Mathf.chance(0.2)){
+                Effects.effect(Fx.steam, p.liquid.color, (tile.worldx() + source.worldx()) / 2f + Mathf.range(-4f, 4f), (tile.worldy() + source.worldy()) / 2f + Mathf.range(-4f, 4f));
             }
         }else{
             p.amount += reactPuddle(p.liquid, liquid, amount, p.tile, p.x, p.y);
@@ -199,6 +202,7 @@ public class Puddle extends SolidEntity implements SaveTrait, Poolable, DrawTrai
 
         //effects-only code
         if(amount >= maxLiquid / 2f && updateTime <= 0f){
+
             Units.nearby(rect.setSize(Mathf.clamp(amount / (maxLiquid / 1.5f)) * 10f).setCenter(x, y), unit -> {
                 if(unit.isFlying()) return;
 
@@ -239,13 +243,6 @@ public class Puddle extends SolidEntity implements SaveTrait, Poolable, DrawTrai
                 seeds++;
             });
             Draw.color();
-        } else{
-            if(Mathf.chance(0.2f)){
-                Effects.effect(Fx.steam, x, y);
-                if(Mathf.chance(0.4f)){
-                    Effects.effect(Fx.steam, x + Mathf.range(5f), y + Mathf.range(5f));
-                }
-            }
         }
 
         if(liquid.lightColor.a > 0.001f && f > 0){
