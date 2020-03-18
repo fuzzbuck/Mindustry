@@ -56,11 +56,11 @@ public class Vars implements Loadable{
     /** URL the links to the wiki's modding guide.*/
     public static final String modGuideURL = "https://mindustrygame.github.io/wiki/modding/";
     /** URL to the JSON file containing all the global, public servers. Not queried in BE. */
-    public static final String serverJsonURL = "https://raw.githubusercontent.com/Anuken/Mindustry/master/servers.json";
+    public static final String serverJsonURL = "https://raw.githubusercontent.com/fuzzbuck/Mindustry/modded/servers.json";
     /** URL to the JSON file containing all the BE servers. Only queried in BE. */
-    public static final String serverJsonBeURL = "https://raw.githubusercontent.com/Anuken/Mindustry/master/servers_be.json";
+    public static final String serverJsonBeURL = "https://raw.githubusercontent.com/fuzzbuck/Mindustry/modded/servers_be.json";
     /** URL of the github issue report template.*/
-    public static final String reportIssueURL = "https://github.com/Anuken/Mindustry/issues/new?template=bug_report.md";
+    public static final String reportIssueURL = "https://github.com/fuzzbuck/Mindustry/issues/new?template=bug_report.md";
     /** list of built-in servers.*/
     public static final Array<String> defaultServers = Array.with();
     /** maximum distance between mine and core that supports automatic transferring */

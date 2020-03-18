@@ -28,9 +28,9 @@ import static mindustry.Vars.renderer;
 public class HeatGenerator extends PowerGenerator{
 
     /** Maximum heat used per frame. */
-    public float maxHeatGenerate = 0.02f;
+    public float maxHeatGenerate = 0.01f;
 
-    public float baseFloorHeatGeneration = 0.08f;
+    public float baseFloorHeatGeneration = 0.04f;
 
     public Attribute attribute = Attribute.heat;
 

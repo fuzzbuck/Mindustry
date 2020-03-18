@@ -24,10 +24,10 @@ public class Fx implements ContentList{
     producesmoke, smeltsmoke, formsmoke, blastsmoke, lava, doorclose, dooropen, dooropenlarge, doorcloselarge, purify, purifyoil, purifystone, generate,
     mine, mineBig, mineHuge, smelt, teleportActivate, teleport, teleportOut, ripple, bubble, launch,
     healBlock, healBlockFull, healWaveMend, overdriveWave, overdriveBlockFull, shieldBreak, hitBulletSmall, hitFuse,
-    hitBulletBig, hitFlameSmall, hitLiquid, hitLaser, hitLancer, hitMeltdown, despawn, flakExplosion, blastExplosion,
+    hitBulletBig, hitFlameSmall, hitLiquid, hitLaser, hitLancer, hitMeltdown, despawn, flakExplosion, blastExplosion, nuclearExplosion,
     plasticExplosion, artilleryTrail, incendTrail, missileTrail, absorb, flakExplosionBig, flakExplosionGigantic, plasticExplosionFlak, burning, radiating, activeRadiation, fire,
     fireSmoke, steam, fireballsmoke, ballfire, freezing, melting, wet, oily, overdriven, dropItem, shockwave,
-    bigShockwave, nuclearShockwave, explosion, blockExplosion, blockExplosionSmoke, shootSmall, shootHeal, shootSmallSmoke, shootBig, shootBig2, shootBigSmoke,
+    bigShockwave, nuclearShockwave, explosion, blockExplosion, blockExplosionSmoke, shootSmall, shootHeal, shootSmallSmoke, shootBig, shootBig2, shootBigNuclear, shootBigSmoke,
     shootBigSmoke2, shootSmallFlame, shootPyraFlame, shootLiquid, shellEjectSmall, shellEjectMedium,
     shellEjectBig, lancerLaserShoot, lancerLaserShootSmoke, lancerLaserCharge, lancerLaserChargeBegin, lightningCharge, lightningShoot,
     unitSpawn, spawnShockwave, magmasmoke, impactShockwave, impactcloud, impactsmoke, dynamicExplosion, padlaunch, commandSend, coreLand;
@@ -386,6 +386,29 @@ public class Fx implements ContentList{
 
         });
 
+        nuclearExplosion = new Effect(230, e -> {
+
+            Draw.color(Pal.radiation);
+            e.scaled(24, i -> {
+                Lines.stroke(3f * i.fout());
+                Lines.circle(e.x, e.y, 3f + i.fin() * 60f);
+            });
+
+            Draw.color(Color.gray);
+
+            Angles.randLenVectors(e.id, 54, 2f + 146f * e.finpow(), (x, y) -> {
+                Fill.circle(e.x + x, e.y + y, e.fout() * 16f + 0.5f);
+            });
+
+            Draw.color(Pal.darkRadiation);
+            Lines.stroke(1f * e.fout());
+
+            Angles.randLenVectors(e.id + 1, 26, 1f + 126f * e.finpow(), (x, y) -> {
+                Lines.lineAngle(e.x + x, e.y + y, Mathf.angle(x, y), 1f + e.fout() * 18f);
+            });
+
+        });
+
         artilleryTrail = new Effect(50, e -> {
             Draw.color(e.color);
             Fill.circle(e.x, e.y, e.rotation * e.fout());
@@ -701,6 +724,13 @@ public class Fx implements ContentList{
             float w = 1.2f + 8 * e.fout();
             Drawf.tri(e.x, e.y, w, 29f * e.fout(), e.rotation);
             Drawf.tri(e.x, e.y, w, 5f * e.fout(), e.rotation + 180f);
+        });
+
+        shootBigNuclear = new Effect(32, e -> {
+            Draw.color(Pal.radiation, Pal.darkRadiation, e.fin());
+            float w = 1.2f + 7 * e.fout();
+            Drawf.tri(e.x, e.y, w, 50f * e.fout(), e.rotation);
+            Drawf.tri(e.x, e.y, w, 8f * e.fout(), e.rotation + 180f);
         });
 
         shootBigSmoke = new Effect(17f, e -> {

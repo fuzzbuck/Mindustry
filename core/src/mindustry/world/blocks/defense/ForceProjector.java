@@ -26,11 +26,11 @@ public class ForceProjector extends Block{
     public float phaseUseTime = 350f;
 
     public float phaseRadiusBoost = 80f;
-    public float radius = 101.7f;
-    public float breakage = 550f;
+    public float radius = 151.7f;
+    public float breakage = 1550f;
     public float cooldownNormal = 1.75f;
-    public float cooldownLiquid = 1.5f;
-    public float cooldownBrokenBase = 0.35f;
+    public float cooldownLiquid = 1f;
+    public float cooldownBrokenBase = 0.25f;
     public float basePowerDraw = 0.2f;
     public TextureRegion topRegion;
 

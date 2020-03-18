@@ -26,7 +26,7 @@ public class Bullets implements ContentList{
     flakScrap, flakLead, flakPlastic, flakExplosive, flakHighlyExplosive, flakSurge, flakGlass, glassFrag,
 
     //missiles
-    missileExplosive, missileIncendiary, missileSurge, missileJavelin, missileSwarm, missileRevenant,
+    missileExplosive, missileIncendiary, missileSurge, missileJavelin, missileSwarm, missileRevenant, missileNuclear,
 
     //standard
     standardCopper, microCopper, standardDense, standardThorium, standardHoming, standardIncendiary, standardMechSmall,
@@ -309,6 +309,28 @@ public class Bullets implements ContentList{
             frontColor = Pal.unitFront;
             hitEffect = Fx.blastExplosion;
             despawnEffect = Fx.blastExplosion;
+            weaveScale = 6f;
+            weaveMag = 1f;
+        }};
+
+        missileNuclear = new MissileBulletType(2.2f, 184, "missile"){{
+            bulletWidth = 20f;
+            bulletHeight = 20f;
+            bulletShrink = 0f;
+            drag = -0.003f;
+            homingPower = 0f;
+            homingRange = 0f;
+            splashDamageRadius = 85f;
+            splashDamage = 130f;
+            lifetime = 340f;
+            trailColor = Pal.radiation;
+            backColor = Pal.darkRadiation;
+            frontColor = Pal.radiation;
+            hitEffect = Fx.nuclearExplosion;
+            despawnEffect = Fx.pulverizeMedium;
+
+            ammoMultiplier = 1;
+            hitShake = 12f;
             weaveScale = 6f;
             weaveMag = 1f;
         }};

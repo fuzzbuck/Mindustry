@@ -26,9 +26,9 @@ import java.io.DataInput;
 import java.io.DataOutput;
 import java.io.IOException;
 
-public class GenericHeatCrafter extends GenericCrafter{
+public class GenericHeatGenerator extends GenericCrafter{
 
-    public GenericHeatCrafter(String name){
+    public GenericHeatGenerator(String name){
         super(name);
         entityType = GenericCrafterEntity::new;
     }

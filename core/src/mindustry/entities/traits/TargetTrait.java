@@ -5,13 +5,15 @@ import arc.graphics.g2d.TextureRegion;
 import arc.math.geom.Position;
 import mindustry.game.Team;
 
+import static mindustry.Vars.headless;
+
 /**
  * Base interface for targetable entities.
  */
 public interface TargetTrait extends Position, VelocityTrait{
 
-    TextureRegion laser = Core.atlas.find("laser");
-    TextureRegion laserEnd = Core.atlas.find("laser-end");
+    TextureRegion laser = (!headless ? Core.atlas.find("laser") : null);
+    TextureRegion laserEnd = (!headless ? Core.atlas.find("laser-end") : null);
 
     boolean isDead();
 
