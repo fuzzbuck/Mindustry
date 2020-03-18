@@ -388,17 +388,18 @@ public class Fx implements ContentList{
 
         nuclearExplosion = new Effect(230, e -> {
 
+            Draw.color(Color.gray);
+
+            Angles.randLenVectors(e.id, 34, 2f + 66f * e.finpow(), (x, y) -> {
+                Fill.circle(e.x + x, e.y + y, e.fout() * 6f + 0.5f);
+            });
+
             Draw.color(Pal.radiation);
             e.scaled(24, i -> {
                 Lines.stroke(3f * i.fout());
                 Lines.circle(e.x, e.y, 3f + i.fin() * 60f);
             });
 
-            Draw.color(Color.gray);
-
-            Angles.randLenVectors(e.id, 54, 2f + 146f * e.finpow(), (x, y) -> {
-                Fill.circle(e.x + x, e.y + y, e.fout() * 16f + 0.5f);
-            });
 
             Draw.color(Pal.darkRadiation);
             Lines.stroke(1f * e.fout());
