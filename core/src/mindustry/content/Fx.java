@@ -386,7 +386,7 @@ public class Fx implements ContentList{
 
         });
 
-        nuclearExplosion = new Effect(230, e -> {
+        nuclearExplosion = new Effect(160, e -> {
 
             Draw.color(Color.gray);
 

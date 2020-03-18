@@ -78,6 +78,7 @@ public abstract class BulletType extends Content{
 
     public float homingPower = 0f;
     public float homingRange = 50f;
+    public boolean homingAffectsUnits = true;
 
     public int lightining;
     public int lightningLength = 5;
@@ -160,9 +161,14 @@ public abstract class BulletType extends Content{
 
     public void update(Bullet b){
 
-        if(homingPower > 0.0001f){
+        if(homingAffectsUnits && homingPower > 0.0001f){
             TargetTrait target = Units.closestTarget(b.getTeam(), b.x, b.y, homingRange, e -> !e.isFlying() || collidesAir);
             if(target != null){
+                b.velocity().setAngle(Mathf.slerpDelta(b.velocity().angle(), b.angleTo(target), 0.08f));
+            }
+        } else if (!homingAffectsUnits && homingPower > 0.0001f){
+            TargetTrait target = Units.closestTileTarget(b.getTeam(), b.x, b.y, homingRange, e -> true);
+            if(target != null) {
                 b.velocity().setAngle(Mathf.slerpDelta(b.velocity().angle(), b.angleTo(target), 0.08f));
             }
         }

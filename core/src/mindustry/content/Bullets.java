@@ -314,12 +314,13 @@ public class Bullets implements ContentList{
         }};
 
         missileNuclear = new MissileBulletType(2.2f, 384, "missile"){{
-            bulletWidth = 20f;
-            bulletHeight = 20f;
+            bulletWidth = 16f;
+            bulletHeight = 16f;
             bulletShrink = 0f;
             drag = -0.003f;
-            homingPower = 15f;
-            homingRange = 40f;
+            homingPower = 10f;
+            homingRange = 120f;
+            homingAffectsUnits = false;
             splashDamageRadius = 110f;
             splashDamage = 280f;
             lifetime = 340f;
@@ -327,6 +328,7 @@ public class Bullets implements ContentList{
             backColor = Pal.darkRadiation;
             frontColor = Pal.radiation;
             hitEffect = Fx.nuclearExplosion;
+            hitSound = Sounds.explosionbig;
             despawnEffect = Fx.pulverizeMedium;
 
             ammoMultiplier = 1;
