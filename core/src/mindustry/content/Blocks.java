@@ -1423,9 +1423,9 @@ public class Blocks implements ContentList{
 
         nuclearReactor = new GenericHeatGenerator("nuclear-reactor"){{
             requirements(Category.power, ItemStack.with(Items.concrete, 1200, Items.lead, 500, Items.silicon, 400, Items.graphite, 300, Items.concrete, 500, Items.surgealloy, 150, Items.thorium, 150, Items.metaglass, 200, Items.plastanium, 100));
-            heatCapacity = 1000f;
+            heatCapacity = 10000f;
             craftTime = 60f * 8;
-            outputHeat = new HeatStack(4f);
+            outputHeat = new HeatStack(6f);
             size = 5;
             health = 4200;
             hasHeat = true;
