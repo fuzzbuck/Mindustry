@@ -673,7 +673,7 @@ public class Blocks implements ContentList{
             size = 4;
             hasPower = true;
 
-            consumes.items(new ItemStack(Items.uranium, 10), new ItemStack(Items.phasefabric, 2), new ItemStack(Items.surgealloy, 2));
+            consumes.items(new ItemStack(Items.uranium, 10), new ItemStack(Items.phasefabric, 2));
             consumes.power(10f);
             itemCapacity = 10;
 
@@ -2070,7 +2070,7 @@ public class Blocks implements ContentList{
         }};
 
         meltdown = new LaserTurret("meltdown"){{
-            requirements(Category.turret, ItemStack.with(Items.copper, 250, Items.lead, 350, Items.graphite, 300, Items.surgealloy, 325, Items.silicon, 325));
+            requirements(Category.turret, ItemStack.with(Items.copper, 250, Items.lead, 350, Items.graphite, 300, Items.surgealloy, 325, Items.silicon, 325, Items.concrete, 100));
             shootType = Bullets.meltdownLaser;
             shootEffect = Fx.shootBigSmoke2;
             shootCone = 40f;
