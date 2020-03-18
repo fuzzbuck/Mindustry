@@ -151,6 +151,7 @@ public class UnitTypes implements ContentList{
                 length = 0.75f;
                 reload = 14f;
                 width = 2.6f;
+                inaccuracy = 10f;
                 alternate = true;
                 ejectEffect = Fx.shellEjectSmall;
                 shootSound = Sounds.shoot;
@@ -236,7 +237,7 @@ public class UnitTypes implements ContentList{
             health = 3000;
             spawnsUnits = true;
             maxUnitsSpawned = 15;
-            unitSpawner = UnitTypes.minion;
+            unitSpawner = UnitTypes.eruptor;
             unitSpawnerInterval = 6;
             weapon = new Weapon("flak"){{
                 length = 1f;

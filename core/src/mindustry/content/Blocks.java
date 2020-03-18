@@ -79,7 +79,7 @@ public class Blocks implements ContentList{
     duo, scatter, scorch, hail, arc, tesla, wave, lancer, swarmer, salvo, fuse, ripple, cyclone, uraniumLauncher, spectre, meltdown,
 
     //units
-    commandCenter, draugFactory, spiritFactory, phantomFactory, wraithFactory, ghoulFactory, revenantFactory, daggerFactory, crawlerFactory, kamikazeFactory, titanFactory,
+    commandCenter, draugFactory, spiritFactory, phantomFactory, wraithFactory, ghoulFactory, revenantFactory, minionFactory, daggerFactory, crawlerFactory, kamikazeFactory, titanFactory,
     fortressFactory, mothershipFactory, repairPoint,
 
     //upgrades
@@ -2155,6 +2155,16 @@ public class Blocks implements ContentList{
             size = 4;
             consumes.power(3f);
             consumes.items(new ItemStack(Items.silicon, 40), new ItemStack(Items.titanium, 30));
+        }};
+
+        minionFactory = new UnitFactory("rally-point"){{
+            requirements(Category.units, ItemStack.with(Items.copper, 75, Items.lead, 55));
+            unitType = UnitTypes.minion;
+            produceTime = 550;
+            maxSpawn = 2;
+            size = 2;
+            consumes.power(0.5f);
+            consumes.items(new ItemStack(Items.copper, 6), new ItemStack(Items.lead, 4));
         }};
 
         daggerFactory = new UnitFactory("dagger-factory"){{

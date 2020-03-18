@@ -313,12 +313,12 @@ public class Bullets implements ContentList{
             weaveMag = 1f;
         }};
 
-        missileNuclear = new MissileBulletType(2.2f, 384, "missile"){{
+        missileNuclear = new MissileBulletType(2f, 384, "missile"){{
             bulletWidth = 16f;
             bulletHeight = 16f;
             bulletShrink = 0f;
             drag = -0.003f;
-            homingPower = 10f;
+            homingPower = 1f;
             homingRange = 120f;
             homingAffectsUnits = false;
             splashDamageRadius = 110f;
@@ -346,23 +346,16 @@ public class Bullets implements ContentList{
             ammoMultiplier = 2;
         }};
 
-        microCopper = new MissileBulletType(1.5f, 3, "bullet"){{
+        microCopper = new BasicBulletType(2.8f, 3, "bullet"){{
             inaccuracy = 15f;
-            homingPower = 20f;
-            homingRange = 80f;
             bulletWidth = 4f;
             bulletHeight = 4f;
-            bulletShrink = 0f;
-            drag = -0.01f;
-            splashDamageRadius = 5f;
-            splashDamage = 6f;
             ammoMultiplier = 8f;
-            lifetime = 100f;
+            lifetime = 40f;
             hitEffect = Fx.pulverizeSmall;
             shootEffect = Fx.shootSmallSmoke;
             hitSound = Sounds.none;
             hitShake = 0f;
-            trailEnabled = false;
         }};
 
         standardUranium = new BasicBulletType(5f, 36, "bullet"){{

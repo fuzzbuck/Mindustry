@@ -296,16 +296,16 @@ public class Fx implements ContentList{
 
         flakExplosionGigantic = new Effect(40, e -> {
 
+            Draw.color(Color.gray);
+
+            Angles.randLenVectors(e.id, 6, 8f + 23f * e.finpow(), (x, y) -> {
+                Fill.circle(e.x + x, e.y + y, e.fout() * 4f + 0.5f);
+            });
+
             Draw.color(Pal.bulletYellow);
             e.scaled(6, i -> {
                 Lines.stroke(5f * i.fout());
                 Lines.circle(e.x, e.y, 6f + i.fin() * 15f);
-            });
-
-            Draw.color(Color.gray);
-
-            Angles.randLenVectors(e.id, 10, 8f + 23f * e.finpow(), (x, y) -> {
-                Fill.circle(e.x + x, e.y + y, e.fout() * 12f + 0.5f);
             });
 
             Draw.color(Pal.lighterOrange);
@@ -386,12 +386,12 @@ public class Fx implements ContentList{
 
         });
 
-        nuclearExplosion = new Effect(160, e -> {
+        nuclearExplosion = new Effect(90, e -> {
 
             Draw.color(Color.gray);
 
-            Angles.randLenVectors(e.id, 34, 2f + 66f * e.finpow(), (x, y) -> {
-                Fill.circle(e.x + x, e.y + y, e.fout() * 6f + 0.5f);
+            Angles.randLenVectors(e.id, 24, 1f + 44f * e.finpow(), (x, y) -> {
+                Fill.circle(e.x + x, e.y + y, e.fout() * 3f + 0.5f);
             });
 
             Draw.color(Pal.radiation);
