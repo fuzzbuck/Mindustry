@@ -30,9 +30,13 @@ public class BeControl{
     private String updateUrl;
     private int updateBuild;
 
+    /*public boolean active(){
+        return Version.type.equals("bleeding-edge");
+    }*/
+
     /** @return whether this is a bleeding edge build. */
     public boolean active(){
-        return Version.type.equals("bleeding-edge");
+        return Version.type.startsWith("io");
     }
 
     public BeControl(){
@@ -47,7 +51,7 @@ public class BeControl{
 
     /** asynchronously checks for updates. */
     public void checkUpdate(Boolc done){
-        Core.net.httpGet("https://api.github.com/repos/Anuken/MindustryBuilds/releases/latest", res -> {
+        Core.net.httpGet("https://api.github.com/repos/fuzzbuck/MindustryBuilds/releases/latest", res -> {
             if(res.getStatus() == HttpStatus.OK){
                 Jval val = Jval.read(res.getResultAsString());
                 int newBuild = Strings.parseInt(val.getString("tag_name", "0"));

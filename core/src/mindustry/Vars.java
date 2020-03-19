@@ -58,7 +58,8 @@ public class Vars implements Loadable{
     /** URL to the JSON file containing all the global, public servers. Not queried in BE. */
     public static final String serverJsonURL = "https://raw.githubusercontent.com/fuzzbuck/Mindustry/modded/servers.json";
     /** URL to the JSON file containing all the BE servers. Only queried in BE. */
-    public static final String serverJsonBeURL = "https://raw.githubusercontent.com/fuzzbuck/Mindustry/modded/servers_be.json";
+    public static final String serverJsonBeURL = "https://raw.githubusercontent.com/fuzzbuck/Mindustry/modded/servers.json";
+    //public static final String serverJsonBeURL = "https://raw.githubusercontent.com/fuzzbuck/Mindustry/modded/servers_be.json";
     /** URL of the github issue report template.*/
     public static final String reportIssueURL = "https://github.com/fuzzbuck/Mindustry/issues/new?template=bug_report.md";
     /** list of built-in servers.*/
