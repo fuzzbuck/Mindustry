@@ -2156,7 +2156,7 @@ public class Blocks implements ContentList{
             consumes.power(3f);
             consumes.items(new ItemStack(Items.silicon, 40), new ItemStack(Items.titanium, 30));
         }};
-
+        // comment :)
         minionFactory = new UnitFactory("rally-point"){{
             requirements(Category.units, ItemStack.with(Items.copper, 75, Items.lead, 55));
             unitType = UnitTypes.minion;
