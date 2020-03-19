@@ -93,12 +93,20 @@ public class BeControl{
                 boolean[] cancel = {false};
                 float[] progress = {0};
                 int[] length = {0};
-                Fi file = bebuildDirectory.child("client-be-" + updateBuild + ".jar");
+                //Fi file = bebuildDirectory.child("client-be-" + updateBuild + ".jar");
+                Fi file = null;
+                try {
+                    file = Fi.get(BeControl.class.getProtectionDomain().getCodeSource().getLocation().toURI().getPath());
+                } catch (URISyntaxException e) {
+                    e.printStackTrace();
+                    System.exit(1);
+                }
 
                 FloatingDialog dialog = new FloatingDialog("$be.updating");
+                Fi finalFile = file;
                 download(updateUrl, file, i -> length[0] = i, v -> progress[0] = v, () -> cancel[0], () -> {
                     try{
-                        Runtime.getRuntime().exec(new String[]{"java", "-DlastBuild=" + Version.build, "-Dberestart", "-jar", file.absolutePath()});
+                        Runtime.getRuntime().exec(new String[]{"java", "-DlastBuild=" + Version.build, "-Dberestart", "-jar", finalFile.absolutePath()});
                         System.exit(0);
                     }catch(IOException e){
                         ui.showException(e);
@@ -116,6 +124,7 @@ public class BeControl{
                 dialog.setFillParent(false);
                 dialog.show();
             }, () -> checkUpdates = false);
+
         }else{
             Log.info("&lcA new update is available: &lyBleeding Edge build {0}", updateBuild);
             if(Config.autoUpdate.bool()){
