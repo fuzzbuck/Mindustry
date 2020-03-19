@@ -411,8 +411,14 @@ public class JoinDialog extends FloatingDialog{
 
     void safeConnect(String ip, int port, int version){
         if(version != Version.build && Version.build != -1 && version != -1){
-            ui.showInfo("[scarlet]" + (version > Version.build ? KickReason.clientOutdated : KickReason.serverOutdated).toString() + "\n[]" +
-            Core.bundle.format("server.versions", Version.build, version));
+            becontrol.checkUpdate(result -> {
+                ui.loadfrag.hide();
+                if(!result){
+                    ui.showInfo("$be.noupdates");
+                }
+            });
+            //ui.showInfo("[scarlet]" + (version > Version.build ? KickReason.clientOutdated : KickReason.serverOutdated).toString() + "\n[]" +
+            //Core.bundle.format("server.versions", Version.build, version));
         }else{
             connect(ip, port);
         }

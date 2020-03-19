@@ -338,10 +338,10 @@ public abstract class BaseUnit extends Unit implements ShooterTrait{
                 if(unitsSpawned < type.maxUnitsSpawned) {
                     unitsSpawned++;
                     BaseUnit minion = type.unitSpawner.create(getTeam());
-                    minion.set(x + Mathf.random(-4f, 4f), y + Mathf.random(-4f, 4f));
+                    minion.set(x + Mathf.random(-8f, 8f), y + Mathf.random(-8f, 8f));
                     minion.parentShip = this;
                     minion.add();
-                    Effects.effect(Fx.unitSpawn, x, y);
+                    Effects.effect(Fx.unitSpawn, minion.getX(), minion.getY());
                 }
             }
         }

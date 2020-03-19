@@ -164,16 +164,6 @@ public class GroundUnit extends BaseUnit{
 
         Draw.mixcol();
         Draw.color();
-        if(repairTarget != null){
-            float ang = angleTo(repairTarget);
-            float len = 5f;
-
-            Draw.color(Color.valueOf("e8ffd7"));
-            Drawf.laser(laser, laserEnd,
-                    x + Angles.trnsx(ang, len), y + Angles.trnsy(ang, len),
-                    repairTarget.x, repairTarget.y, 1f - dst(repairTarget) / type.repairRadius);
-            Draw.color();
-        }
     }
 
     @Override

@@ -314,11 +314,11 @@ public class Bullets implements ContentList{
         }};
 
         missileNuclear = new MissileBulletType(2f, 384, "missile"){{
-            bulletWidth = 16f;
-            bulletHeight = 16f;
+            bulletWidth = 10f;
+            bulletHeight = 12f;
             bulletShrink = 0f;
             drag = -0.003f;
-            homingPower = 1f;
+            homingPower = 0.1f;
             homingRange = 120f;
             homingAffectsUnits = false;
             splashDamageRadius = 110f;
