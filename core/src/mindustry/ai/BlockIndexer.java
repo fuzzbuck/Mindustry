@@ -379,9 +379,9 @@ public class BlockIndexer{
                 //add position of quadrant to list when an ore is found
                 if(tile.drop() != null && scanOres.contains(tile.drop()) && tile.block() == Blocks.air){
                     ores.get(tile.drop()).add(world.tile(
-                    //make sure to clamp quadrant middle position, since it might go off bounds
-                    Mathf.clamp(qx * quadrantSize + quadrantSize / 2, 0, world.width() - 1),
-                    Mathf.clamp(qy * quadrantSize + quadrantSize / 2, 0, world.height() - 1)));
+                            //make sure to clamp quadrant middle position, since it might go off bounds
+                            Mathf.clamp(qx * quadrantSize + quadrantSize / 2, 0, world.width() - 1),
+                            Mathf.clamp(qy * quadrantSize + quadrantSize / 2, 0, world.height() - 1)));
                 }
             }
         }

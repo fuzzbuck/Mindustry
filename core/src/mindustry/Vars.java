@@ -11,6 +11,8 @@ import arc.util.*;
 import arc.util.Log.*;
 import arc.util.io.*;
 import mindustry.ai.*;
+import mindustry.content.Items;
+import mindustry.content.UnitTypes;
 import mindustry.core.*;
 import mindustry.entities.*;
 import mindustry.entities.effect.*;
@@ -24,6 +26,7 @@ import mindustry.maps.*;
 import mindustry.mod.*;
 import mindustry.net.Net;
 import mindustry.net.*;
+import mindustry.type.ItemStack;
 import mindustry.world.blocks.defense.ForceProjector.*;
 
 import java.io.*;
@@ -64,7 +67,7 @@ public class Vars implements Loadable{
     /** list of built-in servers.*/
     public static final Array<String> defaultServers = Array.with();
     /** maximum distance between mine and core that supports automatic transferring */
-    public static final float mineTransferRange = 220f;
+    public static final float mineTransferRange = 500f;
     /** whether to enable editing of units in the editor */
     public static final boolean enableUnitEditing = false;
     /** max chat message length */

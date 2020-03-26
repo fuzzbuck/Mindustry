@@ -9,6 +9,7 @@ import arc.util.*;
 import arc.util.CommandHandler.*;
 import arc.util.io.*;
 import arc.util.serialization.*;
+import mindustry.Vars;
 import mindustry.annotations.Annotations.*;
 import mindustry.content.*;
 import mindustry.core.GameState.*;
@@ -403,6 +404,7 @@ public class NetServer implements ApplicationListener{
                         VoteSession session = new VoteSession(currentlyKicking, found, found.getTeam());
                         found.setTeam(Team.derelict);
                         found.setDead(true);
+                        found.spawner = null;
 
                         found.sendMessage("[accent]You are being vote kicked. You will be able to build once the session is over.");
                         session.vote(player, 1);
@@ -460,6 +462,16 @@ public class NetServer implements ApplicationListener{
                 netServer.sendWorldData(player);
             }
         });
+
+        clientCommands.<Player>register("hud", "Toggle viewing resource & other elements on screen.", (args, player) -> {
+            player.showHud = !player.showHud;
+            player.sendMessage("[accent]Toggled HUD.");
+        });
+
+        /*clientCommands.<Player>register("mult","<number>", "testing only", (args, player) -> {
+            state.multiplier = Float.parseFloat(args[0]);
+            player.sendMessage("[accent]done");
+        });*/
     }
 
     public int votesRequired(){
@@ -655,7 +667,7 @@ public class NetServer implements ApplicationListener{
         Events.fire(new PlayerJoin(player));
     }
 
-    public boolean isWaitingForPlayers(){
+    /*public boolean isWaitingForPlayers(){
         if(state.rules.pvp){
             int used = 0;
             for(TeamData t : state.teams.getActive()){
@@ -666,6 +678,14 @@ public class NetServer implements ApplicationListener{
             return used < 2;
         }
         return false;
+    }*/
+
+    public boolean isWaitingForPlayers(){
+        if(state.rules.playerDamageMultiplier <= 0f){
+            return true;
+        } else{
+            return false;
+        }
     }
 
     @Override

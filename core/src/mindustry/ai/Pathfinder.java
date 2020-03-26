@@ -8,6 +8,7 @@ import arc.math.geom.*;
 import arc.util.*;
 import arc.util.ArcAnnotate.*;
 import arc.util.async.*;
+import mindustry.content.Blocks;
 import mindustry.game.EventType.*;
 import mindustry.game.*;
 import mindustry.gen.*;
@@ -64,7 +65,7 @@ public class Pathfinder implements Runnable{
 
     /** Packs a tile into its internal representation. */
     private int packTile(Tile tile){
-        return PathTile.get(tile.cost, tile.getTeamID(), (byte)0, !tile.solid() && tile.floor().drownTime <= 0f);
+        return PathTile.get(tile.cost, tile.getTeamID(), (byte)0, !tile.solid() && tile.floor().drownTime <= 0f && tile.floor() == Blocks.darkPanel5);
     }
 
     /** Starts or restarts the pathfinding thread. */
@@ -172,8 +173,8 @@ public class Pathfinder implements Runnable{
             Tile other = world.tile(dx, dy);
             if(other == null) continue;
 
-            if(values[dx][dy] < value && (current == null || values[dx][dy] < tl) && !other.solid() && other.floor().drownTime <= 0 &&
-            !(point.x != 0 && point.y != 0 && (world.solid(tile.x + point.x, tile.y) || world.solid(tile.x, tile.y + point.y)))){ //diagonal corner trap
+            if(values[dx][dy] < value && (current == null || values[dx][dy] < tl) && !other.solid() && other.floor().drownTime <= 0 && other.floor() == Blocks.darkPanel5 &&
+            !(point.x != 0 && point.y != 0 && (world.solid(tile.x + point.x, tile.y) || world.solid(tile.x, tile.y + point.y))  && (world.tile(tile.x + point.x, tile.y).floor() == Blocks.darkPanel5 || world.tile(tile.x, tile.y + point.y).floor() == Blocks.darkPanel5 ))) { //diagonal corner trap
                 current = other;
                 tl = values[dx][dy];
             }

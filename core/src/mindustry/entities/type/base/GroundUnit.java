@@ -1,5 +1,6 @@
 package mindustry.entities.type.base;
 
+import arc.Core;
 import arc.graphics.*;
 import arc.graphics.g2d.*;
 import arc.math.*;
@@ -7,6 +8,7 @@ import arc.math.geom.*;
 import arc.util.*;
 import mindustry.*;
 import mindustry.ai.Pathfinder.*;
+import mindustry.content.Blocks;
 import mindustry.entities.*;
 import mindustry.entities.bullet.*;
 import mindustry.entities.type.*;
@@ -15,6 +17,7 @@ import mindustry.game.*;
 import mindustry.type.*;
 import mindustry.world.*;
 import mindustry.world.blocks.*;
+import mindustry.world.blocks.storage.CoreBlock;
 import mindustry.world.meta.*;
 
 import static mindustry.Vars.*;
@@ -30,7 +33,7 @@ public class GroundUnit extends BaseUnit{
 
     attack = new UnitState(){
         public void entered(){
-            target = null;
+            target = getClosestEnemyCore();
         }
 
         public void update(){
@@ -44,41 +47,17 @@ public class GroundUnit extends BaseUnit{
             }else{
                 float dst = dst(core);
 
-                if(dst < getWeapon().bullet.range() / 1.1f){
-                    target = core;
-                }
-
                 if(dst > getWeapon().bullet.range() * 0.5f){
+                    if(getFloorOn() != Blocks.darkPanel5) Core.app.post(() -> {kill();});
                     moveToCore(PathTarget.enemyCores);
                 }
             }
-        }
-    },
-    rally = new UnitState(){
-        public void update(){
-            Tile target = getClosest(BlockFlag.rally);
-
-            if(target != null && dst(target) > 80f){
-                moveToCore(PathTarget.rallyPoints);
-            }
-        }
-    },
-    retreat = new UnitState(){
-        public void entered(){
-            target = null;
-        }
-
-        public void update(){
-            moveAwayFromCore();
         }
     };
 
     @Override
     public void onCommand(UnitCommand command){
-        state.set(command == UnitCommand.retreat ? retreat :
-        command == UnitCommand.attack ? attack :
-        command == UnitCommand.rally ? rally :
-        null);
+        state.set(attack);
     }
 
     @Override
@@ -167,20 +146,13 @@ public class GroundUnit extends BaseUnit{
     @Override
     public void behavior(){
 
-        if(!Units.invalidateTarget(target, this)){
-            if(dst(target) < getWeapon().bullet.range()){
-
-                rotate(angleTo(target));
-
-                if(Angles.near(angleTo(target), rotation, 13f)){
-                    BulletType ammo = getWeapon().bullet;
-
-                    Vec2 to = Predict.intercept(GroundUnit.this, target, ammo.speed);
-
-                    getWeapon().update(GroundUnit.this, to.x, to.y);
-                }
+        //if(!Units.invalidateTarget(target, this)){
+            if(target.dst(x, y) < getWeapon().bullet.range()){
+                BulletType ammo = getWeapon().bullet;
+                Vec2 to = Predict.intercept(GroundUnit.this, target, ammo.speed);
+                getWeapon().update(GroundUnit.this, to.x, to.y);
             }
-        }
+        //}
     }
 
     @Override
@@ -188,11 +160,11 @@ public class GroundUnit extends BaseUnit{
         super.updateTargeting();
 
         if(Units.invalidateTarget(target, team, x, y, Float.MAX_VALUE)){
-            target = null;
+            target = getClosestEnemyCore();
         }
 
         if(retarget()){
-            targetClosest();
+            target = getClosestEnemyCore();
         }
     }
 

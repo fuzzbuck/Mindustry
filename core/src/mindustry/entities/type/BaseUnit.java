@@ -9,6 +9,7 @@ import arc.util.*;
 import arc.util.ArcAnnotate.*;
 import mindustry.*;
 import mindustry.content.*;
+import mindustry.core.GameState;
 import mindustry.ctype.ContentType;
 import mindustry.entities.*;
 import mindustry.entities.traits.*;
@@ -55,9 +56,10 @@ public abstract class BaseUnit extends Unit implements ShooterTrait{
     public static void onUnitDeath(BaseUnit unit){
         if(unit == null) return;
 
-        if(net.server() || !net.active()){
+        /*if(net.server() || !net.active()){
             UnitDrops.dropItems(unit);
-        }
+        }*/
+        Events.fire(new UnitKilledEvent(unit));
 
         unit.onSuperDeath();
         unit.type.deathSound.at(unit);
@@ -173,8 +175,13 @@ public abstract class BaseUnit extends Unit implements ShooterTrait{
         if(target != null) this.target = target.entity;
     }
 
-    public void targetClosestEnemyFlag(BlockFlag flag){
+    /*public void targetClosestEnemyFlag(BlockFlag flag){
         Tile target = Geometry.findClosest(x, y, indexer.getEnemy(team, flag));
+        if(target != null) this.target = target.entity;
+    }*/
+
+    public void targetClosestEnemyFlag(BlockFlag flag){
+        Tile target = Geometry.findClosest(x, y, indexer.getEnemy(team, BlockFlag.core));
         if(target != null) this.target = target.entity;
     }
 
@@ -256,7 +263,7 @@ public abstract class BaseUnit extends Unit implements ShooterTrait{
 
     @Override
     public float maxHealth(){
-        return type.health * Vars.state.rules.unitHealthMultiplier;
+        return type.health * Vars.state.rules.unitHealthMultiplier * Vars.state.multiplier;
     }
 
     @Override

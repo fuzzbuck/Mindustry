@@ -17,6 +17,7 @@ import mindustry.content.*;
 import mindustry.core.*;
 import mindustry.ctype.ContentType;
 import mindustry.entities.*;
+import mindustry.entities.bullet.BulletType;
 import mindustry.entities.traits.*;
 import mindustry.game.*;
 import mindustry.gen.*;
@@ -34,6 +35,7 @@ import java.io.*;
 import static mindustry.Vars.*;
 
 public class Player extends Unit implements BuilderMinerTrait, ShooterTrait{
+
     public static final int timerSync = 2;
     public static final int timerAbility = 3;
     private static final int timerShootLeft = 0;
@@ -44,10 +46,25 @@ public class Player extends Unit implements BuilderMinerTrait, ShooterTrait{
 
     //region instance variables
 
+    public String tag = "";
+    public Boolean doRainbow = false;
+    public Boolean doTrail = false;
+    public Boolean inspector = false;
+    public int hue = 0;
+    public BulletType bt = null;
+    public float sclLifetime = 1f;
+    public float sclVelocity = 1f;
+    public String origName = "unknown";
+    public Effects.Effect trailFx = Fx.shootLiquid;
+    public String passPhrase = "";
+    public Tile tapTile = null;
+    public float healthMultiplier = 1f;
+
     public float baseRotation;
     public float pointerX, pointerY;
     public String name = "noname";
     public @Nullable String uuid, usid;
+    public boolean showHud = true;
     public boolean isAdmin, isTransferring, isShooting, isBoosting, isMobile, isTyping, isBuilding = true;
     public boolean buildWasAutoPaused = false;
     public float boostHeat, shootHeat, destructTime;
@@ -56,6 +73,7 @@ public class Player extends Unit implements BuilderMinerTrait, ShooterTrait{
     public Mech mech = Mechs.starter;
     public SpawnerTrait spawner, lastSpawner;
     public int respawns;
+
 
     public @Nullable NetConnection con;
     public boolean isLocal = false;
@@ -191,7 +209,7 @@ public class Player extends Unit implements BuilderMinerTrait, ShooterTrait{
 
     @Override
     public float maxHealth(){
-        return mech.health * state.rules.playerHealthMultiplier;
+        return mech.health * state.rules.playerHealthMultiplier * healthMultiplier;
     }
 
     @Override

@@ -26,7 +26,7 @@ import static mindustry.Vars.*;
 
 public class MechPad extends Block{
     public @NonNull Mech mech;
-    public float buildTime = 60 * 5;
+    public float buildTime = 60 * 1 / 3;
 
     public MechPad(String name){
         super(name);

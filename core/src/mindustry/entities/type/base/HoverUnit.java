@@ -18,17 +18,17 @@ public class HoverUnit extends FlyingUnit{
         }
     }
 
-    @Override
+    /*@Override
     protected void attack(float circleLength){
         moveTo(circleLength);
-    }
+    }*/
 
-    @Override
+    /*@Override
     protected void updateRotation(){
         if(!Units.invalidateTarget(target, this)){
             rotation = Mathf.slerpDelta(rotation, angleTo(target), type.rotatespeed);
         }else{
             rotation = Mathf.slerpDelta(rotation, velocity.angle(), type.baseRotateSpeed);
         }
-    }
+    }*/
 }

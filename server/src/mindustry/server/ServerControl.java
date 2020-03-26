@@ -2,6 +2,7 @@ package mindustry.server;
 
 import arc.*;
 import arc.files.*;
+import arc.math.Mathf;
 import arc.struct.*;
 import arc.struct.Array.*;
 import arc.util.ArcAnnotate.*;
@@ -12,6 +13,9 @@ import arc.util.Timer.*;
 import arc.util.serialization.*;
 import arc.util.serialization.JsonValue.*;
 import mindustry.*;
+import mindustry.content.Blocks;
+import mindustry.content.Items;
+import mindustry.content.UnitTypes;
 import mindustry.core.GameState.*;
 import mindustry.core.*;
 import mindustry.entities.*;
@@ -27,6 +31,7 @@ import mindustry.mod.Mods.*;
 import mindustry.net.Administration.*;
 import mindustry.net.Packets.*;
 import mindustry.type.*;
+import mindustry.world.blocks.storage.CoreBlock;
 
 import java.io.*;
 import java.net.*;
@@ -56,6 +61,13 @@ public class ServerControl implements ApplicationListener{
     private Thread socketThread;
     private ServerSocket serverSocket;
     private PrintWriter socketOutput;
+
+    private static HashMap<String, ItemStack[]> unitDrops = new HashMap<>();
+    private static HashMap<Item, String> itemIcons = new HashMap<>();
+
+    String getTrafficlightColor(double value){
+        return "#"+Integer.toHexString(java.awt.Color.HSBtoRGB((float)value/3f, 1f, 1f)).substring(2);
+    }
 
     public ServerControl(String[] args){
         Core.settings.defaults(
@@ -132,6 +144,7 @@ public class ServerControl implements ApplicationListener{
 
         Events.on(GameOverEvent.class, event -> {
             if(inExtraRound) return;
+            state.multiplier = 1f;
             if(state.rules.waves){
                 info("&lcGame over! Reached wave &ly{0}&lc with &ly{1}&lc players online on map &ly{2}&lc.", state.wave, playerGroup.size(), Strings.capitalize(world.getMap().name()));
             }else{
@@ -158,6 +171,10 @@ public class ServerControl implements ApplicationListener{
             }
         });
 
+        Events.on(WorldLoadEvent.class, event -> {
+            state.multiplier = 1f;
+        });
+
         Events.on(Trigger.socketConfigChanged, () -> {
             toggleSocket(false);
             toggleSocket(Config.socketInput.bool());
@@ -169,6 +186,48 @@ public class ServerControl implements ApplicationListener{
                 JsonIO.json().readFields(state.rules, value);
             }catch(Throwable t){
                 Log.err("Error applying custom rules, proceeding without them.", t);
+            }
+        });
+
+        Timer.schedule(() -> {
+            Call.onInfoPopup("\uE84F [accent]Unit health multiplier:[" + getTrafficlightColor(Mathf.clamp(1f - (state.multiplier / 10f), 0f, 1f)) + "] " + (String.valueOf(state.multiplier).length() > 3 ? String.valueOf(state.multiplier).substring(0, 4) : state.multiplier) + "x", 10f, 20, 50, 20, 450, 0);
+            Call.onInfoPopup("\uE816 [accent]Toggle HUD:[] /hud", 10f, 20, 50, 20, 480, 0);
+        }, 0, 10);
+
+        Events.on(WaveEvent.class, e -> {
+            int wave = state.wave;
+            state.multiplier = Mathf.clamp((wave/44f), state.multiplier, 100000f);
+        });
+
+
+        Events.on(UnitKilledEvent.class, e -> {
+            BaseUnit unit = e.unit;
+            if(unit.getTeam() != state.rules.waveTeam) return;
+
+            ItemStack[] is = unitDrops.get(unit.getType().name);
+            TileEntity core = unit.getClosestEnemyCore();
+
+            if(is == null || core == null) return;
+
+            StringBuilder message = new StringBuilder();
+            for(ItemStack stack : is){
+                Item item = stack.item;
+                int amount = stack.amount;
+
+                if(item != null && itemIcons.containsKey(item)) {
+                    int calc = Mathf.random(amount - amount / 2, amount + amount / 2);
+                    message.append("[accent]+").append(calc).append("[] ").append(itemIcons.get(item)).append("  ");
+                    amount = core.tile.block().acceptStack(item, calc, core.tile, null);
+                    if (amount > 0) {
+                        Call.transferItemTo(item, amount, unit.x + Mathf.range(2f), unit.y + Mathf.range(2f), core.tile);
+                    }
+                }
+            }
+            String msg = message.toString();
+            for(Player p : playerGroup.all()) {
+                if(p.showHud) {
+                    Call.onLabel(p.con, msg, Strings.stripColors(msg.replaceAll(" ", "")).length() / 8f, unit.x + Mathf.range(-2f, 2f), unit.y + Mathf.range(-2f, 2f));
+                }
             }
         });
 
@@ -248,6 +307,55 @@ public class ServerControl implements ApplicationListener{
                 world.loadMap(result, result.applyRules(lastMode));
                 state.rules = result.applyRules(preset);
                 logic.play();
+
+                unitDrops.put("crawler", ItemStack.with(Items.copper, 4, Items.lead, 2));
+                unitDrops.put("dagger", ItemStack.with(Items.copper, 7, Items.lead, 4, Items.silicon, 2, Items.graphite, 3));
+                unitDrops.put("titan", ItemStack.with(Items.graphite, 5, Items.titanium, 3, Items.metaglass, 2));
+                unitDrops.put("fortress", ItemStack.with(Items.copper, 8, Items.lead, 6, Items.silicon, 10, Items.graphite, 5, Items.titanium, 6, Items.thorium, 3));
+                unitDrops.put("eruptor", ItemStack.with(Items.copper, 4, Items.plastanium, 2, Items.lead, 3, Items.silicon, 5, Items.titanium, 6, Items.graphite, 5));
+                unitDrops.put("wraith", ItemStack.with(Items.metaglass, 5, Items.silicon, 4));
+                unitDrops.put("ghoul", ItemStack.with(Items.copper, 5, Items.lead, 5, Items.silicon, 5, Items.graphite, 4));
+                unitDrops.put("chaos-array", ItemStack.with(Items.copper, 5, Items.lead, 10, Items.silicon, 25, Items.graphite, 5, Items.titanium, 15, Items.thorium, 5, Items.surgealloy, 2));
+                unitDrops.put("lich", ItemStack.with(Items.copper, 5, Items.lead, 10, Items.silicon, 25, Items.graphite, 5, Items.titanium, 15, Items.thorium, 5));
+                unitDrops.put("eradicator", ItemStack.with(Items.copper, 420, Items.lead, 300, Items.silicon, 40, Items.graphite, 60, Items.titanium, 40, Items.thorium, 20, Items.phasefabric, 5, Items.surgealloy, 2));
+                unitDrops.put("revenant", ItemStack.with(Items.plastanium, 15, Items.phasefabric, 4, Items.surgealloy, 2, Items.silicon, 10, Items.titanium, 15));
+                unitDrops.put("reaper", ItemStack.with(Items.copper, 300, Items.lead, 300, Items.silicon, 120, Items.graphite, 80, Items.titanium, 70, Items.thorium, 30, Items.phasefabric, 20, Items.surgealloy, 10));
+
+                itemIcons.put(Items.copper, "\uF838");
+                itemIcons.put(Items.lead, "\uF837");
+                itemIcons.put(Items.metaglass, "\uF836");
+                itemIcons.put(Items.graphite, "\uF835");
+                itemIcons.put(Items.sand, "\uF834");
+                itemIcons.put(Items.coal, "\uF833");
+                itemIcons.put(Items.titanium, "\uF832");
+                itemIcons.put(Items.thorium, "\uF831");
+                itemIcons.put(Items.scrap, "\uF830");
+                itemIcons.put(Items.silicon, "\uF82F");
+                itemIcons.put(Items.plastanium, "\uF82E");
+                itemIcons.put(Items.phasefabric, "\uF82D");
+                itemIcons.put(Items.surgealloy, "\uF82C");
+                itemIcons.put(Items.sporePod, "\uF82B");
+                itemIcons.put(Items.blastCompound, "\uF82A");
+                itemIcons.put(Items.pyratite, "\uF829");
+
+                Vars.netServer.admins.addActionFilter(action -> {
+                    Player player = action.player;
+                    if (player == null) return true;
+
+                    if(action.type == ActionType.placeBlock){
+                        boolean b = (action.tile.floor() != Blocks.darkPanel4 && action.tile.floor() != Blocks.darkPanel5) || action.block == Blocks.shockMine;
+                        if(!b && player.con != null) Call.onInfoToast(player.con, "[accent]You can not build on the enemy path!", 8f);
+                        return b;
+                    }
+
+                    boolean b = action.tile.block() != null && !(action.tile.block() instanceof CoreBlock);
+                    if (action.type == ActionType.depositItem || action.type == ActionType.withdrawItem) {
+                        if (!b && player.con != null)
+                            Call.onInfoToast(player.con, "[accent]You can not interact with the core.", 8f);
+                        return b;
+                    }
+                    return true;
+                });
 
                 info("Map loaded.");
 

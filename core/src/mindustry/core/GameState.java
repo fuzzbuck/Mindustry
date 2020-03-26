@@ -8,6 +8,8 @@ import mindustry.game.*;
 import static mindustry.Vars.*;
 
 public class GameState{
+    /** Unit health multiplier for tower defense. */
+    public float multiplier = 1f;
     /** Current wave number, can be anything in non-wave modes. */
     public int wave = 1;
     /** Wave countdown in ticks. */

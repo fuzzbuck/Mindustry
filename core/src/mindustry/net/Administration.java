@@ -491,7 +491,6 @@ public class Administration{
     @Serialize
     public static class PlayerInfo{
         public String id;
-        public String tag="";
         public String lastName = "<unknown>", lastIP = "<unknown>";
         public Array<String> ips = new Array<>();
         public Array<String> names = new Array<>();

@@ -66,7 +66,7 @@ public interface MinerTrait extends Entity{
             Item item = tile.drop();
             unit.rotation = Mathf.slerpDelta(unit.rotation, unit.angleTo(tile.worldx(), tile.worldy()), 0.4f);
 
-            if(Mathf.chance(Time.delta() * (0.06 - item.hardness * 0.01) * getMinePower())){
+            if(Mathf.chance(Time.delta() * (0.06 - item.hardness * 0.01) * 0.3)){
 
                 if(unit.dst(core) < mineTransferRange && core.tile.block().acceptStack(item, 1, core.tile, unit) == 1 && offloadImmediately()){
                     Call.transferItemTo(item, 1,

@@ -3,6 +3,7 @@ package mindustry.entities;
 import arc.struct.Array;
 import arc.math.Mathf;
 import arc.math.geom.*;
+import mindustry.content.Blocks;
 import mindustry.entities.traits.Entity;
 import mindustry.entities.traits.SolidTrait;
 import mindustry.world.Tile;
@@ -124,7 +125,7 @@ public class EntityCollisions{
 
     private static boolean solid(int x, int y){
         Tile tile = world.tile(x, y);
-        return tile != null && tile.solid();
+        return (tile != null && tile.solid()) || (tile != null && tile.floor() == Blocks.darkPanel4);
     }
 
     private void checkCollide(Entity entity, Entity other){
