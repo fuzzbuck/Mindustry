@@ -236,50 +236,51 @@ public class ServerControl implements ApplicationListener{
         /** SPAWN UNITS && UPDATE PLAYERS*/
         Timer.schedule(() -> {
             if(state.running) {
+                CompletableFuture.runAsync(() -> { // just to be sure
+                    for (int port : ports.values()) {
+                        net.pingHost(host, port, host -> {
+                            players.put(port, host.players);
+                        }, fail -> {
+                            players.put(port, 0);
+                        });
+                    }
 
-                for (int port : ports.values()) {
-                    net.pingHost(host, port, host -> {
-                        players.put(port, host.players);
-                    }, fail -> {
-                        players.put(port, 0);
-                    });
-                }
+                    state.players = 0;
+                    for (int pcount : players.values()) {
+                        state.players = state.players + pcount;
+                    }
 
-                state.players = 0;
-                for(int pcount : players.values()){
-                    state.players = state.players + pcount;
-                }
+                    // update players online gui
+                    int offset = 4;
+                    Call.onLabel("[accent]" + players.get(4000) + "[] players", 10f, td.worldx() + offset, td.worldy() - tilesize * 5 - offset);
+                    Call.onLabel("[accent]" + players.get(5000) + "[] players", 10f, sandbox.worldx() + offset, sandbox.worldy() - tilesize * 5 - offset);
 
-                // update players online gui
-                int offset = 4;
-                Call.onLabel("[accent]" + players.get(4000) + "[] players", 10f, td.worldx() + offset, td.worldy() - tilesize * 5 - offset);
-                Call.onLabel("[accent]" + players.get(5000) + "[] players", 10f, sandbox.worldx() + offset, sandbox.worldy() - tilesize * 5 - offset);
+                    Tile sTile = world.tile(121, 91); // spawn tile
+                    Tile sTile2 = world.tile(89, 24); // spawn tile 2
 
-                Tile sTile = world.tile(121, 91); // spawn tile
-                Tile sTile2 = world.tile(89, 24); // spawn tile 2
+                    ArrayList<UnitType> units = new ArrayList<>();
+                    units.add(UnitTypes.titan);
+                    units.add(UnitTypes.dagger);
+                    units.add(UnitTypes.crawler);
 
-                ArrayList<UnitType> units = new ArrayList<>();
-                units.add(UnitTypes.titan);
-                units.add(UnitTypes.dagger);
-                units.add(UnitTypes.crawler);
+                    for (UnitType type : units) {
+                        IntStream.range(0, Mathf.random(2, 8)).forEach(n -> {
+                            BaseUnit unit = type.create(Team.crux);
+                            unit.set(sTile.getX(), sTile.getY());
+                            unit.add();
+                        });
+                        IntStream.range(0, Mathf.random(4, 12)).forEach(n -> {
+                            BaseUnit unit = type.create(Team.crux);
+                            unit.set(sTile2.getX(), sTile2.getY());
+                            unit.add();
+                        });
+                    }
+                    Call.onEffectReliable(Fx.unitDrop, sTile.worldx(), sTile.worldy(), 15, Pal.accent);
+                    Call.onEffectReliable(Fx.unitLand, sTile.worldx(), sTile.worldy(), 15, Pal.accent);
 
-                for (UnitType type : units) {
-                    IntStream.range(0, Mathf.random(2, 8)).forEach(n -> {
-                        BaseUnit unit = type.create(Team.crux);
-                        unit.set(sTile.getX(), sTile.getY());
-                        unit.add();
-                    });
-                    IntStream.range(0, Mathf.random(4, 12)).forEach(n -> {
-                        BaseUnit unit = type.create(Team.crux);
-                        unit.set(sTile2.getX(), sTile2.getY());
-                        unit.add();
-                    });
-                }
-                Call.onEffectReliable(Fx.unitDrop, sTile.worldx(), sTile.worldy(), 15, Pal.accent);
-                Call.onEffectReliable(Fx.unitLand, sTile.worldx(), sTile.worldy(), 15, Pal.accent);
-
-                Call.onEffectReliable(Fx.unitDrop, sTile2.worldx(), sTile2.worldy(), 15, Pal.accent);
-                Call.onEffectReliable(Fx.unitLand, sTile2.worldx(), sTile2.worldy(), 15, Pal.accent);
+                    Call.onEffectReliable(Fx.unitDrop, sTile2.worldx(), sTile2.worldy(), 15, Pal.accent);
+                    Call.onEffectReliable(Fx.unitLand, sTile2.worldx(), sTile2.worldy(), 15, Pal.accent);
+                });
             }
         }, 0, 10);
         if(!mods.list().isEmpty()){
@@ -295,14 +296,16 @@ public class ServerControl implements ApplicationListener{
         if (p != null){
             if(!p.isConnecting && t.block() == Blocks.launchPadLarge) {
                 if(ports.containsKey(t.floor())){
-                    int port = ports.get(t.floor());
-                    p.isConnecting = true;
-                    net.pingHost(host, port, success -> {
-                        Call.onEffectReliable(Fx.teleport, p.getX(), p.getY(), 0, Pal.accent);
-                        Call.onConnect(p.con, host, port);
-                    }, fail -> {
-                        p.sendMessage("[lightgray]connection failed, server could be down.");
-                        p.isConnecting = false;
+                    CompletableFuture.runAsync(() -> { // just to be sure
+                        int port = ports.get(t.floor());
+                        p.isConnecting = true;
+                        net.pingHost(host, port, success -> {
+                            Call.onEffectReliable(Fx.teleport, p.getX(), p.getY(), 0, Pal.accent);
+                            Call.onConnect(p.con, host, port);
+                        }, fail -> {
+                            p.sendMessage("[lightgray]connection failed, server could be down.");
+                            p.isConnecting = false;
+                        });
                     });
                 }
             }
