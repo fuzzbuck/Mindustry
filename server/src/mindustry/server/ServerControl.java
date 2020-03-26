@@ -215,8 +215,8 @@ public class ServerControl implements ApplicationListener{
             Call.onLabel(e.player.con, "\uE80F[lightgray] under construction[] \uE84D", 9999f, ud2.worldx() + offset, ud2.worldy());
             Call.onLabel(e.player.con, "\uE841[#fdff8a] sandbox[] \uF12D", 9999f, sandbox.worldx() + offset, sandbox.worldy());
 
-            Call.onLabel("[accent]" + players.get(4000) + "[] players", 10f, td.worldx() + offset, td.worldy() - tilesize * 5 - offset);
-            Call.onLabel("[accent]" + players.get(5000) + "[] players", 10f, sandbox.worldx() + offset, sandbox.worldy() - tilesize * 5 - offset);
+            Call.onLabel(e.player.con, "[accent]" + players.get(4000) + "[] players", 10f, td.worldx() + offset, td.worldy() - tilesize * 5 - offset);
+            Call.onLabel(e.player.con, "[accent]" + players.get(5000) + "[] players", 10f, sandbox.worldx() + offset, sandbox.worldy() - tilesize * 5 - offset);
         });
 
         Events.on(TapEvent.class, event -> {
