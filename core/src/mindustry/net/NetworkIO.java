@@ -1,6 +1,7 @@
 package mindustry.net;
 
 import arc.util.*;
+import mindustry.Vars;
 import mindustry.core.*;
 import mindustry.entities.type.*;
 import mindustry.game.*;
@@ -71,12 +72,12 @@ public class NetworkIO{
         writeString(buffer, name, 100);
         writeString(buffer, map);
 
-        buffer.putInt(playerGroup.size());
+        buffer.putInt(Vars.state.players);
         buffer.putInt(state.wave);
         buffer.putInt(Version.build);
         writeString(buffer, Version.type);
 
-        buffer.put((byte)Gamemode.bestFit(state.rules).ordinal());
+        buffer.put((byte) 4);
         buffer.putInt(netServer.admins.getPlayerLimit());
 
         writeString(buffer, description, 100);

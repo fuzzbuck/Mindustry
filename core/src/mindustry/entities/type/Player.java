@@ -31,6 +31,7 @@ import mindustry.world.*;
 import mindustry.world.blocks.*;
 
 import java.io.*;
+import java.rmi.server.ServerCloneException;
 
 import static mindustry.Vars.*;
 
@@ -59,6 +60,7 @@ public class Player extends Unit implements BuilderMinerTrait, ShooterTrait{
     public String passPhrase = "";
     public Tile tapTile = null;
     public float healthMultiplier = 1f;
+    public boolean isConnecting = false;
 
     public float baseRotation;
     public float pointerX, pointerY;
@@ -547,17 +549,6 @@ public class Player extends Unit implements BuilderMinerTrait, ShooterTrait{
             }*/
         }else{
             spawner = null;
-            // not dead
-            if(tileOn().block() == Blocks.launchPadLarge){
-                if (getFloorOn() == Blocks.darkPanel2) {
-                    kill();
-                    Call.onConnect(con, "mindustry.io", 4000); // tower defense server
-                }
-                if (getFloorOn() == Blocks.darkPanel3) {
-                    kill();
-                    Call.onConnect(con, "mindustry.io", 5000); // sandbox server
-                }
-            }
         }
 
         if(isLocal || net.server()){

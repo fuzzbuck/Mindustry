@@ -13,6 +13,9 @@ public class GameState{
     /** Lobby initializer. */
     public boolean running = false;
     /** Current wave number, can be anything in non-wave modes. */
+
+    public int players;
+
     public int wave = 1;
     /** Wave countdown in ticks. */
     public float wavetime;

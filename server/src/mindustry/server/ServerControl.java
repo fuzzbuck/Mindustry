@@ -30,14 +30,16 @@ import mindustry.mod.Mods.*;
 import mindustry.net.Administration.*;
 import mindustry.net.Packets.*;
 import mindustry.type.*;
+import mindustry.world.Block;
 import mindustry.world.Tile;
-import mindustry.world.blocks.storage.CoreBlock;
 
 import java.io.*;
 import java.net.*;
 import java.time.*;
 import java.time.format.*;
 import java.util.*;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.IntStream;
 
 import static arc.util.Log.*;
@@ -65,6 +67,15 @@ public class ServerControl implements ApplicationListener{
 
     private static HashMap<String, ItemStack[]> unitDrops = new HashMap<>();
     private static HashMap<Item, String> itemIcons = new HashMap<>();
+
+    /** SETUP HASHMAPS */
+    public HashMap<Block, Integer> ports = new HashMap<>();
+    public HashMap<Integer, Integer> players = new HashMap<>();
+
+    public Tile td;
+    public Tile ud;
+    public Tile ud2;
+    public Tile sandbox;
 
     String getTrafficlightColor(double value){
         return "#"+Integer.toHexString(java.awt.Color.HSBtoRGB((float)value/3f, 1f, 1f)).substring(2);
@@ -185,54 +196,80 @@ public class ServerControl implements ApplicationListener{
             }
         });
 
+        /** SETUP HASHMAP */
+        ports.put(Blocks.darkPanel2, 4000);
+        ports.put(Blocks.darkPanel3, 5000);
+
+
+
+
+        for(int port : ports.values()){
+            players.put(port, 0);
+        }
+
         Events.on(PlayerJoin.class, e -> {
             int offset = 4;
 
-            Tile td = world.tile(86, 89);
-            Tile ud = world.tile(62, 89);
-            Tile ud2 = world.tile(85, 65);
-            Tile sandbox = world.tile(62, 65);
             Call.onLabel(e.player.con, "\uE84E[lime] tower defense[] \uE84F", 9999f, td.worldx() + offset, td.worldy());
             Call.onLabel(e.player.con, "\uE80F[lightgray] under construction[] \uE84D", 9999f, ud.worldx() + offset, ud.worldy());
             Call.onLabel(e.player.con, "\uE80F[lightgray] under construction[] \uE84D", 9999f, ud2.worldx() + offset, ud2.worldy());
             Call.onLabel(e.player.con, "\uE841[#fdff8a] sandbox[] \uF12D", 9999f, sandbox.worldx() + offset, sandbox.worldy());
+
+            Call.onLabel("[accent]" + players.get(4000) + "[] players", 10f, td.worldx() + offset, td.worldy() - tilesize * 5 - offset);
+            Call.onLabel("[accent]" + players.get(5000) + "[] players", 10f, sandbox.worldx() + offset, sandbox.worldy() - tilesize * 5 - offset);
         });
 
         Events.on(TapEvent.class, event -> {
             Player p = event.player;
             Tile t = event.tile;
-            if (p != null){
-                if(t.block() == Blocks.launchPadLarge) {
-                    if (t.floor() == Blocks.darkPanel2) {
-                        p.kill();
-                        Call.onConnect(p.con, "mindustry.io", 4000); // tower defense server
-                    }
-                    if (t.floor() == Blocks.darkPanel3) {
-                        p.kill();
-                        Call.onConnect(p.con, "mindustry.io", 5000); // sandbox server
-                    }
+            checkPlayer(p, t);
+        });
+
+        Events.on(Trigger.update.getClass(), event -> {
+            for(Player p: playerGroup.all()){
+                if(p.tileOn() != null && p.tileOn().block() == Blocks.launchPadLarge){
+                    checkPlayer(p, p.tileOn());
                 }
             }
         });
 
-        /** SPAWN UNITS */
+        /** SPAWN UNITS && UPDATE PLAYERS*/
         Timer.schedule(() -> {
             if(state.running) {
+
+                for (int port : ports.values()) {
+                    net.pingHost(host, port, host -> {
+                        players.put(port, host.players);
+                    }, fail -> {
+                        players.put(port, 0);
+                    });
+                }
+
+                state.players = 0;
+                for(int pcount : players.values()){
+                    state.players = state.players + pcount;
+                }
+
+                // update players online gui
+                int offset = 4;
+                Call.onLabel("[accent]" + players.get(4000) + "[] players", 10f, td.worldx() + offset, td.worldy() - tilesize * 5 - offset);
+                Call.onLabel("[accent]" + players.get(5000) + "[] players", 10f, sandbox.worldx() + offset, sandbox.worldy() - tilesize * 5 - offset);
+
                 Tile sTile = world.tile(121, 91); // spawn tile
                 Tile sTile2 = world.tile(89, 24); // spawn tile 2
 
                 ArrayList<UnitType> units = new ArrayList<>();
-                units.add(UnitTypes.eruptor);
+                units.add(UnitTypes.titan);
                 units.add(UnitTypes.dagger);
                 units.add(UnitTypes.crawler);
 
                 for (UnitType type : units) {
-                    IntStream.range(0, Mathf.random(1, 6)).forEach(n -> {
+                    IntStream.range(0, Mathf.random(2, 8)).forEach(n -> {
                         BaseUnit unit = type.create(Team.crux);
                         unit.set(sTile.getX(), sTile.getY());
                         unit.add();
                     });
-                    IntStream.range(0, Mathf.random(1, 8)).forEach(n -> {
+                    IntStream.range(0, Mathf.random(4, 12)).forEach(n -> {
                         BaseUnit unit = type.create(Team.crux);
                         unit.set(sTile2.getX(), sTile2.getY());
                         unit.add();
@@ -252,6 +289,24 @@ public class ServerControl implements ApplicationListener{
         toggleSocket(Config.socketInput.bool());
 
         info("&lcServer loaded. Type &ly'help'&lc for help.");
+    }
+    String host = "mindustry.io";
+    public void checkPlayer(Player p, Tile t){
+        if (p != null){
+            if(!p.isConnecting && t.block() == Blocks.launchPadLarge) {
+                if(ports.containsKey(t.floor())){
+                    int port = ports.get(t.floor());
+                    p.isConnecting = true;
+                    net.pingHost(host, port, success -> {
+                        Call.onEffectReliable(Fx.teleport, p.getX(), p.getY(), 0, Pal.accent);
+                        Call.onConnect(p.con, host, port);
+                    }, fail -> {
+                        p.sendMessage("[lightgray]connection failed, server could be down.");
+                        p.isConnecting = false;
+                    });
+                }
+            }
+        }
     }
 
     private void registerCommands(){
@@ -330,6 +385,11 @@ public class ServerControl implements ApplicationListener{
                 });
 
                 info("Map loaded.");
+                td = world.tile(86, 89);
+                ud = world.tile(62, 89);
+                ud2 = world.tile(85, 65);
+                sandbox = world.tile(62, 65);
+
                 state.running = true;
                 netServer.openServer();
             }catch(MapException e){
