@@ -68,8 +68,9 @@ public class NetworkIO{
         //String name = (headless ? Config.name.string() : player.name);
         int ci1 = (int) Mathf.range(0xCCCCCC, 0xffffff); // min & max
         int ci2 = (int) Mathf.range(0xCCCCCC, 0xffffff); // min & max
-        String c1 = String.format("#%06x", ci1), c2 = String.format("#%06x", ci2);
-        String name = "[orange]<[white]io[orange]> [" + c1 + "]mini[" + c2 + "]games[white] " + "\uE84E";
+        int ci3 = (int) Mathf.range(0xCCCCCC, 0xffffff); // min & max
+        String c1 = String.format("#%06x", ci1), c2 = String.format("#%06x", ci2), c3 = String.format("#%06x", ci3);
+        String name = "[orange]<[white]io[orange]> [" + c1 + "]mini[" + c2 + "]games [" + c3 + "]\uE84E";
         String description = headless && !Config.desc.string().equals("off") ? Config.desc.string() : "";
         String map = world.getMap() == null ? "None" : world.getMap().name();
 
