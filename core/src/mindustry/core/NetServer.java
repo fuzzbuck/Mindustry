@@ -463,10 +463,10 @@ public class NetServer implements ApplicationListener{
             }
         });
 
-        clientCommands.<Player>register("hud", "Toggle viewing resource & other elements on screen.", (args, player) -> {
+        /*clientCommands.<Player>register("hud", "Toggle viewing resource & other elements on screen.", (args, player) -> {
             player.showHud = !player.showHud;
             player.sendMessage("[accent]Toggled HUD.");
-        });
+        });*/
 
         /*clientCommands.<Player>register("mult","<number>", "testing only", (args, player) -> {
             state.multiplier = Float.parseFloat(args[0]);

@@ -522,14 +522,42 @@ public class Player extends Unit implements BuilderMinerTrait, ShooterTrait{
         }
 
         if(isDead()){
-            isBoosting = false;
+            /*isBoosting = false;
             boostHeat = 0f;
             if(respawns > 0 || !state.rules.limitedRespawns){
                 updateRespawning();
             }
-            return;
+            return;*/
+            velocity.setZero();
+            boostHeat = 1f;
+            achievedFlight = true;
+            rotation = 90f;
+            baseRotation = 90f;
+            dead = false;
+            spawner = null;
+            respawns --;
+
+            setNet(74.5f * tilesize, 74.5f * tilesize);
+            clearItem();
+            heal();
+            /*if(isAdmin){
+                mech = Mechs.omega;
+            } else {
+                mech = Mechs.alpha;
+            }*/
         }else{
             spawner = null;
+            // not dead
+            if(tileOn().block() == Blocks.launchPadLarge){
+                if (getFloorOn() == Blocks.darkPanel2) {
+                    kill();
+                    Call.onConnect(con, "mindustry.io", 4000); // tower defense server
+                }
+                if (getFloorOn() == Blocks.darkPanel3) {
+                    kill();
+                    Call.onConnect(con, "mindustry.io", 5000); // sandbox server
+                }
+            }
         }
 
         if(isLocal || net.server()){

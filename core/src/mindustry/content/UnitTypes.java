@@ -76,7 +76,7 @@ public class UnitTypes implements ContentList{
 
         dagger = new UnitType("dagger", GroundUnit::new){{
             maxVelocity = 1.1f;
-            speed = 0.2f;
+            speed = 0.1f;
             drag = 0.4f;
             hitsize = 8f;
             mass = 1.75f;
@@ -99,7 +99,7 @@ public class UnitTypes implements ContentList{
 
         crawler = new UnitType("crawler", GroundUnit::new){{
             maxVelocity = 1.27f;
-            speed = 0.285f;
+            speed = 0.14f;
             drag = 0.4f;
             hitsize = 8f;
             mass = 1.75f;
@@ -173,13 +173,13 @@ public class UnitTypes implements ContentList{
 
         eruptor = new UnitType("eruptor", GroundUnit::new){{
             maxVelocity = 0.81f;
-            speed = 0.16f;
+            speed = 0.08f;
             drag = 0.4f;
             mass = 5f;
             hitsize = 9f;
             rotatespeed = 0.05f;
             targetAir = false;
-            health = 600;
+            health = 1200;
             immunities = ObjectSet.with(StatusEffects.burning, StatusEffects.melting);
             weapon = new Weapon("eruption"){{
                 reload = 12f;

@@ -110,6 +110,7 @@ public abstract class BulletType extends Content{
     }
 
     public void hit(Bullet b, float x, float y){
+        /*
         Effects.effect(hitEffect, x, y, b.rot());
         hitSound.at(b);
 
@@ -130,6 +131,7 @@ public abstract class BulletType extends Content{
         if(splashDamageRadius > 0){
             Damage.damage(b.getTeam(), x, y, splashDamageRadius, splashDamage * b.damageMultiplier());
         }
+        */
     }
 
     public void despawned(Bullet b){
@@ -137,11 +139,11 @@ public abstract class BulletType extends Content{
         hitSound.at(b);
 
         if(fragBullet != null || splashDamageRadius > 0){
-            hit(b);
+            //hit(b);
         }
 
         for(int i = 0; i < lightining; i++){
-            Lightning.createLighting(Lightning.nextSeed(), b.getTeam(), Pal.surge, damage, b.x, b.y, Mathf.random(360f), lightningLength);
+            //Lightning.createLighting(Lightning.nextSeed(), b.getTeam(), Pal.surge, damage, b.x, b.y, Mathf.random(360f), lightningLength);
         }
     }
 

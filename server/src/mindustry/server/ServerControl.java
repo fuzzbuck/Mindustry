@@ -13,9 +13,7 @@ import arc.util.Timer.*;
 import arc.util.serialization.*;
 import arc.util.serialization.JsonValue.*;
 import mindustry.*;
-import mindustry.content.Blocks;
-import mindustry.content.Items;
-import mindustry.content.UnitTypes;
+import mindustry.content.*;
 import mindustry.core.GameState.*;
 import mindustry.core.*;
 import mindustry.entities.*;
@@ -23,6 +21,7 @@ import mindustry.entities.type.*;
 import mindustry.game.*;
 import mindustry.game.EventType.*;
 import mindustry.gen.*;
+import mindustry.graphics.Pal;
 import mindustry.io.*;
 import mindustry.maps.Map;
 import mindustry.maps.*;
@@ -31,6 +30,7 @@ import mindustry.mod.Mods.*;
 import mindustry.net.Administration.*;
 import mindustry.net.Packets.*;
 import mindustry.type.*;
+import mindustry.world.Tile;
 import mindustry.world.blocks.storage.CoreBlock;
 
 import java.io.*;
@@ -38,6 +38,7 @@ import java.net.*;
 import java.time.*;
 import java.time.format.*;
 import java.util.*;
+import java.util.stream.IntStream;
 
 import static arc.util.Log.*;
 import static mindustry.Vars.*;
@@ -144,7 +145,6 @@ public class ServerControl implements ApplicationListener{
 
         Events.on(GameOverEvent.class, event -> {
             if(inExtraRound) return;
-            state.multiplier = 1f;
             if(state.rules.waves){
                 info("&lcGame over! Reached wave &ly{0}&lc with &ly{1}&lc players online on map &ly{2}&lc.", state.wave, playerGroup.size(), Strings.capitalize(world.getMap().name()));
             }else{
@@ -171,10 +171,6 @@ public class ServerControl implements ApplicationListener{
             }
         });
 
-        Events.on(WorldLoadEvent.class, event -> {
-            state.multiplier = 1f;
-        });
-
         Events.on(Trigger.socketConfigChanged, () -> {
             toggleSocket(false);
             toggleSocket(Config.socketInput.bool());
@@ -189,48 +185,66 @@ public class ServerControl implements ApplicationListener{
             }
         });
 
-        Timer.schedule(() -> {
-            Call.onInfoPopup("\uE84F [accent]Unit health multiplier:[" + getTrafficlightColor(Mathf.clamp(1f - (state.multiplier / 10f), 0f, 1f)) + "] " + (String.valueOf(state.multiplier).length() > 3 ? String.valueOf(state.multiplier).substring(0, 4) : state.multiplier) + "x", 10f, 20, 50, 20, 450, 0);
-            Call.onInfoPopup("\uE816 [accent]Toggle HUD:[] /hud", 10f, 20, 50, 20, 480, 0);
-        }, 0, 10);
+        Events.on(PlayerJoin.class, e -> {
+            int offset = 4;
 
-        Events.on(WaveEvent.class, e -> {
-            int wave = state.wave;
-            state.multiplier = Mathf.clamp((wave/44f), state.multiplier, 100000f);
+            Tile td = world.tile(86, 89);
+            Tile ud = world.tile(62, 89);
+            Tile ud2 = world.tile(85, 65);
+            Tile sandbox = world.tile(62, 65);
+            Call.onLabel(e.player.con, "\uE84E[lime] tower defense[] \uE84F", 9999f, td.worldx() + offset, td.worldy());
+            Call.onLabel(e.player.con, "\uE80F[lightgray] under construction[] \uE84D", 9999f, ud.worldx() + offset, ud.worldy());
+            Call.onLabel(e.player.con, "\uE80F[lightgray] under construction[] \uE84D", 9999f, ud2.worldx() + offset, ud2.worldy());
+            Call.onLabel(e.player.con, "\uE841[#fdff8a] sandbox[] \uF12D", 9999f, sandbox.worldx() + offset, sandbox.worldy());
         });
 
-
-        Events.on(UnitKilledEvent.class, e -> {
-            BaseUnit unit = e.unit;
-            if(unit.getTeam() != state.rules.waveTeam) return;
-
-            ItemStack[] is = unitDrops.get(unit.getType().name);
-            TileEntity core = unit.getClosestEnemyCore();
-
-            if(is == null || core == null) return;
-
-            StringBuilder message = new StringBuilder();
-            for(ItemStack stack : is){
-                Item item = stack.item;
-                int amount = stack.amount;
-
-                if(item != null && itemIcons.containsKey(item)) {
-                    int calc = Mathf.random(amount - amount / 2, amount + amount / 2);
-                    message.append("[accent]+").append(calc).append("[] ").append(itemIcons.get(item)).append("  ");
-                    amount = core.tile.block().acceptStack(item, calc, core.tile, null);
-                    if (amount > 0) {
-                        Call.transferItemTo(item, amount, unit.x + Mathf.range(2f), unit.y + Mathf.range(2f), core.tile);
+        Events.on(TapEvent.class, event -> {
+            Player p = event.player;
+            Tile t = event.tile;
+            if (p != null){
+                if(t.block() == Blocks.launchPadLarge) {
+                    if (t.floor() == Blocks.darkPanel2) {
+                        p.kill();
+                        Call.onConnect(p.con, "mindustry.io", 4000); // tower defense server
+                    }
+                    if (t.floor() == Blocks.darkPanel3) {
+                        p.kill();
+                        Call.onConnect(p.con, "mindustry.io", 5000); // sandbox server
                     }
                 }
             }
-            String msg = message.toString();
-            for(Player p : playerGroup.all()) {
-                if(p.showHud) {
-                    Call.onLabel(p.con, msg, Strings.stripColors(msg.replaceAll(" ", "")).length() / 8f, unit.x + Mathf.range(-2f, 2f), unit.y + Mathf.range(-2f, 2f));
-                }
-            }
         });
 
+        /** SPAWN UNITS */
+        Timer.schedule(() -> {
+            if(state.running) {
+                Tile sTile = world.tile(121, 91); // spawn tile
+                Tile sTile2 = world.tile(89, 24); // spawn tile 2
+
+                ArrayList<UnitType> units = new ArrayList<>();
+                units.add(UnitTypes.eruptor);
+                units.add(UnitTypes.dagger);
+                units.add(UnitTypes.crawler);
+
+                for (UnitType type : units) {
+                    IntStream.range(0, Mathf.random(1, 6)).forEach(n -> {
+                        BaseUnit unit = type.create(Team.crux);
+                        unit.set(sTile.getX(), sTile.getY());
+                        unit.add();
+                    });
+                    IntStream.range(0, Mathf.random(1, 8)).forEach(n -> {
+                        BaseUnit unit = type.create(Team.crux);
+                        unit.set(sTile2.getX(), sTile2.getY());
+                        unit.add();
+                    });
+                }
+                Call.onEffectReliable(Fx.unitDrop, sTile.worldx(), sTile.worldy(), 15, Pal.accent);
+                Call.onEffectReliable(Fx.unitLand, sTile.worldx(), sTile.worldy(), 15, Pal.accent);
+
+                Call.onEffectReliable(Fx.unitDrop, sTile2.worldx(), sTile2.worldy(), 15, Pal.accent);
+                Call.onEffectReliable(Fx.unitLand, sTile2.worldx(), sTile2.worldy(), 15, Pal.accent);
+            }
+        }, 0, 10);
         if(!mods.list().isEmpty()){
             info("&lc{0} mods loaded.", mods.list().size);
         }
@@ -288,7 +302,7 @@ public class ServerControl implements ApplicationListener{
                 info("Randomized next map to be {0}.", result.name());
             }
 
-            Gamemode preset = Gamemode.survival;
+            Gamemode preset = Gamemode.sandbox;
 
             if(arg.length > 1){
                 try{
@@ -308,57 +322,15 @@ public class ServerControl implements ApplicationListener{
                 state.rules = result.applyRules(preset);
                 logic.play();
 
-                unitDrops.put("crawler", ItemStack.with(Items.copper, 4, Items.lead, 2));
-                unitDrops.put("dagger", ItemStack.with(Items.copper, 7, Items.lead, 4, Items.silicon, 2, Items.graphite, 3));
-                unitDrops.put("titan", ItemStack.with(Items.graphite, 5, Items.titanium, 3, Items.metaglass, 2));
-                unitDrops.put("fortress", ItemStack.with(Items.copper, 8, Items.lead, 6, Items.silicon, 10, Items.graphite, 5, Items.titanium, 6, Items.thorium, 3));
-                unitDrops.put("eruptor", ItemStack.with(Items.copper, 4, Items.plastanium, 2, Items.lead, 3, Items.silicon, 5, Items.titanium, 6, Items.graphite, 5));
-                unitDrops.put("wraith", ItemStack.with(Items.metaglass, 5, Items.silicon, 4));
-                unitDrops.put("ghoul", ItemStack.with(Items.copper, 5, Items.lead, 5, Items.silicon, 5, Items.graphite, 4));
-                unitDrops.put("chaos-array", ItemStack.with(Items.copper, 5, Items.lead, 10, Items.silicon, 25, Items.graphite, 5, Items.titanium, 15, Items.thorium, 5, Items.surgealloy, 2));
-                unitDrops.put("lich", ItemStack.with(Items.copper, 5, Items.lead, 10, Items.silicon, 25, Items.graphite, 5, Items.titanium, 15, Items.thorium, 5));
-                unitDrops.put("eradicator", ItemStack.with(Items.copper, 420, Items.lead, 300, Items.silicon, 40, Items.graphite, 60, Items.titanium, 40, Items.thorium, 20, Items.phasefabric, 5, Items.surgealloy, 2));
-                unitDrops.put("revenant", ItemStack.with(Items.plastanium, 15, Items.phasefabric, 4, Items.surgealloy, 2, Items.silicon, 10, Items.titanium, 15));
-                unitDrops.put("reaper", ItemStack.with(Items.copper, 300, Items.lead, 300, Items.silicon, 120, Items.graphite, 80, Items.titanium, 70, Items.thorium, 30, Items.phasefabric, 20, Items.surgealloy, 10));
-
-                itemIcons.put(Items.copper, "\uF838");
-                itemIcons.put(Items.lead, "\uF837");
-                itemIcons.put(Items.metaglass, "\uF836");
-                itemIcons.put(Items.graphite, "\uF835");
-                itemIcons.put(Items.sand, "\uF834");
-                itemIcons.put(Items.coal, "\uF833");
-                itemIcons.put(Items.titanium, "\uF832");
-                itemIcons.put(Items.thorium, "\uF831");
-                itemIcons.put(Items.scrap, "\uF830");
-                itemIcons.put(Items.silicon, "\uF82F");
-                itemIcons.put(Items.plastanium, "\uF82E");
-                itemIcons.put(Items.phasefabric, "\uF82D");
-                itemIcons.put(Items.surgealloy, "\uF82C");
-                itemIcons.put(Items.sporePod, "\uF82B");
-                itemIcons.put(Items.blastCompound, "\uF82A");
-                itemIcons.put(Items.pyratite, "\uF829");
-
                 Vars.netServer.admins.addActionFilter(action -> {
                     Player player = action.player;
-                    if (player == null) return true;
-
-                    if(action.type == ActionType.placeBlock){
-                        boolean b = (action.tile.floor() != Blocks.darkPanel4 && action.tile.floor() != Blocks.darkPanel5) || action.block == Blocks.shockMine;
-                        if(!b && player.con != null) Call.onInfoToast(player.con, "[accent]You can not build on the enemy path!", 8f);
-                        return b;
-                    }
-
-                    boolean b = action.tile.block() != null && !(action.tile.block() instanceof CoreBlock);
-                    if (action.type == ActionType.depositItem || action.type == ActionType.withdrawItem) {
-                        if (!b && player.con != null)
-                            Call.onInfoToast(player.con, "[accent]You can not interact with the core.", 8f);
-                        return b;
-                    }
-                    return true;
+                    if(player == null) return true;
+                    if(action.type == ActionType.tapTile) return true;
+                    return(player.isAdmin);
                 });
 
                 info("Map loaded.");
-
+                state.running = true;
                 netServer.openServer();
             }catch(MapException e){
                 Log.err(e.map.name() + ": " + e.getMessage());

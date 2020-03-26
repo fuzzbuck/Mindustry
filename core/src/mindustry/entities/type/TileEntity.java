@@ -9,12 +9,14 @@ import arc.math.geom.Point2;
 import arc.math.geom.Vec2;
 import arc.util.*;
 import arc.util.ArcAnnotate.*;
+import mindustry.content.Fx;
 import mindustry.entities.EntityGroup;
 import mindustry.entities.traits.HealthTrait;
 import mindustry.entities.traits.TargetTrait;
 import mindustry.game.*;
 import mindustry.game.EventType.BlockDestroyEvent;
 import mindustry.gen.*;
+import mindustry.graphics.Pal;
 import mindustry.world.*;
 import mindustry.world.consumers.*;
 import mindustry.world.modules.*;
@@ -50,11 +52,12 @@ public class TileEntity extends BaseEntity implements TargetTrait, HealthTrait{
     @Remote(called = Loc.server, unreliable = true)
     public static void onTileDamage(Tile tile, float health){
         if(tile.entity != null){
-            tile.entity.health = health;
-
+            /*tile.entity.health = health;
+            tile.entity.health = tile.entity.maxHealth();
             if(tile.entity.damaged()){
                 indexer.notifyTileDamaged(tile.entity);
-            }
+            }*/
+            Call.onEffectReliable(Fx.healBlock, tile.entity.getX(), tile.entity.getY(), tile.block().size, Pal.heal);
         }
     }
 
@@ -168,7 +171,8 @@ public class TileEntity extends BaseEntity implements TargetTrait, HealthTrait{
 
     @Override
     public void damage(float damage){
-        if(dead) return;
+        Call.onTileDamage(tile, health - block.handleDamage(tile, damage));
+        /*if(dead) return;
 
         if(Mathf.zero(state.rules.blockHealthMultiplier)){
             damage = health + 1;
@@ -178,7 +182,6 @@ public class TileEntity extends BaseEntity implements TargetTrait, HealthTrait{
 
         float preHealth = health;
 
-        Call.onTileDamage(tile, health - block.handleDamage(tile, damage));
 
         if(health <= 0){
             Call.onTileDestroyed(tile);
@@ -186,7 +189,7 @@ public class TileEntity extends BaseEntity implements TargetTrait, HealthTrait{
 
         if(preHealth >= maxHealth() - 0.00001f && health < maxHealth() && world != null){ //when just damaged
             indexer.notifyTileDamaged(this);
-        }
+        }*/
     }
 
     public Tile getTile(){
