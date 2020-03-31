@@ -1,16 +1,15 @@
 package mindustry.ui.dialogs;
 
 import arc.*;
-import mindustry.annotations.Annotations.*;
-import arc.struct.*;
-import arc.graphics.*;
 import arc.input.*;
 import arc.math.*;
 import arc.scene.ui.*;
 import arc.scene.ui.layout.*;
+import arc.struct.*;
 import arc.util.*;
 import arc.util.serialization.*;
 import mindustry.*;
+import mindustry.annotations.Annotations.*;
 import mindustry.core.*;
 import mindustry.gen.*;
 import mindustry.graphics.*;
@@ -242,6 +241,9 @@ public class JoinDialog extends FloatingDialog{
     }
 
     void setup(){
+        local.clear();
+        remote.clear();
+        global.clear();
         float w = targetWidth();
 
         hosts.clear();
@@ -255,7 +257,6 @@ public class JoinDialog extends FloatingDialog{
         pane.setScrollingDisabled(true, false);
 
         setupRemote();
-        refreshRemote();
 
         cont.clear();
         cont.table(t -> {
@@ -273,7 +274,7 @@ public class JoinDialog extends FloatingDialog{
             ImageButton button = t.addImageButton(Tex.whiteui, Styles.clearFulli, 40, () -> {
                 new PaletteDialog().show(color -> {
                     player.color.set(color);
-                    Core.settings.put("color-0", Color.rgba8888(color));
+                    Core.settings.put("color-0", color.rgba());
                     Core.settings.save();
                 });
             }).size(54f).get();

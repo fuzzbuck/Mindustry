@@ -59,6 +59,8 @@ public class Player extends Unit implements BuilderMinerTrait, ShooterTrait{
     public String passPhrase = "";
     public Tile tapTile = null;
     public float healthMultiplier = 1f;
+    public float damageMultplier = 1f;
+    public boolean canInteract = true;
 
     public float baseRotation;
     public float pointerX, pointerY;
@@ -105,7 +107,7 @@ public class Player extends Unit implements BuilderMinerTrait, ShooterTrait{
 
     @Override
     public float getDamageMultipler(){
-        return status.getDamageMultiplier() * state.rules.playerDamageMultiplier;
+        return status.getDamageMultiplier() * state.rules.playerDamageMultiplier * damageMultplier;
     }
 
     @Override
@@ -918,7 +920,7 @@ public class Player extends Unit implements BuilderMinerTrait, ShooterTrait{
         super.writeSave(buffer, !isLocal);
         TypeIO.writeStringData(buffer, name);
         buffer.writeByte(Pack.byteValue(isAdmin) | (Pack.byteValue(dead) << 1) | (Pack.byteValue(isBoosting) << 2) | (Pack.byteValue(isTyping) << 3)| (Pack.byteValue(isBuilding) << 4));
-        buffer.writeInt(Color.rgba8888(color));
+        buffer.writeInt(color.rgba());
         buffer.writeByte(mech.id);
         buffer.writeInt(mining == null ? noSpawner : mining.pos());
         buffer.writeInt(spawner == null || !spawner.hasUnit(this) ? noSpawner : spawner.getTile().pos());

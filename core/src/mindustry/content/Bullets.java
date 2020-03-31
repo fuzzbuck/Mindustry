@@ -40,10 +40,19 @@ public class Bullets implements ContentList{
     fireball, basicFlame, pyraFlame, driverBolt, healBullet, healBulletBig, frag, eruptorShot,
 
     //bombs
-    bombExplosive, bombIncendiary, bombOil;
+    bombExplosive, bombIncendiary, bombOil,
+
+    //none
+    none;
 
     @Override
     public void load(){
+
+        none = new BasicBulletType(0f, 0, "bullet"){{
+            bulletWidth = 0f;
+            bulletHeight = 0f;
+            lifetime = 0f;
+        }};
 
         artilleryDense = new ArtilleryBulletType(3f, 0, "shell"){{
             hitEffect = Fx.flakExplosion;

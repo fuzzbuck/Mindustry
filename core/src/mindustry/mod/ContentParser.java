@@ -3,7 +3,7 @@ package mindustry.mod;
 import arc.*;
 import arc.assets.*;
 import arc.audio.*;
-import arc.audio.mock.*;
+import arc.mock.*;
 import arc.struct.Array;
 import arc.struct.*;
 import arc.files.*;
@@ -454,6 +454,8 @@ public class ContentParser{
 
         if(t.getMessage() != null && t instanceof JsonParseException){
             builder.append("[accent][[JsonParse][] ").append(":\n").append(t.getMessage());
+        }else if(t instanceof NullPointerException){
+            builder.append(Strings.parseException(t, true));
         }else{
             Array<Throwable> causes = Strings.getCauses(t);
             for(Throwable e : causes){

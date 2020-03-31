@@ -49,6 +49,8 @@ public class NetServer implements ApplicationListener{
         if(state.rules.pvp){
             //find team with minimum amount of players and auto-assign player to that.
             TeamData re = state.teams.getActive().min(data -> {
+                if((state.rules.waveTeam == data.team && state.rules.waves) || !data.team.active()) return Integer.MAX_VALUE;
+
                 int count = 0;
                 for(Player other : players){
                     if(other.getTeam() == data.team && other != player){
@@ -321,8 +323,7 @@ public class NetServer implements ApplicationListener{
                 this.task = Timer.schedule(() -> {
                     if(!checkPass()){
                         Call.sendMessage(Strings.format("[lightgray]Vote failed. Not enough votes to kick[orange] {0}[lightgray].", target.name));
-                        target.setTeam(team);
-                        target.setDead(false);
+                        target.canInteract = true;
                         map[0] = null;
                         task.cancel();
                     }
@@ -333,7 +334,7 @@ public class NetServer implements ApplicationListener{
                 votes += d;
                 voted.addAll(player.uuid, admins.getInfo(player.uuid).lastIP);
                         
-                Call.sendMessage(Strings.format("[orange]{0}[lightgray] has voted to kick[orange] {1}[].[accent] ({2}/{3})\n[lightgray]Type[orange] /vote <y/n>[] to agree.",
+                Call.sendMessage(Strings.format("[orange]{0}[lightgray] has voted on kicking[orange] {1}[].[accent] ({2}/{3})\n[lightgray]Type[orange] /vote <y/n>[] to agree.",
                             player.name, target.name, votes, votesRequired()));
             }
 
@@ -402,9 +403,7 @@ public class NetServer implements ApplicationListener{
                         }
 
                         VoteSession session = new VoteSession(currentlyKicking, found, found.getTeam());
-                        found.setTeam(Team.derelict);
-                        found.setDead(true);
-                        found.spawner = null;
+                        found.canInteract = false;
 
                         found.sendMessage("[accent]You are being vote kicked. You will be able to build once the session is over.");
                         session.vote(player, 1);

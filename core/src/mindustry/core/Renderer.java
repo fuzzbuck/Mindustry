@@ -270,7 +270,7 @@ public class Renderer implements ApplicationListener{
         drawAllTeams(true);
 
         Draw.flush();
-        if(bloom != null && !pixelator.enabled()){
+        if(bloom != null){
             bloom.capture();
         }
 
@@ -278,7 +278,7 @@ public class Renderer implements ApplicationListener{
         effectGroup.draw();
 
         Draw.flush();
-        if(bloom != null && !pixelator.enabled()){
+        if(bloom != null){
             bloom.render();
         }
 
@@ -406,7 +406,7 @@ public class Renderer implements ApplicationListener{
         landTime = duration;
     }
 
-    public void takeMapScreenshot(){
+    public void getMapScreenshot(){
         drawGroundShadows();
 
         int w = world.width() * tilesize, h = world.height() * tilesize;
@@ -446,16 +446,60 @@ public class Renderer implements ApplicationListener{
         }
         buffer.end();
         Pixmap fullPixmap = new Pixmap(w, h, Pixmap.Format.RGBA8888);
-        BufferUtils.copy(lines, 0, fullPixmap.getPixels(), lines.length);
+        //BufferUtils.copy(lines, 0, fullPixmap.getPixels(), lines.length);
+        Fi file = new Fi("screenshot-" + Time.millis() + ".png");
+        PixmapIO.writePNG(file, fullPixmap);
+        fullPixmap.dispose();
+        //ui.showInfoFade(Core.bundle.format("screenshot", file.toString()));
+
+        buffer.dispose();
+
+        Core.settings.put("animatedwater", hadWater);
+        Core.settings.put("animatedshields", hadShields);
+    }
+
+    public void takeMapScreenshot(){
+        drawGroundShadows();
+
+        int w = world.width() * tilesize, h = world.height() * tilesize;
+        int memory = w * h * 4 / 1024 / 1024;
+
+        if(memory >= 65){
+            ui.showInfo("$screenshot.invalid");
+            return;
+        }
+
+        FrameBuffer buffer = new FrameBuffer(w, h);
+
+        float vpW = camera.width, vpH = camera.height, px = camera.position.x, py = camera.position.y;
+        disableUI = true;
+        camera.width = w;
+        camera.height = h;
+        camera.position.x = w / 2f + tilesize / 2f;
+        camera.position.y = h / 2f + tilesize / 2f;
+        Draw.flush();
+        buffer.begin();
+        draw();
+        Draw.flush();
+        buffer.end();
+        disableUI = false;
+        camera.width = vpW;
+        camera.height = vpH;
+        camera.position.set(px, py);
+        buffer.begin();
+        byte[] lines = ScreenUtils.getFrameBufferPixels(0, 0, w, h, true);
+        for(int i = 0; i < lines.length; i += 4){
+            lines[i + 3] = (byte)255;
+        }
+        buffer.end();
+        Pixmap fullPixmap = new Pixmap(w, h, Pixmap.Format.RGBA8888);
+        Buffers.copy(lines, 0, fullPixmap.getPixels(), lines.length);
         Fi file = screenshotDirectory.child("screenshot-" + Time.millis() + ".png");
         PixmapIO.writePNG(file, fullPixmap);
         fullPixmap.dispose();
         ui.showInfoFade(Core.bundle.format("screenshot", file.toString()));
 
         buffer.dispose();
-
-        Core.settings.put("animatedwater", hadWater);
-        Core.settings.put("animatedshields", hadShields);
     }
 
 }
