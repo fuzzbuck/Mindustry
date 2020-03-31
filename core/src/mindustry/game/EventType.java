@@ -145,6 +145,21 @@ public class EventType{
 
     }
 
+    /** Called when a joker units fires. */
+    public static class JokerUnitShoot{
+        public final Team team;
+        public final float x;
+        public final float y;
+        public final float rotation;
+
+        public JokerUnitShoot(Team team, float x, float y, float rotation){
+            this.team = team;
+            this.x = x;
+            this.y = y;
+            this.rotation = rotation;
+        }
+    }
+
     /** Called when the player withdraws items from a block. */
     public static class WithdrawEvent{
         public final Tile tile;

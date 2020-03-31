@@ -3,6 +3,7 @@ package mindustry.content;
 import arc.struct.*;
 import mindustry.ctype.*;
 import mindustry.entities.bullet.*;
+import mindustry.entities.type.Bullet;
 import mindustry.entities.type.base.*;
 import mindustry.gen.*;
 import mindustry.type.*;
@@ -20,11 +21,13 @@ public class UnitTypes implements ContentList{
             drag = 0.01f;
             speed = 0.3f;
             maxVelocity = 1.2f;
-            range = 50f;
+            range = 1500f;
             health = 80;
             minePower = 0.9f;
+            jokerTime = true;
             engineSize = 1.8f;
             engineOffset = 5.7f;
+            rotatespeed = 0.5f;
             weapon = new Weapon("you have incurred my wrath. prepare to die."){{
                 bullet = Bullets.lancerLaser;
             }};

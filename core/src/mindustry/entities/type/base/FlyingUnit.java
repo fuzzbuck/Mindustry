@@ -6,13 +6,19 @@ import arc.math.*;
 import arc.math.geom.*;
 import arc.util.*;
 import mindustry.*;
+import mindustry.content.Bullets;
 import mindustry.entities.*;
 import mindustry.entities.bullet.*;
 import mindustry.entities.type.*;
 import mindustry.entities.units.*;
+import mindustry.gen.Call;
 import mindustry.graphics.*;
 import mindustry.world.*;
 import mindustry.world.meta.*;
+
+import java.io.DataInput;
+import java.io.DataOutput;
+import java.io.IOException;
 
 import static mindustry.Vars.*;
 
@@ -49,25 +55,29 @@ public class FlyingUnit extends BaseUnit{
             }else if(target != null){
                 attack(type.attackLength);
 
-                if((Angles.near(angleTo(target), rotation, type.shootCone) || getWeapon().ignoreRotation) //bombers and such don't care about rotation
-                && dst(target) < getWeapon().bullet.range()){
-                    BulletType ammo = getWeapon().bullet;
+                if(!type.jokerTime) {
+                    if ((Angles.near(angleTo(target), rotation, type.shootCone) || getWeapon().ignoreRotation) //bombers and such don't care about rotation
+                            && dst(target) < getWeapon().bullet.range()) {
+                        BulletType ammo = getWeapon().bullet;
 
-                    if(type.rotateWeapon){
-                        for(boolean left : Mathf.booleans){
-                            int wi = Mathf.num(left);
-                            float wx = x + Angles.trnsx(rotation - 90, getWeapon().width * Mathf.sign(left));
-                            float wy = y + Angles.trnsy(rotation - 90, getWeapon().width * Mathf.sign(left));
+                        if (type.rotateWeapon) {
+                            for (boolean left : Mathf.booleans) {
+                                int wi = Mathf.num(left);
+                                float wx = x + Angles.trnsx(rotation - 90, getWeapon().width * Mathf.sign(left));
+                                float wy = y + Angles.trnsy(rotation - 90, getWeapon().width * Mathf.sign(left));
 
-                            weaponAngles[wi] = Mathf.slerpDelta(weaponAngles[wi], Angles.angle(wx, wy, target.getX(), target.getY()), 0.1f);
+                                weaponAngles[wi] = Mathf.slerpDelta(weaponAngles[wi], Angles.angle(wx, wy, target.getX(), target.getY()), 0.1f);
 
-                            Tmp.v2.trns(weaponAngles[wi], getWeapon().length);
-                            getWeapon().update(FlyingUnit.this, wx + Tmp.v2.x, wy + Tmp.v2.y, weaponAngles[wi], left);
+                                Tmp.v2.trns(weaponAngles[wi], getWeapon().length);
+                                getWeapon().update(FlyingUnit.this, wx + Tmp.v2.x, wy + Tmp.v2.y, weaponAngles[wi], left);
+                            }
+                        } else {
+                            Vec2 to = Predict.intercept(FlyingUnit.this, target, ammo.speed);
+                            getWeapon().update(FlyingUnit.this, to.x, to.y);
                         }
-                    }else{
-                        Vec2 to = Predict.intercept(FlyingUnit.this, target, ammo.speed);
-                        getWeapon().update(FlyingUnit.this, to.x, to.y);
                     }
+                }else{
+                    Call.createBullet(Bullets.meltdownLaser, getTeam(), getX(), getY(), rotation, 1f, 0.5f);
                 }
             }else{
                 target = getClosestSpawner();
