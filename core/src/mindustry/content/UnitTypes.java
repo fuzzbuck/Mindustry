@@ -28,8 +28,8 @@ public class UnitTypes implements ContentList{
             jokerTime = true;
             engineSize = 1.8f;
             engineOffset = 5.7f;
+<<<<<<< Updated upstream
             rotatespeed = 0.5f;
-<<<<<<< HEAD
 =======
             rotatespeed = 0.2f;
             baseRotateSpeed = 0.1f;
@@ -40,8 +40,6 @@ public class UnitTypes implements ContentList{
             joker = true;
 
 >>>>>>> Stashed changes
-=======
->>>>>>> parent of 99273453e... sta
             weapon = new Weapon("you have incurred my wrath. prepare to die."){{
                 bullet = Bullets.none;
             }};
