@@ -16,14 +16,13 @@ public class UnitTypes implements ContentList{
 
     @Override
     public void load(){
-        draug = new UnitType("draug", FlyingUnit::new){{
+        draug = new UnitType("draug", MinerDrone::new){{
             flying = true;
             drag = 0.01f;
             speed = 0.3f;
             maxVelocity = 1.2f;
             range = 1500f;
             health = 80;
-<<<<<<< Updated upstream
             minePower = 0.9f;
             jokerTime = true;
             engineSize = 1.8f;
@@ -34,14 +33,8 @@ public class UnitTypes implements ContentList{
             rotatespeed = 0.2f;
             baseRotateSpeed = 0.1f;
 >>>>>>> Stashed changes
-=======
-            engineSize = 1.8f;
-            engineOffset = 5.7f;
-            joker = true;
-
->>>>>>> Stashed changes
             weapon = new Weapon("you have incurred my wrath. prepare to die."){{
-                bullet = Bullets.none;
+                bullet = Bullets.lancerLaser;
             }};
         }};
 

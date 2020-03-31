@@ -55,11 +55,7 @@ public class FlyingUnit extends BaseUnit{
             }else if(target != null){
                 attack(type.attackLength);
 
-<<<<<<< Updated upstream
                 if(!type.jokerTime) {
-=======
-                if(!type.joker) {
->>>>>>> Stashed changes
                     if ((Angles.near(angleTo(target), rotation, type.shootCone) || getWeapon().ignoreRotation) //bombers and such don't care about rotation
                             && dst(target) < getWeapon().bullet.range()) {
                         BulletType ammo = getWeapon().bullet;
