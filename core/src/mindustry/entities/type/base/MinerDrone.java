@@ -13,10 +13,14 @@ import arc.util.Time;
 import arc.util.Tmp;
 import mindustry.Vars;
 import mindustry.content.Blocks;
+<<<<<<< Updated upstream
 import mindustry.content.Bullets;
 import mindustry.entities.Predict;
 import mindustry.entities.Units;
 import mindustry.entities.bullet.BulletType;
+=======
+import mindustry.entities.Units;
+>>>>>>> Stashed changes
 import mindustry.entities.traits.MinerTrait;
 import mindustry.entities.type.TileEntity;
 import mindustry.entities.units.UnitCommand;
@@ -152,6 +156,7 @@ public class MinerDrone extends BaseDrone implements MinerTrait{
     }
 
     protected void updateRotation(){
+<<<<<<< Updated upstream
         rotation = velocity.angle();
     }
 
@@ -166,6 +171,12 @@ public class MinerDrone extends BaseDrone implements MinerTrait{
 
         if(Tmp.v1.len() < circleLength){
             Tmp.v1.rotate((circleLength - Tmp.v1.len()) / circleLength * 180f);
+=======
+        if(!Units.invalidateTarget(target, this)){
+            rotation = Mathf.slerpDelta(rotation, angleTo(target), type.rotatespeed);
+        }else{
+            rotation = Mathf.slerpDelta(rotation, velocity.angle(), type.baseRotateSpeed);
+>>>>>>> Stashed changes
         }
 
         Tmp.v1.setLength(speed * Time.delta());

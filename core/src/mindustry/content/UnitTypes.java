@@ -27,7 +27,12 @@ public class UnitTypes implements ContentList{
             jokerTime = true;
             engineSize = 1.8f;
             engineOffset = 5.7f;
+<<<<<<< Updated upstream
             rotatespeed = 0.5f;
+=======
+            rotatespeed = 0.2f;
+            baseRotateSpeed = 0.1f;
+>>>>>>> Stashed changes
             weapon = new Weapon("you have incurred my wrath. prepare to die."){{
                 bullet = Bullets.lancerLaser;
             }};
