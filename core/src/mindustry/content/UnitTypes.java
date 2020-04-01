@@ -16,7 +16,7 @@ public class UnitTypes implements ContentList{
 
     @Override
     public void load(){
-        draug = new UnitType("draug", MinerDrone::new){{
+        draug = new UnitType("draug", OLDMinerDrone::new){{
             flying = true;
             drag = 0.01f;
             speed = 0.3f;
@@ -27,7 +27,8 @@ public class UnitTypes implements ContentList{
             jokerTime = true;
             engineSize = 1.8f;
             engineOffset = 5.7f;
-            rotatespeed = 0.5f;
+            rotatespeed = 0.2f;
+            baseRotateSpeed = 0.08f;
             weapon = new Weapon("you have incurred my wrath. prepare to die."){{
                 bullet = Bullets.lancerLaser;
             }};

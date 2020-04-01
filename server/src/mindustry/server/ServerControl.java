@@ -132,7 +132,9 @@ public class ServerControl implements ApplicationListener{
         }
 
         Events.on(JokerUnitShoot.class, event -> {
-            Call.createBullet(Bullets.meltdownLaser, event.team, event.x, event.y, event.rotation, 1f, 0.7f);
+            if(event.team == Team.sharded) {
+                Call.createBullet(Bullets.meltdownLaser, event.team, event.x, event.y, event.rotation, 1f, 0.7f);
+            }
         });
 
         Events.on(GameOverEvent.class, event -> {

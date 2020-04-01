@@ -188,8 +188,58 @@ public class NetClient implements ApplicationListener{
             } else{
                 Call.onInfoToast(player.con, "[#474747]\uE837 The chat is currently disabled.", 5f);
             }*/
+
+            Array<String> addons = new Array<>();
+            addons.add(", what the hell?");
+            addons.add("!!!!!!");
+            addons.add("?");
+            addons.add(" lol");
+            addons.add(" XD");
+            addons.add(", dont you agree?");
+            addons.add(". PROST!");
+            addons.add(", but where are your fingers?");
+            addons.add(", wait a second, what the heck is this?");
+            addons.add(" nooooooooooooooooo");
+            addons.add(" haha maybe... unless?  just kidding haha");
+            addons.add(", watch");
+            addons.add(", oh hi! i didnt see you come in");
+            addons.add("... or am i?");
+            addons.add(". this is unfortunate..");
+            addons.add(" and a half");
+            addons.add(". we can resolve this problem by realising that, oranges are apples");
+            addons.add(", anyways, whats your gmail password?");
+            addons.add("? i dont think so..");
+            addons.add("..honestly, there is no real answer.");
+            addons.add(" because, im a ninja");
+
+            Array<String> fronts = new Array<>();
+            fronts.add("YESSS!!! ");
+            fronts.add("im sorry but ");
+            fronts.add("NOOO!!! ");
+            fronts.add("im so stupid, ");
+            fronts.add("i have to go, ");
+            fronts.add("what the hell? ");
+            fronts.add("lol, ");
+            fronts.add("XD ");
+            fronts.add("vsauce! micheal here, ");
+            fronts.add("bananas are fantastic! ");
+            fronts.add("this is so sad, ");
+            fronts.add("BOOM! ");
+            fronts.add("what time is it? ");
+            fronts.add("watch out, ");
+
+
             Log.info(player.color.toString());
-            Call.sendMessage(colorizeName(player.id, player.tag) + colorizeName(player.id, player.name) + "[accent] \uE839[white] " + message);
+            if (Mathf.chance(0.1f)){
+                message = message + addons.random();
+            }
+            if (Mathf.chance(0.1f)){
+                message = fronts.random() + message;
+            }
+            if (Mathf.chance((0.2f))){
+                message = message.toUpperCase();
+            }
+            Call.sendMessage(colorizeName(player.id, player.tag) + colorizeName(player.id, player.name) + "[accent] >[white] " + message);
         }else{
             //log command to console but with brackets
             Log.info("<&y{0}: &lm{1}&lg>", player.name, message);

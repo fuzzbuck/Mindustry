@@ -151,8 +151,13 @@ public class MinerDrone extends BaseDrone implements MinerTrait{
         return attack;
     }
 
+    @Override
     protected void updateRotation(){
-        rotation = velocity.angle();
+        if(!Units.invalidateTarget(target, this)){
+            rotation = Mathf.slerpDelta(rotation, angleTo(target), type.rotatespeed);
+        }else{
+            rotation = Mathf.slerpDelta(rotation, velocity.angle(), type.baseRotateSpeed);
+        }
     }
 
     protected void circle(float circleLength){
