@@ -172,6 +172,48 @@ public class ServerControl implements ApplicationListener{
             }
         });
 
+        Timer.schedule(() -> {
+            Call.onInfoPopup("\uE84F [accent]Unit health multiplier:[" + getTrafficlightColor(Mathf.clamp(1f - (state.multiplier / 10f), 0f, 1f)) + "] " + (String.valueOf(state.multiplier).length() > 3 ? String.valueOf(state.multiplier).substring(0, 4) : state.multiplier) + "x", 10f, 20, 50, 20, 450, 0);
+            Call.onInfoPopup("\uE816 [accent]Toggle HUD:[] /hud", 10f, 20, 50, 20, 480, 0);
+        }, 0, 10);
+
+        Events.on(WaveEvent.class, e -> {
+            int wave = state.wave;
+            state.multiplier = Mathf.clamp(((wave*wave/3000f)+0.5), state.multiplier, 100000f);
+        });
+
+
+        Events.on(UnitKilledEvent.class, e -> {
+            BaseUnit unit = e.unit;
+            if(unit.getTeam() != state.rules.waveTeam) return;
+
+            ItemStack[] is = unitDrops.get(unit.getType().name);
+            TileEntity core = unit.getClosestEnemyCore();
+
+            if(is == null || core == null) return;
+
+            StringBuilder message = new StringBuilder();
+            for(ItemStack stack : is){
+                Item item = stack.item;
+                int amount = stack.amount;
+
+                if(item != null && itemIcons.containsKey(item)) {
+                    int calc = Mathf.random(amount - amount / 2, amount + amount / 2);
+                    message.append("[accent]+").append(calc).append("[] ").append(itemIcons.get(item)).append("  ");
+                    amount = core.tile.block().acceptStack(item, calc, core.tile, null);
+                    if (amount > 0) {
+                        Call.transferItemTo(item, amount, unit.x + Mathf.range(2f), unit.y + Mathf.range(2f), core.tile);
+                    }
+                }
+            }
+            String msg = message.toString();
+            for(Player p : playerGroup.all()) {
+                if(p.showHud) {
+                    Call.onLabel(p.con, msg, Strings.stripColors(msg.replaceAll(" ", "")).length() / 8f, unit.x + Mathf.range(-2f, 2f), unit.y + Mathf.range(-2f, 2f));
+                }
+            }
+        });
+
         if(!mods.list().isEmpty()){
             info("&lc{0} mods loaded.", mods.list().size);
         }
