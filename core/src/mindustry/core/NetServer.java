@@ -670,11 +670,7 @@ public class NetServer implements ApplicationListener{
     }*/
 
     public boolean isWaitingForPlayers(){
-        if(state.rules.playerDamageMultiplier <= 0f){
-            return true;
-        } else{
-            return false;
-        }
+        return state.rules.playerDamageMultiplier <= 0f;
     }
 
     @Override

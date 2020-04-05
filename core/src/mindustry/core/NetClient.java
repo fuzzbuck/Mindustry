@@ -190,7 +190,11 @@ public class NetClient implements ApplicationListener{
                 Call.onInfoToast(player.con, "[#474747]\uE837 The chat is currently disabled.", 5f);
             }*/
             //Call.sendMessage(colorizeName(player.id, player.tag) + colorizeName(player.id, player.name) + "[accent] >[white] " + message);
-            Call.sendMessage(message, player.tag + colorizeName(player.id, player.name), player);
+            if(state.rules.playerDamageMultiplier > 0f || player.isAdmin) {
+                Call.sendMessage(message, player.tag + colorizeName(player.id, player.name), player);
+            }else{
+                Call.onInfoToast(player.con, "[#474747]\uE837 The chat is temporarily disabled, please wait for the game to begin.", 5f);
+            }
         }else{
             //log command to console but with brackets
             Log.info("<&y{0}: &lm{1}&lg>", player.name, message);
