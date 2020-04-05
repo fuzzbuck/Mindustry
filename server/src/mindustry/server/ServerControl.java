@@ -39,7 +39,6 @@ import java.time.*;
 import java.time.format.*;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.IntStream;
 
 import static arc.util.Log.*;
@@ -75,7 +74,7 @@ public class ServerControl implements ApplicationListener{
     public Tile td;
     public Tile ud;
     public Tile ud2;
-    public Tile sandbox;
+    public Tile thewalls;
 
     String getTrafficlightColor(double value){
         return "#"+Integer.toHexString(java.awt.Color.HSBtoRGB((float)value/3f, 1f, 1f)).substring(2);
@@ -210,13 +209,13 @@ public class ServerControl implements ApplicationListener{
         Events.on(PlayerJoin.class, e -> {
             int offset = 4;
 
-            Call.onLabel(e.player.con, "\uE84E[lime] tower defense[] \uE84F", 9999f, td.worldx() + offset, td.worldy());
+            Call.onLabel(e.player.con, "\uE84E[lime] Tower Defense[] \uE84F", 9999f, td.worldx() + offset, td.worldy());
             Call.onLabel(e.player.con, "\uE80F[lightgray] under construction[] \uE84D", 9999f, ud.worldx() + offset, ud.worldy());
             Call.onLabel(e.player.con, "\uE80F[lightgray] under construction[] \uE84D", 9999f, ud2.worldx() + offset, ud2.worldy());
-            Call.onLabel(e.player.con, "\uE841[#fdff8a] sandbox[] \uF12D", 9999f, sandbox.worldx() + offset, sandbox.worldy());
+            Call.onLabel(e.player.con, "\uE83F[#a268e8] The Walls[] \uE855", 9999f, thewalls.worldx() + offset, thewalls.worldy());
 
             Call.onLabel(e.player.con, "[accent]" + players.get(4000) + "[] players", 10f, td.worldx() + offset, td.worldy() - tilesize * 5 - offset);
-            Call.onLabel(e.player.con, "[accent]" + players.get(5000) + "[] players", 10f, sandbox.worldx() + offset, sandbox.worldy() - tilesize * 5 - offset);
+            Call.onLabel(e.player.con, "[accent]" + players.get(5000) + "[] players", 10f, thewalls.worldx() + offset, thewalls.worldy() - tilesize * 5 - offset);
         });
 
         Events.on(TapEvent.class, event -> {
@@ -253,7 +252,7 @@ public class ServerControl implements ApplicationListener{
                     // update players online gui
                     int offset = 4;
                     Call.onLabel("[accent]" + players.get(4000) + "[] players", 10f, td.worldx() + offset, td.worldy() - tilesize * 5 - offset);
-                    Call.onLabel("[accent]" + players.get(5000) + "[] players", 10f, sandbox.worldx() + offset, sandbox.worldy() - tilesize * 5 - offset);
+                    Call.onLabel("[accent]" + players.get(5000) + "[] players", 10f, thewalls.worldx() + offset, thewalls.worldy() - tilesize * 5 - offset);
 
                     Tile sTile = world.tile(121, 91); // spawn tile
                     Tile sTile2 = world.tile(89, 24); // spawn tile 2
@@ -391,7 +390,7 @@ public class ServerControl implements ApplicationListener{
                 td = world.tile(86, 89);
                 ud = world.tile(62, 89);
                 ud2 = world.tile(85, 65);
-                sandbox = world.tile(62, 65);
+                thewalls = world.tile(62, 65);
 
                 state.running = true;
                 netServer.openServer();
