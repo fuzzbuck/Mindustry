@@ -9,6 +9,7 @@ import arc.util.*;
 import arc.util.CommandHandler.*;
 import arc.util.io.*;
 import arc.util.serialization.*;
+import mindustry.Vars;
 import mindustry.annotations.Annotations.*;
 import mindustry.content.*;
 import mindustry.core.GameState.*;
@@ -29,6 +30,9 @@ import mindustry.world.blocks.storage.CoreBlock.*;
 import java.io.*;
 import java.net.*;
 import java.nio.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 import java.util.zip.*;
 
 import static arc.util.Log.*;
@@ -351,14 +355,11 @@ public class NetServer implements ApplicationListener{
         //current kick sessions
         VoteSession[] currentlyKicking = {null};
 
-        clientCommands.<Player>register("votekick", "[player...]", "Vote to kick a player, with a cooldown.", (args, player) -> {
+        HashMap<String, List<String>> votekicks = new HashMap<>(); // uuid of player being votekicked, uuids of players votekicking that player
+
+        clientCommands.<Player>register("votekick", "[player...]", "Vote to kick a player.", (args, player) -> {
             if(!Config.enableVotekick.bool()){
                 player.sendMessage("[scarlet]Vote-kick is disabled on this server.");
-                return;
-            }
-
-            if(playerGroup.size() < 3){
-                player.sendMessage("[scarlet]At least 3 players are needed to start a votekick.");
                 return;
             }
 
@@ -393,15 +394,24 @@ public class NetServer implements ApplicationListener{
                     }else if(found.getTeam() != player.getTeam()){
                         player.sendMessage("[scarlet]Only players on your team can be kicked.");
                     }else{
-                        if(!vtime.get()){
-                            player.sendMessage("[scarlet]You must wait " + voteCooldown/60 + " minutes between votekicks.");
-                            return;
+                        if(!votekicks.containsKey(found.uuid))
+                            votekicks.put(found.uuid, new ArrayList<>());
+
+                        if(!votekicks.get(found.uuid).contains(player.uuid)){
+                            List<String> list = votekicks.get(found.uuid);
+                            list.add(player.uuid);
+                            votekicks.put(found.uuid, list);
+                            Call.sendMessage("[accent]" + player.name + "[] has voted to kick [scarlet]" + found.name + "[].\nClick the [accent]hammer button[] near [accent]" + found.name + "[] in the player tab to agree.\n");
+                        }else{
+                            player.sendMessage("[scarlet]You already voted to kick this player!");
                         }
 
-                        VoteSession session = new VoteSession(currentlyKicking, found);
-                        session.vote(player, 1);
-                        vtime.reset();                  
-                        currentlyKicking[0] = session;
+                        if(votekicks.get(found.uuid).size() > 3){
+                            Call.sendMessage("[accent]" + found.name + "[] was kicked.");
+                            found.getInfo().lastKicked = Time.millis() + (kickDuration*1000) * found.getInfo().timesKicked;
+                            playerGroup.all().each(p -> p.uuid != null && p.uuid.equals(found.uuid), p -> p.con.kick(KickReason.vote));
+                            votekicks.put(found.uuid, new ArrayList<>());
+                        }
                     }
                 }else{
                     player.sendMessage("[scarlet]No player[orange]'" + args[0] + "'[scarlet] found.");
@@ -409,6 +419,7 @@ public class NetServer implements ApplicationListener{
             }
         });
 
+        /*
         clientCommands.<Player>register("vote", "<y/n>", "Vote to kick the current player.", (arg, player) -> {
             if(currentlyKicking[0] == null){
                 player.sendMessage("[scarlet]Nobody is being voted on.");
@@ -438,6 +449,7 @@ public class NetServer implements ApplicationListener{
                 currentlyKicking[0].vote(player, sign);
             }
         });
+         */
 
 
         clientCommands.<Player>register("sync", "Re-synchronize world state.", (args, player) -> {
