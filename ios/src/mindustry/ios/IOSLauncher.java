@@ -2,16 +2,17 @@ package mindustry.ios;
 
 import arc.*;
 import arc.Input.*;
+import arc.backend.robovm.*;
 import arc.files.*;
 import arc.func.*;
 import arc.scene.ui.layout.*;
 import arc.util.*;
 import arc.util.io.*;
-import com.badlogic.gdx.backends.iosrobovm.*;
 import mindustry.*;
 import mindustry.game.EventType.*;
 import mindustry.game.Saves.*;
 import mindustry.io.*;
+import mindustry.net.*;
 import mindustry.ui.*;
 import org.robovm.apple.coregraphics.*;
 import org.robovm.apple.foundation.*;
@@ -154,7 +155,7 @@ public class IOSLauncher extends IOSApplication.Delegate{
                         pop.setSourceRect(targetRect);
                         pop.setPermittedArrowDirections(UIPopoverArrowDirection.None);
                     }
-                    rootVc.presentViewController(p, true, () -> Log.info("Success! Presented {0}", to));
+                    rootVc.presentViewController(p, true, () -> Log.info("Success! Presented @", to));
                 }catch(Throwable t){
                     ui.showException(t);
                 }
@@ -172,7 +173,7 @@ public class IOSLauncher extends IOSApplication.Delegate{
                 UINavigationController.attemptRotationToDeviceOrientation();
             }
         }, new IOSApplicationConfiguration(){{
-           //errorHandler = ModCrashHandler::handle;
+
         }});
     }
 
@@ -205,7 +206,7 @@ public class IOSLauncher extends IOSApplication.Delegate{
                         UIInterfaceOrientation o = UIApplication.getSharedApplication().getStatusBarOrientation();
                         return forced && (o == UIInterfaceOrientation.Portrait || o == UIInterfaceOrientation.PortraitUpsideDown);
                     });
-                    t.add("Please rotate the device to landscape orientation to use the editor.").wrap().grow();
+                    t.add("Rotate the device to landscape orientation to use the editor.").wrap().grow();
                 });
             }));
         });
@@ -236,10 +237,10 @@ public class IOSLauncher extends IOSApplication.Delegate{
                             ui.load.runLoadSave(slot);
                         }
                     }catch(IOException e){
-                        ui.showException("$save.import.fail", e);
+                        ui.showException("@save.import.fail", e);
                     }
                 }else{
-                    ui.showErrorMessage("$save.import.invalid");
+                    ui.showErrorMessage("@save.import.invalid");
                 }
 
             }
@@ -248,7 +249,14 @@ public class IOSLauncher extends IOSApplication.Delegate{
 
     public static void main(String[] argv){
         NSAutoreleasePool pool = new NSAutoreleasePool();
-        UIApplication.main(argv, null, IOSLauncher.class);
+        try{
+            UIApplication.main(argv, null, IOSLauncher.class);
+        }catch(Throwable t){
+            //attempt to log the exception
+            CrashSender.log(t);
+            //rethrow the exception so it actually crashes
+            throw t;
+        }
         pool.close();
     }
 }

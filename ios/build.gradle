@@ -1,8 +1,5 @@
 sourceSets.main.java.srcDirs = ["src/"]
 
-sourceCompatibility = '1.8'
-[compileJava, compileTestJava]*.options*.encoding = 'UTF-8'
-
 ext{
     mainClassName = "mindustry.ios.IOSLauncher"
 }
@@ -29,7 +26,7 @@ task copyAssets(){
         }
     
         delete{
-            delete fileTree('assets') {
+            delete fileTree('assets'){
                 include '**/*.ogg'
             }
         }
@@ -37,7 +34,7 @@ task copyAssets(){
 }
 
 task deploy{
-    dependsOn copyAssets
+    if(System.getProperty("os.name").contains("Mac")) dependsOn copyAssets
     dependsOn createIPA
 }
 
@@ -48,4 +45,11 @@ createIPA.dependsOn build
 
 robovm{
     archs = "thumbv7:arm64"
+
+    if(project.hasProperty("signIdentity")) println "iOS Sign Identity: " + project.property("signIdentity")
+    if(project.hasProperty("provisioningProfile")) println "iOS Provisioning Profile: " + project.property("provisioningProfile")
+
+    iosSignIdentity = project.properties["signIdentity"]
+    iosProvisioningProfile = project.properties["provisioningProfile"]
+    iosSkipSigning = false
 }
