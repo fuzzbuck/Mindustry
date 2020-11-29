@@ -25,5 +25,9 @@
   },
   {
     "address": "cheginde.ddns.net"
+  },
+  {
+    "name": "io",
+    "address": ["mindustry.io:7000"]
   }
 ]
