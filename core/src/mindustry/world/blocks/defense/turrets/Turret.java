@@ -27,7 +27,7 @@ import mindustry.world.meta.*;
 
 import static mindustry.Vars.*;
 
-public abstract class Turret extends ReloadTurret{
+public class Turret extends ReloadTurret{
     //after being logic-controlled and this amount of time passes, the turret will resume normal AI
     public final static float logicControlCooldown = 60 * 2;
 
@@ -205,7 +205,7 @@ public abstract class Turret extends ReloadTurret{
         }
 
         public boolean isActive(){
-            return target != null || (logicControlled() && logicShooting) || (isControlled() && unit.isShooting());
+            return target != null || wasShooting;
         }
 
         public void targetPosition(Posc pos){
@@ -345,7 +345,11 @@ public abstract class Turret extends ReloadTurret{
 
         /** @return  whether the turret has ammo. */
         public boolean hasAmmo(){
-            return ammo.size > 0 && ammo.peek().amount >= 1;
+            //skip first entry if it has less than the required amount of ammo
+            if(ammo.size >= 2 && ammo.peek().amount < ammoPerShot){
+                ammo.pop();
+            }
+            return ammo.size > 0 && ammo.peek().amount >= ammoPerShot;
         }
 
         protected void updateShooting(){

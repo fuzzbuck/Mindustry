@@ -235,17 +235,15 @@ public class UnitTypes implements ContentList{
                 reload = 12f;
                 shootCone = 180f;
                 ejectEffect = Fx.none;
-                shootSound = Sounds.explosion;
-                bullet = new BombBulletType(0f, 0f, "clear"){{
-                    hitEffect = Fx.pulverize;
-                    lifetime = 10f;
-                    speed = 1f;
-                    splashDamageRadius = 70f;
-                    instantDisappear = true;
-                    splashDamage = 80f;
-                    killShooter = true;
-                    hittable = false;
-                    collidesAir = true;
+                recoil = 2f;
+                shootSound = Sounds.lasershoot;
+
+                bullet = new LaserBoltBulletType(5.2f, 14){{
+                    lifetime = 37f;
+                    healPercent = 5f;
+                    collidesTeam = true;
+                    backColor = Pal.heal;
+                    frontColor = Color.white;
                 }};
             }});
         }};
@@ -261,7 +259,7 @@ public class UnitTypes implements ContentList{
 
             mineTier = 2;
             mineSpeed = 5f;
-            commandLimit = 8;
+            commandLimit = 9;
 
             abilities.add(new ShieldRegenFieldAbility(20f, 40f, 60f * 5, 60f));
             ammoType = AmmoTypes.power;
@@ -496,7 +494,7 @@ public class UnitTypes implements ContentList{
             drag = 0.4f;
             hitSize = 12f;
             rotateSpeed = 3f;
-            health = 800;
+            health = 900;
             immunities = ObjectSet.with(StatusEffects.burning, StatusEffects.melting);
             legCount = 6;
             legLength = 13f;
@@ -518,17 +516,43 @@ public class UnitTypes implements ContentList{
                 reload = 12f;
                 shootCone = 180f;
                 ejectEffect = Fx.none;
-                shootSound = Sounds.explosion;
-                bullet = new BombBulletType(0f, 0f, "clear"){{
-                    hitEffect = Fx.pulverize;
-                    lifetime = 10f;
-                    speed = 1f;
-                    splashDamageRadius = 70f;
-                    instantDisappear = true;
-                    splashDamage = 80f;
-                    killShooter = true;
-                    hittable = false;
-                    collidesAir = true;
+                recoil = 2f;
+                rotate = true;
+                shootSound = Sounds.sap;
+
+                x = 8.5f;
+                y = -1.5f;
+
+                bullet = new SapBulletType(){{
+                    sapStrength = 0.4f;
+                    length = 75f;
+                    damage = 20;
+                    shootEffect = Fx.shootSmall;
+                    hitColor = color = Color.valueOf("bf92f9");
+                    despawnEffect = Fx.none;
+                    width = 0.54f;
+                    lifetime = 35f;
+                    knockback = -1.24f;
+                }};
+            }});
+
+            weapons.add(new Weapon("mount-purple-weapon"){{
+                reload = 20f;
+                rotate = true;
+                x = 4f;
+                y = 3f;
+                shootSound = Sounds.sap;
+
+                bullet = new SapBulletType(){{
+                    sapStrength = 0.8f;
+                    length = 40f;
+                    damage = 16;
+                    shootEffect = Fx.shootSmall;
+                    hitColor = color = Color.valueOf("bf92f9");
+                    despawnEffect = Fx.none;
+                    width = 0.4f;
+                    lifetime = 25f;
+                    knockback = -0.65f;
                 }};
             }});
         }};
@@ -706,7 +730,7 @@ public class UnitTypes implements ContentList{
 
         zenith = new UnitType("zenith"){{
             health = 700;
-            speed = 1.7f;
+            speed = 1.8f;
             accel = 0.04f;
             drag = 0.016f;
             flying = true;
@@ -718,22 +742,33 @@ public class UnitTypes implements ContentList{
             engineOffset = 12f;
             engineSize = 3f;
 
-            defaultController = SuicideAI::new;
-            weapons.add(new Weapon(){{
-                reload = 12f;
-                shootCone = 180f;
-                ejectEffect = Fx.none;
-                shootSound = Sounds.explosion;
-                bullet = new BombBulletType(0f, 0f, "clear"){{
-                    hitEffect = Fx.pulverize;
-                    lifetime = 10f;
-                    speed = 1f;
-                    splashDamageRadius = 70f;
-                    instantDisappear = true;
-                    splashDamage = 80f;
-                    killShooter = true;
-                    hittable = false;
-                    collidesAir = true;
+            weapons.add(new Weapon("zenith-missiles"){{
+                reload = 40f;
+                x = 7f;
+                rotate = true;
+                shake = 1f;
+                shots = 2;
+                inaccuracy = 5f;
+                velocityRnd = 0.2f;
+                shootSound = Sounds.missile;
+
+                bullet = new MissileBulletType(3f, 14){{
+                    width = 8f;
+                    height = 8f;
+                    shrinkY = 0f;
+                    drag = -0.003f;
+                    homingRange = 60f;
+                    keepVelocity = false;
+                    splashDamageRadius = 25f;
+                    splashDamage = 16f;
+                    lifetime = 60f;
+                    trailColor = Pal.unitBack;
+                    backColor = Pal.unitBack;
+                    frontColor = Pal.unitFront;
+                    hitEffect = Fx.blastExplosion;
+                    despawnEffect = Fx.blastExplosion;
+                    weaveScale = 6f;
+                    weaveMag = 1f;
                 }};
             }});
         }};
@@ -889,8 +924,8 @@ public class UnitTypes implements ContentList{
 
             mineTier = 3;
             mineSpeed = 4f;
-            health = 500;
-            armor = 5f;
+            health = 460;
+            armor = 3f;
             speed = 2.5f;
             accel = 0.06f;
             drag = 0.017f;
@@ -902,25 +937,37 @@ public class UnitTypes implements ContentList{
             engineSize = 3f;
             payloadCapacity = (2 * 2) * tilePayload;
             buildSpeed = 2.6f;
+            isCounted = false;
 
             ammoType = AmmoTypes.power;
 
-            defaultController = SuicideAI::new;
-            weapons.add(new Weapon(){{
-                reload = 12f;
-                shootCone = 180f;
-                ejectEffect = Fx.none;
-                shootSound = Sounds.explosion;
-                bullet = new BombBulletType(0f, 0f, "clear"){{
-                    hitEffect = Fx.pulverize;
-                    lifetime = 10f;
-                    speed = 1f;
-                    splashDamageRadius = 70f;
-                    instantDisappear = true;
-                    splashDamage = 80f;
-                    killShooter = true;
-                    hittable = false;
-                    collidesAir = true;
+            weapons.add(
+            new Weapon("heal-weapon-mount"){{
+                shootSound = Sounds.lasershoot;
+                reload = 25f;
+                x = 8f;
+                y = -6f;
+                rotate = true;
+                bullet = new LaserBoltBulletType(5.2f, 10){{
+                    lifetime = 35f;
+                    healPercent = 5.5f;
+                    collidesTeam = true;
+                    backColor = Pal.heal;
+                    frontColor = Color.white;
+                }};
+            }},
+            new Weapon("heal-weapon-mount"){{
+                shootSound = Sounds.lasershoot;
+                reload = 15f;
+                x = 4f;
+                y = 5f;
+                rotate = true;
+                bullet = new LaserBoltBulletType(5.2f, 8){{
+                    lifetime = 35f;
+                    healPercent = 3f;
+                    collidesTeam = true;
+                    backColor = Pal.heal;
+                    frontColor = Color.white;
                 }};
             }});
         }};
@@ -946,22 +993,50 @@ public class UnitTypes implements ContentList{
 
             ammoType = AmmoTypes.powerHigh;
 
-            defaultController = SuicideAI::new;
-            weapons.add(new Weapon(){{
-                reload = 12f;
-                shootCone = 180f;
-                ejectEffect = Fx.none;
-                shootSound = Sounds.explosion;
-                bullet = new BombBulletType(0f, 0f, "clear"){{
-                    hitEffect = Fx.pulverize;
-                    lifetime = 10f;
-                    speed = 1f;
-                    splashDamageRadius = 70f;
-                    instantDisappear = true;
-                    splashDamage = 80f;
-                    killShooter = true;
-                    hittable = false;
-                    collidesAir = true;
+            weapons.add(
+            new Weapon(){{
+                x = y = 0f;
+                mirror = false;
+                reload = 55f;
+                minShootVelocity = 0.01f;
+
+                soundPitchMin = 1f;
+                shootSound = Sounds.plasmadrop;
+
+                bullet = new BasicBulletType(){{
+                    sprite = "large-bomb";
+                    width = height = 120/4f;
+
+                    maxRange = 30f;
+                    ignoreRotation = true;
+
+                    backColor = Pal.heal;
+                    frontColor = Color.white;
+                    mixColorTo = Color.white;
+
+                    hitSound = Sounds.plasmaboom;
+
+                    shootCone = 180f;
+                    ejectEffect = Fx.none;
+                    despawnShake = 4f;
+
+                    collidesAir = false;
+
+                    lifetime = 70f;
+
+                    despawnEffect = Fx.greenBomb;
+                    hitEffect = Fx.massiveExplosion;
+                    keepVelocity = false;
+                    spin = 2f;
+
+                    shrinkX = shrinkY = 0.7f;
+
+                    speed = 0.001f;
+                    collides = false;
+
+                    healPercent = 15f;
+                    splashDamage = 230f;
+                    splashDamageRadius = 120f;
                 }};
             }});
         }};
@@ -1139,17 +1214,54 @@ public class UnitTypes implements ContentList{
                 reload = 12f;
                 shootCone = 180f;
                 ejectEffect = Fx.none;
-                shootSound = Sounds.explosion;
-                bullet = new BombBulletType(0f, 0f, "clear"){{
-                    hitEffect = Fx.pulverize;
-                    lifetime = 10f;
-                    speed = 1f;
-                    splashDamageRadius = 70f;
-                    instantDisappear = true;
-                    splashDamage = 80f;
-                    killShooter = true;
-                    hittable = false;
-                    collidesAir = true;
+                shake = 3f;
+                shootSound = Sounds.missile;
+                xRand = 8f;
+                shotDelay = 1f;
+
+                bullet = new MissileBulletType(4.2f, 40){{
+                    homingPower = 0.12f;
+                    width = 8f;
+                    height = 8f;
+                    shrinkX = shrinkY = 0f;
+                    drag = -0.003f;
+                    homingRange = 80f;
+                    keepVelocity = false;
+                    splashDamageRadius = 35f;
+                    splashDamage = 45f;
+                    lifetime = 56f;
+                    trailColor = Pal.bulletYellowBack;
+                    backColor = Pal.bulletYellowBack;
+                    frontColor = Pal.bulletYellow;
+                    hitEffect = Fx.blastExplosion;
+                    despawnEffect = Fx.blastExplosion;
+                    weaveScale = 8f;
+                    weaveMag = 2f;
+                }};
+            }});
+
+            weapons.add(new Weapon("large-bullet-mount"){{
+                reload = 60f;
+                cooldownTime = 90f;
+                x = 70f/4f;
+                y = -66f/4f;
+                rotateSpeed = 4f;
+                rotate = true;
+                shootY = 7f;
+                shake = 2f;
+                recoil = 3f;
+                occlusion = 12f;
+                ejectEffect = Fx.casing3;
+                shootSound = Sounds.shootBig;
+
+                shots = 3;
+                shotDelay = 4f;
+                inaccuracy = 1f;
+                bullet = new BasicBulletType(7f, 55){{
+                    width = 13f;
+                    height = 19f;
+                    shootEffect = Fx.shootBig;
+                    lifetime = 30f;
                 }};
             }});
         }};
@@ -1222,13 +1334,13 @@ public class UnitTypes implements ContentList{
                 top = false;
                 ejectEffect = Fx.casing1;
 
-                bullet = new BasicBulletType(2.5f, 10){{
+                bullet = new BasicBulletType(2.5f, 11){{
                     width = 7f;
                     height = 9f;
                     lifetime = 60f;
                     shootEffect = Fx.shootSmall;
                     smokeEffect = Fx.shootSmallSmoke;
-                    tileDamageMultiplier = 0.02f;
+                    tileDamageMultiplier = 0.01f;
                 }};
             }});
         }};
@@ -1264,13 +1376,13 @@ public class UnitTypes implements ContentList{
                 spacing = 0f;
                 ejectEffect = Fx.casing1;
 
-                bullet = new BasicBulletType(3f, 10){{
+                bullet = new BasicBulletType(3f, 11){{
                     width = 7f;
                     height = 9f;
                     lifetime = 60f;
                     shootEffect = Fx.shootSmall;
                     smokeEffect = Fx.shootSmallSmoke;
-                    tileDamageMultiplier = 0.02f;
+                    tileDamageMultiplier = 0.01f;
                 }};
             }});
         }};
@@ -1304,13 +1416,13 @@ public class UnitTypes implements ContentList{
                 shotDelay = 3f;
                 ejectEffect = Fx.casing1;
 
-                bullet = new BasicBulletType(3.5f, 10){{
+                bullet = new BasicBulletType(3.5f, 11){{
                     width = 6.5f;
                     height = 11f;
                     lifetime = 70f;
                     shootEffect = Fx.shootSmall;
                     smokeEffect = Fx.shootSmallSmoke;
-                    tileDamageMultiplier = 0.02f;
+                    tileDamageMultiplier = 0.01f;
                     homingPower = 0.04f;
                 }};
             }});
