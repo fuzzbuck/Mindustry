@@ -710,8 +710,8 @@ public class UnitTypes implements ContentList{
             ammoType = AmmoTypes.power;
             buildSpeed = 1f;
 
-            legSplashDamage = 32;
-            legSplashRange = 30;
+            legSplashDamage = 0;
+            legSplashRange = 0;
 
             hovering = true;
             allowLegStep = true;
@@ -814,8 +814,8 @@ public class UnitTypes implements ContentList{
             ammoType = AmmoTypes.powerHigh;
             buildSpeed = 1f;
 
-            legSplashDamage = 80;
-            legSplashRange = 60;
+            legSplashDamage = 0;
+            legSplashRange = 0;
 
             hovering = true;
             allowLegStep = true;
@@ -1646,7 +1646,7 @@ public class UnitTypes implements ContentList{
                 xRand = 8f;
                 shotDelay = 1f;
 
-                bullet = new MissileBulletType(4.2f, 40){{
+                bullet = new MissileBulletType(4.2f, 42){{
                     homingPower = 0.12f;
                     width = 8f;
                     height = 8f;
@@ -1656,7 +1656,7 @@ public class UnitTypes implements ContentList{
                     keepVelocity = false;
                     splashDamageRadius = 35f;
                     splashDamage = 45f;
-                    lifetime = 56f;
+                    lifetime = 62f;
                     trailColor = Pal.bulletYellowBack;
                     backColor = Pal.bulletYellowBack;
                     frontColor = Pal.bulletYellow;
@@ -1684,11 +1684,11 @@ public class UnitTypes implements ContentList{
                 shots = 3;
                 shotDelay = 4f;
                 inaccuracy = 1f;
-                bullet = new BasicBulletType(7f, 55){{
+                bullet = new BasicBulletType(7f, 57){{
                     width = 13f;
                     height = 19f;
                     shootEffect = Fx.shootBig;
-                    lifetime = 30f;
+                    lifetime = 35f;
                 }};
             }});
         }};
