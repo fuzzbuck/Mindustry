@@ -885,7 +885,7 @@ public class Blocks implements ContentList{
             size = 1;
             reload = 200f;
             range = 40f;
-            healPercent = 4f;
+            healPercent = 1f;
             phaseBoost = 4f;
             phaseRangeBoost = 20f;
             health = 80;
@@ -898,7 +898,7 @@ public class Blocks implements ContentList{
             size = 2;
             reload = 250f;
             range = 85f;
-            healPercent = 11f;
+            healPercent = 3f;
             phaseBoost = 15f;
             health = 80 * size * size;
             consumes.item(Items.phaseFabric).boost();
