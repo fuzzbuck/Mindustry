@@ -1282,34 +1282,34 @@ public class UnitTypes implements ContentList{
             ammoType = AmmoTypes.power;
 
             weapons.add(
-                    new Weapon("heal-weapon-mount"){{
-                        shootSound = Sounds.lasershoot;
-                        reload = 25f;
-                        x = 8f;
-                        y = -6f;
-                        rotate = true;
-                        bullet = new LaserBoltBulletType(5.2f, 10){{
-                            lifetime = 35f;
-                            healPercent = 5.5f;
-                            collidesTeam = true;
-                            backColor = Pal.heal;
-                            frontColor = Color.white;
-                        }};
-                    }},
-                    new Weapon("heal-weapon-mount"){{
-                        shootSound = Sounds.lasershoot;
-                        reload = 15f;
-                        x = 4f;
-                        y = 5f;
-                        rotate = true;
-                        bullet = new LaserBoltBulletType(5.2f, 8){{
-                            lifetime = 35f;
-                            healPercent = 3f;
-                            collidesTeam = true;
-                            backColor = Pal.heal;
-                            frontColor = Color.white;
-                        }};
-                    }});
+            new Weapon("heal-weapon-mount"){{
+                shootSound = Sounds.lasershoot;
+                reload = 25f;
+                x = 8f;
+                y = -6f;
+                rotate = true;
+                bullet = new LaserBoltBulletType(5.2f, 10){{
+                    lifetime = 35f;
+                    healPercent = 5.5f;
+                    collidesTeam = true;
+                    backColor = Pal.heal;
+                    frontColor = Color.white;
+                }};
+            }},
+            new Weapon("heal-weapon-mount"){{
+                shootSound = Sounds.lasershoot;
+                reload = 15f;
+                x = 4f;
+                y = 5f;
+                rotate = true;
+                bullet = new LaserBoltBulletType(5.2f, 8){{
+                    lifetime = 35f;
+                    healPercent = 3f;
+                    collidesTeam = true;
+                    backColor = Pal.heal;
+                    frontColor = Color.white;
+                }};
+            }});
         }};
 
         quad = new UnitType("quad"){{
