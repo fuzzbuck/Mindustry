@@ -11,6 +11,7 @@ import arc.util.serialization.*;
 import arc.util.serialization.JsonValue.*;
 import mindustry.core.GameState.*;
 import mindustry.core.*;
+import mindustry.creeper.CreeperUtils;
 import mindustry.game.EventType.*;
 import mindustry.game.*;
 import mindustry.gen.*;
@@ -193,6 +194,7 @@ public class ServerControl implements ApplicationListener{
 
         //reset autosave on world load
         Events.on(WorldLoadEvent.class, e -> {
+            CreeperUtils.init();
             autosaveCount.reset(0, Config.autosaveSpacing.num() * 60);
         });
 

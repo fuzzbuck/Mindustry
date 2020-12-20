@@ -2,6 +2,7 @@ package mindustry.game;
 
 import arc.util.*;
 import mindustry.core.GameState.*;
+import mindustry.creeper.Creeper;
 import mindustry.ctype.*;
 import mindustry.entities.units.*;
 import mindustry.gen.*;
@@ -331,6 +332,12 @@ public class EventType{
         public BlockDestroyEvent(Tile tile){
             this.tile = tile;
         }
+    }
+
+    public static class CreeperDestroyEvent{
+        public final Tile tile;
+
+        public CreeperDestroyEvent(Tile tile) { this.tile = tile;}
     }
 
     public static class UnitDestroyEvent{

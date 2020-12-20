@@ -10,6 +10,8 @@ import arc.struct.*;
 import arc.util.*;
 import mindustry.annotations.Annotations.*;
 import mindustry.content.*;
+import mindustry.creeper.Creeper;
+import mindustry.creeper.CreeperUtils;
 import mindustry.game.*;
 import mindustry.gen.*;
 import mindustry.type.*;
@@ -27,6 +29,7 @@ public class Tile implements Position, QuadTreeObject, Displayable{
     public @Nullable Building build;
     public short x, y;
     protected Block block;
+    public Creeper creeper;
     protected Floor floor;
     protected Floor overlay;
     protected boolean changing = false;
@@ -303,6 +306,27 @@ public class Tile implements Position, QuadTreeObject, Displayable{
     public void remove(){
         //this automatically removes multiblock references to this block
         setBlock(Blocks.air);
+    }
+
+    public boolean isNear(Block block){
+        return(
+                world.tile(x-1, y).block == block ||
+                world.tile(x+1, y).block == block ||
+                world.tile(x, y-1).block == block ||
+                world.tile(x, y+1).block == block
+        );
+    }
+
+    public boolean isCreeper(){
+        return CreeperUtils.creeperLevelBlocks.containsValue(block);
+    }
+
+    public boolean isNearCreeper(){
+        for(Block creeperBlock : CreeperUtils.creeperLevelBlocks.values()){
+            if(isNear(creeperBlock))
+                return true;
+        }
+        return false;
     }
 
     /** remove()-s this tile, except it's synced across the network */
