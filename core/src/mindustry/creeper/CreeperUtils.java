@@ -6,10 +6,7 @@ import arc.func.Cons;
 import arc.math.Mathf;
 import arc.math.geom.Point2;
 import arc.struct.IntSeq;
-import mindustry.Vars;
 import mindustry.content.Blocks;
-import mindustry.editor.MapEditor;
-import mindustry.game.EventType;
 import mindustry.world.Block;
 import mindustry.world.Tile;
 
@@ -19,6 +16,7 @@ import static mindustry.Vars.world;
 
 public class CreeperUtils {
     public static HashMap<Integer, Block> creeperLevelBlocks = new HashMap<>();
+    public static HashMap<Block, CreeperSpawner> creeperSpawnerBlocks = new HashMap<>();
     public static int max_level = 9;
 
     public static void init(){
@@ -32,12 +30,13 @@ public class CreeperUtils {
         creeperLevelBlocks.put(8, Blocks.plastaniumWall);
         creeperLevelBlocks.put(9, Blocks.scrapWall);
 
-        Events.on(EventType.CreeperDestroyEvent.class, e -> {
-            if(e.tile.creeper == null)
-                return;
-            if(e.tile.creeper.level > 1)
-                e.tile.creeper.downgrade();
-        });
+        creeperSpawnerBlocks.put(Blocks.groundFactory, new CreeperSpawner(5, 1f));
+        creeperSpawnerBlocks.put(Blocks.airFactory, new CreeperSpawner(1, 0.1f));
+        creeperSpawnerBlocks.put(Blocks.navalFactory, new CreeperSpawner(15, 5f));
+        creeperSpawnerBlocks.put(Blocks.additiveReconstructor, new CreeperSpawner(8, 1f));
+        creeperSpawnerBlocks.put(Blocks.multiplicativeReconstructor, new CreeperSpawner(5, 0.5f));
+        creeperSpawnerBlocks.put(Blocks.exponentialReconstructor, new CreeperSpawner(15, 0.5f));
+        creeperSpawnerBlocks.put(Blocks.tetrativeReconstructor, new CreeperSpawner(15, 0.2f));
     }
 
     public static boolean isCreeper(Block block){
