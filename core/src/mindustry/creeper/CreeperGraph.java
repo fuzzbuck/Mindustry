@@ -71,20 +71,31 @@ public class CreeperGraph {
         });
     }
 
-    public void updateBorders(int amt){
-        for(Creeper c : activeCreepers.values()){
-            if(amt <= 0)
-                return;
+    public void update(int amt){
+        if(activeCreepers.size() == 0){
 
-            Tile t = c.findAvailableLand();
-            if(t != null){
-                amt--;
-                addCreeper(new Point2(t.x, t.y), c.level == 1 ? 1 : c.level -1);
+            // update Borders
+            for (Creeper c : activeCreepers.values()) {
+                if (amt <= 0) {
+                    return;
+                }
+                if (!c.isBorderingWithLand()) {
+                    activeCreepers.remove(c);
+                    continue;
+                }
+
+                Tile t = c.findAvailableLand(c.level);
+                if (t != null) {
+                    amt--;
+                    addCreeper(new Point2(t.x, t.y), 1);
+                }
+
+                // check if this should still be active
+                if (!c.isBorderingWithLand())
+                    activeCreepers.remove(new Point2(c.x, c.y));
             }
+        }else {
 
-            // check if this should still be active
-            if(!c.isBorderingWithLand())
-                activeCreepers.remove(new Point2(c.x, c.y));
         }
     }
 

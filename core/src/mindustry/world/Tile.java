@@ -18,6 +18,8 @@ import mindustry.type.*;
 import mindustry.ui.*;
 import mindustry.world.blocks.environment.*;
 
+import java.util.ArrayList;
+
 import static mindustry.Vars.*;
 
 public class Tile implements Position, QuadTreeObject, Displayable{
@@ -308,17 +310,34 @@ public class Tile implements Position, QuadTreeObject, Displayable{
         setBlock(Blocks.air);
     }
 
+    public ArrayList<Tile> getNeighbours(){
+        ArrayList<Tile> s = new ArrayList<>();
+        s.add(world.tile(x-1, y));
+        s.add(world.tile(x+1, y));
+        s.add(world.tile(x, y-1));
+        s.add(world.tile(x, y+1));
+
+        return s;
+    }
+
     public boolean isNear(Block block){
-        return(
-                world.tile(x-1, y).block == block ||
-                world.tile(x+1, y).block == block ||
-                world.tile(x, y-1).block == block ||
-                world.tile(x, y+1).block == block
-        );
+        for(Tile t : getNeighbours()){
+            if(t.block == block)
+                return true;
+        }
+        return false;
     }
 
     public boolean isCreeper(){
         return CreeperUtils.creeperLevelBlocks.containsValue(block);
+    }
+
+    public int creeperLevel(){
+        return (CreeperUtils.creeperBlockLevels.containsValue(block) ? CreeperUtils.creeperBlockLevels.get(block) : 0);
+    }
+
+    public boolean canBeClaimedByCreeper(int level) {
+        return (creeperLevel() < level && (Build.validPlace(Blocks.copperWall, CreeperUtils.creeperTeam, x, y, 0)));
     }
 
     public boolean isNearCreeper(){

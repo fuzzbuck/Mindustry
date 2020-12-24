@@ -52,12 +52,12 @@ public class Creeper {
     }
 
     // finds free land ready to be claimed (or null if theres no free land)
-    public Tile findAvailableLand(){
-        if(world.tile(x+1, y).isCreeper()) return world.tile(x+1, y);
-        if(world.tile(x-1, y).isCreeper()) return world.tile(x-1, y);
+    public Tile findAvailableLand(int level){
+        if(world.tile(x+1, y).canBeClaimedByCreeper(level)) return world.tile(x+1, y);
+        if(world.tile(x-1, y).canBeClaimedByCreeper(level)) return world.tile(x-1, y);
 
-        if(world.tile(x, y+1).isCreeper()) return world.tile(x, y+1);
-        if(world.tile(x, y-1).isCreeper()) return world.tile(x, y-1);
+        if(world.tile(x, y+1).canBeClaimedByCreeper(level)) return world.tile(x, y+1);
+        if(world.tile(x, y-1).canBeClaimedByCreeper(level)) return world.tile(x, y-1);
 
         return null;
     }
