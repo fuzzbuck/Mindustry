@@ -43,8 +43,7 @@ public class Sorter extends Block{
 
     @Override
     public int minimapColor(Tile tile){
-        var build = (SorterBuild)tile.build;
-        return build == null || build.sortItem == null ? 0 : build.sortItem.color.rgba();
+        return tile.<SorterBuild>bc().sortItem == null ? 0 : tile.<SorterBuild>bc().sortItem.color.rgba();
     }
 
     public class SorterBuild extends Building{

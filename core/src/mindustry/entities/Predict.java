@@ -58,8 +58,8 @@ public class Predict{
             ddy += h.deltaY();
         }
         if(src instanceof Hitboxc h){
-            ddx -= h.deltaX();
-            ddy -= h.deltaY();
+            ddx -= h.deltaX()/(Time.delta);
+            ddy -= h.deltaY()/(Time.delta);
         }
         return intercept(src.getX(), src.getY(), dst.getX(), dst.getY(), ddx, ddy, v);
     }

@@ -10,7 +10,6 @@ import mindustry.*;
 import mindustry.content.*;
 import mindustry.entities.*;
 import mindustry.entities.units.*;
-import mindustry.game.EventType.*;
 import mindustry.gen.*;
 import mindustry.graphics.*;
 import mindustry.type.*;
@@ -175,7 +174,6 @@ public class Reconstructor extends UnitBlock{
                             Effect.shake(2f, 3f, this);
                             Fx.producesmoke.at(this);
                             consume();
-                            Events.fire(new UnitCreateEvent(payload.unit));
                         }
                     }
                 }

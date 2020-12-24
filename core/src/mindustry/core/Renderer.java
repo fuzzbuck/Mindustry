@@ -66,7 +66,7 @@ public class Renderer implements ApplicationListener{
 
         float dest = Mathf.round(targetscale, 0.5f);
         camerascale = Mathf.lerpDelta(camerascale, dest, 0.1f);
-        if(Mathf.equal(camerascale, dest, 0.001f)) camerascale = dest;
+        if(Mathf.within(camerascale, dest, 0.001f)) camerascale = dest;
         laserOpacity = Core.settings.getInt("lasersopacity") / 100f;
 
         if(landTime > 0){
@@ -111,10 +111,7 @@ public class Renderer implements ApplicationListener{
         minimap.dispose();
         effectBuffer.dispose();
         blocks.dispose();
-        if(planets != null){
-            planets.dispose();
-            planets = null;
-        }
+        planets.dispose();
         if(bloom != null){
             bloom.dispose();
             bloom = null;

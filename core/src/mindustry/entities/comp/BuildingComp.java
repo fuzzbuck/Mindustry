@@ -201,7 +201,7 @@ abstract class BuildingComp implements Posc, Teamc, Healthc, Buildingc, Timerc, 
 
         if(self() instanceof ConstructBuild entity){
             //update block to reflect the fact that something was being constructed
-            if(entity.cblock != null && entity.cblock.synthetic() && entity.wasConstructing){
+            if(entity.cblock != null && entity.cblock.synthetic()){
                 block = entity.cblock;
             }else{
                 //otherwise this was a deconstruction that was interrupted, don't want to rebuild that

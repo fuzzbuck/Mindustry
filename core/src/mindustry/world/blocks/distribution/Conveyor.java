@@ -91,7 +91,7 @@ public class Conveyor extends Block implements Autotiler{
             Mathf.mod(req.tile().build.rotation - req.rotation, 2) == 1 ? Blocks.junction : this;
     }
 
-    public class ConveyorBuild extends Building implements ChainedBuilding{
+    public class ConveyorBuild extends Building{
         //parallel array data
         public Item[] ids = new Item[capacity];
         public float[] xs = new float[capacity];
@@ -390,12 +390,6 @@ public class Conveyor extends Block implements Autotiler{
             }
 
             len--;
-        }
-
-        @Nullable
-        @Override
-        public Building next(){
-            return nextc;
         }
     }
 }

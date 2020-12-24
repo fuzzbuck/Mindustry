@@ -28,7 +28,7 @@ public enum SStat{
 
     public void max(int amount){
         if(amount > get()){
-            set(amount);
+            add(amount - get());
         }
     }
 
@@ -42,7 +42,7 @@ public enum SStat{
     }
 
     public void add(int amount){
-        set(get() + amount);
+        set(get() + 1);
     }
 
     public void add(){

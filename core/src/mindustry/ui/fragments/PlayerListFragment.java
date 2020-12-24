@@ -6,7 +6,6 @@ import arc.scene.*;
 import arc.scene.event.*;
 import arc.scene.ui.*;
 import arc.scene.ui.layout.*;
-import arc.struct.*;
 import arc.util.*;
 import mindustry.gen.*;
 import mindustry.graphics.*;
@@ -22,7 +21,6 @@ public class PlayerListFragment extends Fragment{
     private Interval timer = new Interval();
     private TextField sField;
     private boolean found = false;
-    private Seq<Player> players = new Seq<>();
 
     @Override
     public void build(Group parent){
@@ -80,12 +78,8 @@ public class PlayerListFragment extends Fragment{
         float h = 74f;
         found = false;
 
-        players.clear();
-        Groups.player.copy(players);
-
-        players.sort(Structs.comps(Structs.comparing(Player::team), Structs.comparingBool(p -> !p.admin)));
-
-        for(var user : players){
+        Groups.player.sort(Structs.comparing(Player::team));
+        Groups.player.each(user -> {
             found = true;
             NetConnection connection = user.con;
 
@@ -165,7 +159,7 @@ public class PlayerListFragment extends Fragment{
             content.row();
             content.image().height(4f).color(state.rules.pvp ? user.team().color : Pal.gray).growX();
             content.row();
-        }
+        });
 
         if(!found){
             content.add(Core.bundle.format("players.notfound")).padBottom(6).width(350f).maxHeight(h + 14);

@@ -54,7 +54,7 @@ public class ItemLiquidGeneratorTests extends PowerTestFixture{
         };
 
         tile = createFakeTile(0, 0, generator);
-        entity = (ItemLiquidGeneratorBuild)tile.build;
+        entity = tile.bc();
     }
 
     /** Tests the consumption and efficiency when being supplied with liquids. */

@@ -21,7 +21,7 @@ public class Accelerator extends Block{
     public @Load("launch-arrow") TextureRegion arrowRegion;
 
     public Block launching = Blocks.coreNucleus;
-    public int[] capacities;
+    public int[] capacities = new int[content.items().size];
 
     public Accelerator(String name){
         super(name);
@@ -35,7 +35,6 @@ public class Accelerator extends Block{
     @Override
     public void init(){
         itemCapacity = 0;
-        capacities = new int[content.items().size];
         for(ItemStack stack : launching.requirements){
             capacities[stack.item.id] = stack.amount;
             itemCapacity += stack.amount;
@@ -44,11 +43,6 @@ public class Accelerator extends Block{
         super.init();
     }
 
-    @Override
-    public boolean outputsItems(){
-        return false;
-    }
-    
     public class AcceleratorBuild extends Building{
 
         @Override

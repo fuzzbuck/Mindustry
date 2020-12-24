@@ -16,7 +16,6 @@ import mindustry.graphics.*;
 import mindustry.type.*;
 import mindustry.world.*;
 import mindustry.world.blocks.*;
-import mindustry.world.blocks.distribution.*;
 
 import static mindustry.Vars.*;
 
@@ -74,7 +73,7 @@ public class Conduit extends LiquidBlock implements Autotiler{
         return new TextureRegion[]{Core.atlas.find("conduit-bottom"), topRegions[0]};
     }
 
-    public class ConduitBuild extends LiquidBuild implements ChainedBuilding{
+    public class ConduitBuild extends LiquidBuild{
         public float smoothLiquid;
         public int blendbits, xscl, yscl, blending;
 
@@ -137,16 +136,6 @@ public class Conduit extends LiquidBlock implements Autotiler{
             }else{
                 sleep();
             }
-        }
-
-        @Nullable
-        @Override
-        public Building next(){
-            Tile next = tile.nearby(rotation);
-            if(next != null && next.build instanceof ConduitBuild){
-                return next.build;
-            }
-            return null;
         }
     }
 }

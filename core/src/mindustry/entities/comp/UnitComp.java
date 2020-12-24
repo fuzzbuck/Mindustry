@@ -38,7 +38,6 @@ abstract class UnitComp implements Healthc, Physicsc, Hitboxc, Statusc, Teamc, I
     @Import Team team;
     @Import int id;
     @Import @Nullable Tile mineTile;
-    @Import Vec2 vel;
 
     private UnitController controller;
     UnitType type;
@@ -50,10 +49,6 @@ abstract class UnitComp implements Healthc, Physicsc, Hitboxc, Statusc, Teamc, I
 
     public void moveAt(Vec2 vector){
         moveAt(vector, type.accel);
-    }
-
-    public void approach(Vec2 vector){
-        vel.approachDelta(vector, type.accel * realSpeed() * floorSpeedMultiplier());
     }
 
     public void aimLook(Position pos){
@@ -237,7 +232,7 @@ abstract class UnitComp implements Healthc, Physicsc, Hitboxc, Statusc, Teamc, I
 
     public void setType(UnitType type){
         this.type = type;
-        this.maxHealth = type.health;
+        this.maxHealth = type.health * (team != Team.sharded ? state.multiplier : 1);
         this.drag = type.drag;
         this.armor = type.armor;
         this.hitSize = type.hitSize;
@@ -402,8 +397,6 @@ abstract class UnitComp implements Healthc, Physicsc, Hitboxc, Statusc, Teamc, I
 
     /** Actually destroys the unit, removing it and creating explosions. **/
     public void destroy(){
-        if(!isAdded()) return;
-
         float explosiveness = 2f + item().explosiveness * stack().amount * 1.53f;
         float flammability = item().flammability * stack().amount / 1.9f;
 
@@ -425,9 +418,12 @@ abstract class UnitComp implements Healthc, Physicsc, Hitboxc, Statusc, Teamc, I
         }
 
         //if this unit crash landed (was flying), damage stuff in a radius
+        //actually dont
+        /*
         if(type.flying && !spawnedByCore){
             Damage.damage(team,x, y, Mathf.pow(hitSize, 0.94f) * 1.25f, Mathf.pow(hitSize, 0.75f) * type.crashDamageMultiplier * 5f, true, false, true);
         }
+         */
 
         if(!headless){
             for(int i = 0; i < type.wreckRegions.length; i++){

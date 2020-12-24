@@ -206,7 +206,7 @@ public class ItemModule extends BlockModule{
 
     /** Begins a speculative take operation. This returns the item that would be returned by #take(), but does not change state. */
     @Nullable
-    public Item takeIndex(int takeRotation){
+    public Item beginTake(){
         for(int i = 0; i < items.length; i++){
             int index = (i + takeRotation);
             if(index >= items.length) index -= items.length;
@@ -217,15 +217,23 @@ public class ItemModule extends BlockModule{
         return null;
     }
 
-    public int nextIndex(int takeRotation){
+    /** Finishes a take operation. Updates take state, removes the item. */
+    public void endTake(Item item){
+        items[item.id] --;
+        total --;
+        takeRotation = item.id + 1;
+    }
+
+    public void failTake(){
         for(int i = 1; i < items.length; i++){
             int index = (i + takeRotation);
             if(index >= items.length) index -= items.length;
             if(items[index] > 0){
-                return (takeRotation + i) % items.length;
+                takeRotation += i;
+                takeRotation %= items.length;
+                return;
             }
         }
-        return takeRotation;
     }
 
     public int get(int id){

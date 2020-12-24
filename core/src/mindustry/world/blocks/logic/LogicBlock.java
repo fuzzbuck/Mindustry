@@ -68,7 +68,7 @@ public class LogicBlock extends Block{
         });
     }
 
-    public static String getLinkName(Block block){
+    static String getLinkName(Block block){
         String name = block.name;
         if(name.contains("-")){
             String[] split = name.split("-");
@@ -82,11 +82,11 @@ public class LogicBlock extends Block{
         return name;
     }
 
-    public static byte[] compress(String code, Seq<LogicLink> links){
+    static byte[] compress(String code, Seq<LogicLink> links){
         return compress(code.getBytes(charset), links);
     }
 
-    public static byte[] compress(byte[] bytes, Seq<LogicLink> links){
+    static byte[] compress(byte[] bytes, Seq<LogicLink> links){
         try{
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
             DataOutputStream stream = new DataOutputStream(new DeflaterOutputStream(baos));

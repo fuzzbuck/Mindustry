@@ -68,6 +68,7 @@ public class UnitTypes implements ContentList{
         //region ground attack
 
         dagger = new UnitType("dagger"){{
+            defaultController = SuicideAI::new;
             speed = 0.5f;
             hitSize = 8f;
             health = 140;
@@ -82,6 +83,7 @@ public class UnitTypes implements ContentList{
         }};
 
         mace = new UnitType("mace"){{
+            defaultController = SuicideAI::new;
             speed = 0.4f;
             hitSize = 9f;
             health = 500;
@@ -113,6 +115,7 @@ public class UnitTypes implements ContentList{
         }};
 
         fortress = new UnitType("fortress"){{
+            defaultController = SuicideAI::new;
             speed = 0.39f;
             hitSize = 13f;
             rotateSpeed = 3f;
@@ -153,55 +156,55 @@ public class UnitTypes implements ContentList{
             armor = 11f;
             canDrown = false;
             mechFrontSway = 1f;
-
+            defaultController = SuicideAI::new;
             mechStepParticles = true;
             mechStepShake = 0.15f;
             singleTarget = true;
 
             weapons.add(
-            new Weapon("scepter-weapon"){{
-                top = false;
-                y = 1f;
-                x = 16f;
-                shootY = 8f;
-                reload = 45f;
-                recoil = 5f;
-                shake = 2f;
-                ejectEffect = Fx.casing3;
-                shootSound = Sounds.bang;
-                shots = 3;
-                inaccuracy = 3f;
-                shotDelay = 4f;
+                    new Weapon("scepter-weapon"){{
+                        top = false;
+                        y = 1f;
+                        x = 16f;
+                        shootY = 8f;
+                        reload = 45f;
+                        recoil = 5f;
+                        shake = 2f;
+                        ejectEffect = Fx.casing3;
+                        shootSound = Sounds.bang;
+                        shots = 3;
+                        inaccuracy = 3f;
+                        shotDelay = 4f;
 
-                bullet = new BasicBulletType(7f, 50){{
-                    width = 11f;
-                    height = 20f;
-                    lifetime = 25f;
-                    shootEffect = Fx.shootBig;
-                    lightning = 2;
-                    lightningLength = 6;
-                    lightningColor = Pal.surge;
-                    //standard bullet damage is far too much for lightning
-                    lightningDamage = 30;
-                }};
-            }},
+                        bullet = new BasicBulletType(7f, 50){{
+                            width = 11f;
+                            height = 20f;
+                            lifetime = 25f;
+                            shootEffect = Fx.shootBig;
+                            lightning = 2;
+                            lightningLength = 6;
+                            lightningColor = Pal.surge;
+                            //standard bullet damage is far too much for lightning
+                            lightningDamage = 30;
+                        }};
+                    }},
 
-            new Weapon("mount-weapon"){{
-                reload = 13f;
-                x = 8.5f;
-                y = 6f;
-                rotate = true;
-                ejectEffect = Fx.casing1;
-                bullet = Bullets.standardCopper;
-            }},
-            new Weapon("mount-weapon"){{
-                reload = 16f;
-                x = 8.5f;
-                y = -7f;
-                rotate = true;
-                ejectEffect = Fx.casing1;
-                bullet = Bullets.standardCopper;
-            }}
+                    new Weapon("mount-weapon"){{
+                        reload = 13f;
+                        x = 8.5f;
+                        y = 6f;
+                        rotate = true;
+                        ejectEffect = Fx.casing1;
+                        bullet = Bullets.standardCopper;
+                    }},
+                    new Weapon("mount-weapon"){{
+                        reload = 16f;
+                        x = 8.5f;
+                        y = -7f;
+                        rotate = true;
+                        ejectEffect = Fx.casing1;
+                        bullet = Bullets.standardCopper;
+                    }}
 
             );
         }};
@@ -217,50 +220,50 @@ public class UnitTypes implements ContentList{
             canDrown = false;
             mechFrontSway = 1.9f;
             mechSideSway = 0.6f;
-
+            defaultController = SuicideAI::new;
             weapons.add(
-            new Weapon("reign-weapon"){{
-                top = false;
-                y = 1f;
-                x = 21.5f;
-                shootY = 11f;
-                reload = 9f;
-                recoil = 5f;
-                shake = 2f;
-                ejectEffect = Fx.casing4;
-                shootSound = Sounds.bang;
+                    new Weapon("reign-weapon"){{
+                        top = false;
+                        y = 1f;
+                        x = 21.5f;
+                        shootY = 11f;
+                        reload = 9f;
+                        recoil = 5f;
+                        shake = 2f;
+                        ejectEffect = Fx.casing4;
+                        shootSound = Sounds.bang;
 
-                bullet = new BasicBulletType(13f, 60){{
-                    pierce = true;
-                    pierceCap = 10;
-                    width = 14f;
-                    height = 33f;
-                    lifetime = 15f;
-                    shootEffect = Fx.shootBig;
-                    fragVelocityMin = 0.4f;
+                        bullet = new BasicBulletType(13f, 60){{
+                            pierce = true;
+                            pierceCap = 10;
+                            width = 14f;
+                            height = 33f;
+                            lifetime = 15f;
+                            shootEffect = Fx.shootBig;
+                            fragVelocityMin = 0.4f;
 
-                    hitEffect = Fx.blastExplosion;
-                    splashDamage = 18f;
-                    splashDamageRadius = 30f;
+                            hitEffect = Fx.blastExplosion;
+                            splashDamage = 18f;
+                            splashDamageRadius = 30f;
 
-                    fragBullets = 2;
-                    fragLifeMin = 0f;
-                    fragCone = 30f;
+                            fragBullets = 2;
+                            fragLifeMin = 0f;
+                            fragCone = 30f;
 
-                    fragBullet = new BasicBulletType(9f, 15){{
-                        width = 10f;
-                        height = 10f;
-                        pierce = true;
-                        pierceBuilding = true;
-                        pierceCap = 3;
+                            fragBullet = new BasicBulletType(9f, 15){{
+                                width = 10f;
+                                height = 10f;
+                                pierce = true;
+                                pierceBuilding = true;
+                                pierceCap = 3;
 
-                        lifetime = 20f;
-                        hitEffect = Fx.flakExplosion;
-                        splashDamage = 15f;
-                        splashDamageRadius = 15f;
-                    }};
-                }};
-            }}
+                                lifetime = 20f;
+                                hitEffect = Fx.flakExplosion;
+                                splashDamage = 15f;
+                                splashDamageRadius = 15f;
+                            }};
+                        }};
+                    }}
 
             );
         }};
@@ -277,7 +280,7 @@ public class UnitTypes implements ContentList{
             buildSpeed = 0.8f;
             armor = 1f;
             commandLimit = 8;
-
+            defaultController = SuicideAI::new;
             abilities.add(new RepairFieldAbility(10f, 60f * 4, 60f));
             ammoType = AmmoTypes.power;
 
@@ -309,7 +312,7 @@ public class UnitTypes implements ContentList{
             health = 320f;
             buildSpeed = 0.9f;
             armor = 4f;
-
+            defaultController = SuicideAI::new;
             mineTier = 2;
             mineSpeed = 5f;
             commandLimit = 9;
@@ -366,7 +369,7 @@ public class UnitTypes implements ContentList{
             canBoost = true;
             armor = 9f;
             landShake = 2f;
-
+            defaultController = SuicideAI::new;
             commandLimit = 10;
             mechFrontSway = 0.55f;
             ammoType = AmmoTypes.power;
@@ -403,7 +406,7 @@ public class UnitTypes implements ContentList{
 
         vela = new UnitType("vela"){{
             hitSize = 23f;
-
+            defaultController = SuicideAI::new;
             rotateSpeed = 1.6f;
             canDrown = false;
             mechFrontSway = 1f;
@@ -477,7 +480,7 @@ public class UnitTypes implements ContentList{
             armor = 9f;
             landShake = 1.5f;
             rotateSpeed = 1.5f;
-
+            defaultController = SuicideAI::new;
             commandLimit = 8;
 
             legCount = 4;
@@ -549,7 +552,6 @@ public class UnitTypes implements ContentList{
 
         crawler = new UnitType("crawler"){{
             defaultController = SuicideAI::new;
-
             speed = 1f;
             hitSize = 8f;
             health = 180;
@@ -576,6 +578,7 @@ public class UnitTypes implements ContentList{
         }};
 
         atrax = new UnitType("atrax"){{
+            defaultController = SuicideAI::new;
             speed = 0.5f;
             drag = 0.4f;
             hitSize = 10f;
@@ -616,6 +619,7 @@ public class UnitTypes implements ContentList{
         }};
 
         spiroct = new UnitType("spiroct"){{
+            defaultController = SuicideAI::new;
             speed = 0.4f;
             drag = 0.4f;
             hitSize = 12f;
@@ -683,6 +687,7 @@ public class UnitTypes implements ContentList{
         }};
 
         arkyid = new UnitType("arkyid"){{
+            defaultController = SuicideAI::new;
             drag = 0.1f;
             speed = 0.5f;
             hitSize = 21f;
@@ -705,8 +710,8 @@ public class UnitTypes implements ContentList{
             ammoType = AmmoTypes.power;
             buildSpeed = 1f;
 
-            legSplashDamage = 32;
-            legSplashRange = 30;
+            legSplashDamage = 0;
+            legSplashRange = 0;
 
             hovering = true;
             allowLegStep = true;
@@ -726,66 +731,67 @@ public class UnitTypes implements ContentList{
             }};
 
             weapons.add(
-            new Weapon("spiroct-weapon"){{
-                reload = 9f;
-                x = 4f;
-                y = 8f;
-                rotate = true;
-                bullet = sapper;
-                shootSound = Sounds.sap;
-            }},
-            new Weapon("spiroct-weapon"){{
-                reload = 15f;
-                x = 9f;
-                y = 6f;
-                rotate = true;
-                bullet = sapper;
-                shootSound = Sounds.sap;
-            }},
-            new Weapon("spiroct-weapon"){{
-                reload = 23f;
-                x = 14f;
-                y = 0f;
-                rotate = true;
-                bullet = sapper;
-                shootSound = Sounds.sap;
-            }},
-            new Weapon("large-purple-mount"){{
-                y = -7f;
-                x = 9f;
-                shootY = 7f;
-                reload = 45;
-                shake = 3f;
-                rotateSpeed = 2f;
-                ejectEffect = Fx.casing1;
-                shootSound = Sounds.artillery;
-                rotate = true;
-                shadow = 8f;
-                recoil = 3f;
+                    new Weapon("spiroct-weapon"){{
+                        reload = 9f;
+                        x = 4f;
+                        y = 8f;
+                        rotate = true;
+                        bullet = sapper;
+                        shootSound = Sounds.sap;
+                    }},
+                    new Weapon("spiroct-weapon"){{
+                        reload = 15f;
+                        x = 9f;
+                        y = 6f;
+                        rotate = true;
+                        bullet = sapper;
+                        shootSound = Sounds.sap;
+                    }},
+                    new Weapon("spiroct-weapon"){{
+                        reload = 23f;
+                        x = 14f;
+                        y = 0f;
+                        rotate = true;
+                        bullet = sapper;
+                        shootSound = Sounds.sap;
+                    }},
+                    new Weapon("large-purple-mount"){{
+                        y = -7f;
+                        x = 9f;
+                        shootY = 7f;
+                        reload = 45;
+                        shake = 3f;
+                        rotateSpeed = 2f;
+                        ejectEffect = Fx.casing1;
+                        shootSound = Sounds.artillery;
+                        rotate = true;
+                        occlusion = 8f;
+                        recoil = 3f;
 
-                bullet = new ArtilleryBulletType(2f, 12){{
-                    hitEffect = Fx.sapExplosion;
-                    knockback = 0.8f;
-                    lifetime = 70f;
-                    width = height = 19f;
-                    collidesTiles = true;
-                    ammoMultiplier = 4f;
-                    splashDamageRadius = 95f;
-                    splashDamage = 65f;
-                    backColor = Pal.sapBulletBack;
-                    frontColor = lightningColor = Pal.sapBullet;
-                    lightning = 3;
-                    lightningLength = 10;
-                    smokeEffect = Fx.shootBigSmoke2;
-                    shake = 5f;
+                        bullet = new ArtilleryBulletType(2f, 12){{
+                            hitEffect = Fx.sapExplosion;
+                            knockback = 0.8f;
+                            lifetime = 70f;
+                            width = height = 19f;
+                            collidesTiles = true;
+                            ammoMultiplier = 4f;
+                            splashDamageRadius = 95f;
+                            splashDamage = 65f;
+                            backColor = Pal.sapBulletBack;
+                            frontColor = lightningColor = Pal.sapBullet;
+                            lightning = 3;
+                            lightningLength = 10;
+                            smokeEffect = Fx.shootBigSmoke2;
+                            shake = 5f;
 
-                    status = StatusEffects.sapped;
-                    statusDuration = 60f * 10;
-                }};
-            }});
+                            status = StatusEffects.sapped;
+                            statusDuration = 60f * 10;
+                        }};
+                    }});
         }};
 
         toxopid = new UnitType("toxopid"){{
+            defaultController = SuicideAI::new;
             drag = 0.1f;
             speed = 0.5f;
             hitSize = 21f;
@@ -808,8 +814,8 @@ public class UnitTypes implements ContentList{
             ammoType = AmmoTypes.powerHigh;
             buildSpeed = 1f;
 
-            legSplashDamage = 80;
-            legSplashRange = 60;
+            legSplashDamage = 0;
+            legSplashRange = 0;
 
             hovering = true;
             allowLegStep = true;
@@ -817,35 +823,35 @@ public class UnitTypes implements ContentList{
             groundLayer = Layer.legUnit;
 
             weapons.add(
-            new Weapon("large-purple-mount"){{
-                y = -5f;
-                x = 11f;
-                shootY = 7f;
-                reload = 30;
-                shake = 4f;
-                rotateSpeed = 2f;
-                ejectEffect = Fx.casing1;
-                shootSound = Sounds.shootBig;
-                rotate = true;
-                shadow = 12f;
-                recoil = 3f;
-                shots = 2;
-                spacing = 17f;
+                    new Weapon("large-purple-mount"){{
+                        y = -5f;
+                        x = 11f;
+                        shootY = 7f;
+                        reload = 30;
+                        shake = 4f;
+                        rotateSpeed = 2f;
+                        ejectEffect = Fx.casing1;
+                        shootSound = Sounds.shootBig;
+                        rotate = true;
+                        occlusion = 12f;
+                        recoil = 3f;
+                        shots = 2;
+                        spacing = 17f;
 
-                bullet = new ShrapnelBulletType(){{
-                    length = 90f;
-                    damage = 110f;
-                    width = 25f;
-                    serrationLenScl = 7f;
-                    serrationSpaceOffset = 60f;
-                    serrationFadeOffset = 0f;
-                    serrations = 10;
-                    serrationWidth = 6f;
-                    fromColor = Pal.sapBullet;
-                    toColor = Pal.sapBulletBack;
-                    shootEffect = smokeEffect = Fx.sparkShoot;
-                }};
-            }});
+                        bullet = new ShrapnelBulletType(){{
+                            length = 90f;
+                            damage = 110f;
+                            width = 25f;
+                            serrationLenScl = 7f;
+                            serrationSpaceOffset = 60f;
+                            serrationFadeOffset = 0f;
+                            serrations = 10;
+                            serrationWidth = 6f;
+                            fromColor = Pal.sapBullet;
+                            toColor = Pal.sapBulletBack;
+                            shootEffect = smokeEffect = Fx.sparkShoot;
+                        }};
+                    }});
 
             weapons.add(new Weapon("toxopid-cannon"){{
                 y = -14f;
@@ -859,7 +865,7 @@ public class UnitTypes implements ContentList{
                 ejectEffect = Fx.casing3;
                 shootSound = Sounds.artillery;
                 rotate = true;
-                shadow = 30f;
+                occlusion = 30f;
 
                 bullet = new ArtilleryBulletType(3f, 50){{
                     hitEffect = Fx.sapExplosion;
@@ -909,6 +915,7 @@ public class UnitTypes implements ContentList{
         //region air attack
 
         flare = new UnitType("flare"){{
+            defaultController = SuicideAI::new;
             speed = 3f;
             accel = 0.08f;
             drag = 0.01f;
@@ -918,7 +925,6 @@ public class UnitTypes implements ContentList{
             range = 140f;
             targetAir = false;
             commandLimit = 4;
-            circleTarget = true;
 
             weapons.add(new Weapon(){{
                 y = 0f;
@@ -938,6 +944,7 @@ public class UnitTypes implements ContentList{
         }};
 
         horizon = new UnitType("horizon"){{
+            defaultController = SuicideAI::new;
             health = 340;
             speed = 1.7f;
             accel = 0.08f;
@@ -951,7 +958,6 @@ public class UnitTypes implements ContentList{
             armor = 3f;
             targetFlag = BlockFlag.factory;
             commandLimit = 5;
-            circleTarget = true;
 
             weapons.add(new Weapon(){{
                 minShootVelocity = 0.75f;
@@ -977,6 +983,7 @@ public class UnitTypes implements ContentList{
         }};
 
         zenith = new UnitType("zenith"){{
+            defaultController = SuicideAI::new;
             health = 700;
             speed = 1.8f;
             accel = 0.04f;
@@ -1022,6 +1029,7 @@ public class UnitTypes implements ContentList{
         }};
 
         antumbra = new UnitType("antumbra"){{
+            defaultController = SuicideAI::new;
             speed = 0.8f;
             accel = 0.04f;
             drag = 0.04f;
@@ -1052,50 +1060,51 @@ public class UnitTypes implements ContentList{
             }};
 
             weapons.add(
-            new Weapon("missiles-mount"){{
-                y = 8f;
-                x = 17f;
-                reload = 20f;
-                ejectEffect = Fx.casing1;
-                rotateSpeed = 8f;
-                bullet = missiles;
-                shootSound = Sounds.missile;
-                rotate = true;
-                shadow = 6f;
-            }},
-            new Weapon("missiles-mount"){{
-                y = -8f;
-                x = 17f;
-                reload = 35;
-                rotateSpeed = 8f;
-                ejectEffect = Fx.casing1;
-                bullet = missiles;
-                shootSound = Sounds.missile;
-                rotate = true;
-                shadow = 6f;
-            }},
-            new Weapon("large-bullet-mount"){{
-                y = 2f;
-                x = 10f;
-                shootY = 10f;
-                reload = 12;
-                shake = 1f;
-                rotateSpeed = 2f;
-                ejectEffect = Fx.casing1;
-                shootSound = Sounds.shootBig;
-                rotate = true;
-                shadow = 8f;
-                bullet = new BasicBulletType(7f, 50){{
-                    width = 12f;
-                    height = 18f;
-                    lifetime = 25f;
-                    shootEffect = Fx.shootBig;
-                }};
-            }}
+                    new Weapon("missiles-mount"){{
+                        y = 8f;
+                        x = 17f;
+                        reload = 20f;
+                        ejectEffect = Fx.casing1;
+                        rotateSpeed = 8f;
+                        bullet = missiles;
+                        shootSound = Sounds.missile;
+                        rotate = true;
+                        occlusion = 6f;
+                    }},
+                    new Weapon("missiles-mount"){{
+                        y = -8f;
+                        x = 17f;
+                        reload = 35;
+                        rotateSpeed = 8f;
+                        ejectEffect = Fx.casing1;
+                        bullet = missiles;
+                        shootSound = Sounds.missile;
+                        rotate = true;
+                        occlusion = 6f;
+                    }},
+                    new Weapon("large-bullet-mount"){{
+                        y = 2f;
+                        x = 10f;
+                        shootY = 10f;
+                        reload = 12;
+                        shake = 1f;
+                        rotateSpeed = 2f;
+                        ejectEffect = Fx.casing1;
+                        shootSound = Sounds.shootBig;
+                        rotate = true;
+                        occlusion = 8f;
+                        bullet = new BasicBulletType(7f, 50){{
+                            width = 12f;
+                            height = 18f;
+                            lifetime = 25f;
+                            shootEffect = Fx.shootBig;
+                        }};
+                    }}
             );
         }};
 
         eclipse = new UnitType("eclipse"){{
+            defaultController = SuicideAI::new;
             speed = 0.52f;
             accel = 0.04f;
             drag = 0.04f;
@@ -1123,53 +1132,53 @@ public class UnitTypes implements ContentList{
             }};
 
             weapons.add(
-            new Weapon("large-laser-mount"){{
-                shake = 4f;
-                shootY = 9f;
-                x = 18f;
-                y = 5f;
-                rotateSpeed = 2f;
-                reload = 45f;
-                recoil = 4f;
-                shootSound = Sounds.laser;
-                shadow = 20f;
-                rotate = true;
+                    new Weapon("large-laser-mount"){{
+                        shake = 4f;
+                        shootY = 9f;
+                        x = 18f;
+                        y = 5f;
+                        rotateSpeed = 2f;
+                        reload = 45f;
+                        recoil = 4f;
+                        shootSound = Sounds.laser;
+                        occlusion = 20f;
+                        rotate = true;
 
-                bullet = new LaserBulletType(){{
-                    damage = 90f;
-                    sideAngle = 20f;
-                    sideWidth = 1.5f;
-                    sideLength = 80f;
-                    width = 25f;
-                    length = 200f;
-                    shootEffect = Fx.shockwave;
-                    colors = new Color[]{Color.valueOf("ec7458aa"), Color.valueOf("ff9c5a"), Color.white};
-                }};
-            }},
-            new Weapon("large-artillery"){{
-                x = 11f;
-                y = 27f;
-                rotateSpeed = 2f;
-                reload = 9f;
-                shootSound = Sounds.shoot;
-                shadow = 7f;
-                rotate = true;
-                recoil = 0.5f;
+                        bullet = new LaserBulletType(){{
+                            damage = 90f;
+                            sideAngle = 20f;
+                            sideWidth = 1.5f;
+                            sideLength = 80f;
+                            width = 25f;
+                            length = 200f;
+                            shootEffect = Fx.shockwave;
+                            colors = new Color[]{Color.valueOf("ec7458aa"), Color.valueOf("ff9c5a"), Color.white};
+                        }};
+                    }},
+                    new Weapon("large-artillery"){{
+                        x = 11f;
+                        y = 27f;
+                        rotateSpeed = 2f;
+                        reload = 9f;
+                        shootSound = Sounds.shoot;
+                        occlusion = 7f;
+                        rotate = true;
+                        recoil = 0.5f;
 
-                bullet = fragBullet;
-            }},
-            new Weapon("large-artillery"){{
-                y = -13f;
-                x = 20f;
-                reload = 12f;
-                ejectEffect = Fx.casing1;
-                rotateSpeed = 7f;
-                shake = 1f;
-                shootSound = Sounds.shoot;
-                rotate = true;
-                shadow = 12f;
-                bullet = fragBullet;
-            }});
+                        bullet = fragBullet;
+                    }},
+                    new Weapon("large-artillery"){{
+                        y = -13f;
+                        x = 20f;
+                        reload = 12f;
+                        ejectEffect = Fx.casing1;
+                        rotateSpeed = 7f;
+                        shake = 1f;
+                        shootSound = Sounds.shoot;
+                        rotate = true;
+                        occlusion = 12f;
+                        bullet = fragBullet;
+                    }});
         }};
 
         //endregion
@@ -1177,6 +1186,7 @@ public class UnitTypes implements ContentList{
 
         mono = new UnitType("mono"){{
             defaultController = MinerAI::new;
+
 
             flying = true;
             drag = 0.06f;
@@ -1195,7 +1205,7 @@ public class UnitTypes implements ContentList{
         }};
 
         poly = new UnitType("poly"){{
-            defaultController = BuilderAI::new;
+            defaultController = SuicideAI::new;
 
             flying = true;
             drag = 0.05f;
@@ -1250,7 +1260,7 @@ public class UnitTypes implements ContentList{
         }};
 
         mega = new UnitType("mega"){{
-            defaultController = RepairAI::new;
+            defaultController = SuicideAI::new;
 
             mineTier = 3;
             mineSpeed = 4f;
@@ -1272,37 +1282,38 @@ public class UnitTypes implements ContentList{
             ammoType = AmmoTypes.power;
 
             weapons.add(
-            new Weapon("heal-weapon-mount"){{
-                shootSound = Sounds.lasershoot;
-                reload = 25f;
-                x = 8f;
-                y = -6f;
-                rotate = true;
-                bullet = new LaserBoltBulletType(5.2f, 10){{
-                    lifetime = 35f;
-                    healPercent = 5.5f;
-                    collidesTeam = true;
-                    backColor = Pal.heal;
-                    frontColor = Color.white;
-                }};
-            }},
-            new Weapon("heal-weapon-mount"){{
-                shootSound = Sounds.lasershoot;
-                reload = 15f;
-                x = 4f;
-                y = 5f;
-                rotate = true;
-                bullet = new LaserBoltBulletType(5.2f, 8){{
-                    lifetime = 35f;
-                    healPercent = 3f;
-                    collidesTeam = true;
-                    backColor = Pal.heal;
-                    frontColor = Color.white;
-                }};
-            }});
+                    new Weapon("heal-weapon-mount"){{
+                        shootSound = Sounds.lasershoot;
+                        reload = 25f;
+                        x = 8f;
+                        y = -6f;
+                        rotate = true;
+                        bullet = new LaserBoltBulletType(5.2f, 10){{
+                            lifetime = 35f;
+                            healPercent = 5.5f;
+                            collidesTeam = true;
+                            backColor = Pal.heal;
+                            frontColor = Color.white;
+                        }};
+                    }},
+                    new Weapon("heal-weapon-mount"){{
+                        shootSound = Sounds.lasershoot;
+                        reload = 15f;
+                        x = 4f;
+                        y = 5f;
+                        rotate = true;
+                        bullet = new LaserBoltBulletType(5.2f, 8){{
+                            lifetime = 35f;
+                            healPercent = 3f;
+                            collidesTeam = true;
+                            backColor = Pal.heal;
+                            frontColor = Color.white;
+                        }};
+                    }});
         }};
 
         quad = new UnitType("quad"){{
+            defaultController = SuicideAI::new;
             armor = 8f;
             health = 6000;
             speed = 1.4f;
@@ -1311,7 +1322,6 @@ public class UnitTypes implements ContentList{
             drag = 0.017f;
             lowAltitude = false;
             flying = true;
-            circleTarget = true;
             engineOffset = 12f;
             engineSize = 6f;
             rotateShooting = false;
@@ -1325,54 +1335,55 @@ public class UnitTypes implements ContentList{
             ammoType = AmmoTypes.powerHigh;
 
             weapons.add(
-            new Weapon(){{
-                x = y = 0f;
-                mirror = false;
-                reload = 55f;
-                minShootVelocity = 0.01f;
+                    new Weapon(){{
+                        x = y = 0f;
+                        mirror = false;
+                        reload = 55f;
+                        minShootVelocity = 0.01f;
 
-                soundPitchMin = 1f;
-                shootSound = Sounds.plasmadrop;
+                        soundPitchMin = 1f;
+                        shootSound = Sounds.plasmadrop;
 
-                bullet = new BasicBulletType(){{
-                    sprite = "large-bomb";
-                    width = height = 120/4f;
+                        bullet = new BasicBulletType(){{
+                            sprite = "large-bomb";
+                            width = height = 120/4f;
 
-                    maxRange = 30f;
-                    ignoreRotation = true;
+                            maxRange = 30f;
+                            ignoreRotation = true;
 
-                    backColor = Pal.heal;
-                    frontColor = Color.white;
-                    mixColorTo = Color.white;
+                            backColor = Pal.heal;
+                            frontColor = Color.white;
+                            mixColorTo = Color.white;
 
-                    hitSound = Sounds.plasmaboom;
+                            hitSound = Sounds.plasmaboom;
 
-                    shootCone = 180f;
-                    ejectEffect = Fx.none;
-                    despawnShake = 4f;
+                            shootCone = 180f;
+                            ejectEffect = Fx.none;
+                            despawnShake = 4f;
 
-                    collidesAir = false;
+                            collidesAir = false;
 
-                    lifetime = 70f;
+                            lifetime = 70f;
 
-                    despawnEffect = Fx.greenBomb;
-                    hitEffect = Fx.massiveExplosion;
-                    keepVelocity = false;
-                    spin = 2f;
+                            despawnEffect = Fx.greenBomb;
+                            hitEffect = Fx.massiveExplosion;
+                            keepVelocity = false;
+                            spin = 2f;
 
-                    shrinkX = shrinkY = 0.7f;
+                            shrinkX = shrinkY = 0.7f;
 
-                    speed = 0.001f;
-                    collides = false;
+                            speed = 0.001f;
+                            collides = false;
 
-                    healPercent = 15f;
-                    splashDamage = 230f;
-                    splashDamageRadius = 120f;
-                }};
-            }});
+                            healPercent = 15f;
+                            splashDamage = 230f;
+                            splashDamageRadius = 120f;
+                        }};
+                    }});
         }};
 
         oct = new UnitType("oct"){{
+            defaultController = SuicideAI::new;
             armor = 16f;
             health = 24000;
             speed = 0.8f;
@@ -1394,12 +1405,61 @@ public class UnitTypes implements ContentList{
             ammoResupplyAmount = 20;
 
             abilities.add(new ForceFieldAbility(140f, 4f, 7000f, 60f * 8), new RepairFieldAbility(130f, 60f * 2, 140f));
+
+            weapons.add(
+                    new Weapon(){{
+                        x = y = 0f;
+                        mirror = false;
+                        reload = 505f;
+                        minShootVelocity = 0.01f;
+
+                        soundPitchMin = 1f;
+                        shootSound = Sounds.plasmadrop;
+
+                        bullet = new BasicBulletType(){{
+                            sprite = "large-bomb";
+                            width = height = 120/4f;
+
+                            maxRange = 30f;
+                            ignoreRotation = true;
+
+                            backColor = Pal.heal;
+                            frontColor = Color.white;
+                            mixColorTo = Color.white;
+
+                            hitSound = Sounds.plasmaboom;
+
+                            shootCone = 180f;
+                            ejectEffect = Fx.none;
+                            despawnShake = 4f;
+
+                            collidesAir = false;
+
+                            lifetime = 70f;
+
+                            despawnEffect = Fx.greenBomb;
+                            hitEffect = Fx.massiveExplosion;
+                            keepVelocity = false;
+                            spin = 2f;
+
+                            shrinkX = shrinkY = 0.7f;
+
+                            speed = 0.001f;
+                            collides = false;
+
+                            healPercent = 15f;
+                            splashDamage = 930f;
+                            splashDamageRadius = 120f;
+                        }};
+                    }});
         }};
 
         //endregion
         //region naval attack
 
         risso = new UnitType("risso"){{
+            swimming = true;
+            defaultController = SuicideAI::new;
             speed = 1.1f;
             drag = 0.13f;
             hitSize = 9f;
@@ -1451,6 +1511,8 @@ public class UnitTypes implements ContentList{
         }};
 
         minke = new UnitType("minke"){{
+            swimming = true;
+            defaultController = SuicideAI::new;
             health = 600;
             speed = 0.9f;
             drag = 0.15f;
@@ -1494,6 +1556,8 @@ public class UnitTypes implements ContentList{
         }};
 
         bryde = new UnitType("bryde"){{
+            swimming = true;
+            defaultController = SuicideAI::new;
             health = 900;
             speed = 0.85f;
             accel = 0.2f;
@@ -1520,7 +1584,7 @@ public class UnitTypes implements ContentList{
                 shootY = 7f;
                 shake = 5f;
                 recoil = 4f;
-                shadow = 12f;
+                occlusion = 12f;
 
                 shots = 1;
                 inaccuracy = 3f;
@@ -1556,7 +1620,7 @@ public class UnitTypes implements ContentList{
                 x = 8.5f;
                 y = -9f;
 
-                shadow = 6f;
+                occlusion = 6f;
 
                 rotateSpeed = 4f;
                 rotate = true;
@@ -1589,6 +1653,8 @@ public class UnitTypes implements ContentList{
         }};
 
         sei = new UnitType("sei"){{
+            swimming = true;
+            defaultController = SuicideAI::new;
             health = 10000;
             armor = 12f;
 
@@ -1612,7 +1678,7 @@ public class UnitTypes implements ContentList{
                 rotateSpeed = 4f;
                 mirror = false;
 
-                shadow = 20f;
+                occlusion = 20f;
 
                 shootY = 2f;
                 recoil = 4f;
@@ -1658,7 +1724,7 @@ public class UnitTypes implements ContentList{
                 shootY = 7f;
                 shake = 2f;
                 recoil = 3f;
-                shadow = 12f;
+                occlusion = 12f;
                 ejectEffect = Fx.casing3;
                 shootSound = Sounds.shootBig;
 
@@ -1675,6 +1741,8 @@ public class UnitTypes implements ContentList{
         }};
 
         omura = new UnitType("omura"){{
+            swimming = true;
+            defaultController = SuicideAI::new;
             health = 22000;
             speed = 0.62f;
             drag = 0.18f;
@@ -1704,7 +1772,7 @@ public class UnitTypes implements ContentList{
                 shootY = 23f;
                 shake = 6f;
                 recoil = 10.5f;
-                shadow = 50f;
+                occlusion = 50f;
                 shootSound = Sounds.railgun;
 
                 shots = 1;
@@ -1728,7 +1796,7 @@ public class UnitTypes implements ContentList{
         //region core
 
         alpha = new UnitType("alpha"){{
-            defaultController = BuilderAI::new;
+            defaultController = SuicideAI::new;
             isCounted = false;
 
             flying = true;
@@ -1765,7 +1833,7 @@ public class UnitTypes implements ContentList{
         }};
 
         beta = new UnitType("beta"){{
-            defaultController = BuilderAI::new;
+            defaultController = SuicideAI::new;
             isCounted = false;
 
             flying = true;
@@ -1807,7 +1875,7 @@ public class UnitTypes implements ContentList{
         }};
 
         gamma = new UnitType("gamma"){{
-            defaultController = BuilderAI::new;
+            defaultController = SuicideAI::new;
             isCounted = false;
 
             flying = true;
