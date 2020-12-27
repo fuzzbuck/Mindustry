@@ -372,6 +372,9 @@ public class LExecutor{
                         ai.control = type;
                     }
                     case target -> {
+                        if(unit.type.canHeal)
+                            return;
+
                         ai.posTarget.set(x1, y1);
                         ai.aimControl = type;
                         ai.mainTarget = null;

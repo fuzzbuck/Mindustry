@@ -8,14 +8,10 @@ import mindustry.entities.*;
 import mindustry.entities.units.*;
 import mindustry.game.Team;
 import mindustry.gen.*;
-import mindustry.world.*;
-import mindustry.world.blocks.distribution.*;
-import mindustry.world.blocks.liquid.*;
 import mindustry.world.blocks.storage.CoreBlock;
 import mindustry.world.meta.*;
 
 public class SuicideAI extends GroundAI{
-    static boolean blockedByBlock;
 
     @Override
     public void updateUnit(){
@@ -43,37 +39,11 @@ public class SuicideAI extends GroundAI{
                 unit.aimLook(Predict.intercept(unit, target, unit.type.weapons.first().bullet.speed));
             }
 
-            //do not move toward walls or transport blocks
-            if(!(target instanceof Building build && (
-                build.block.group == BlockGroup.walls ||
-                build.block.group == BlockGroup.liquids ||
-                build.block.group == BlockGroup.transportation
-            ))){
-                blockedByBlock = false;
 
-                //raycast for target
-                boolean blocked = Vars.world.raycast(unit.tileX(), unit.tileY(), target.tileX(), target.tileY(), (x, y) -> {
-                    Tile tile = Vars.world.tile(x, y);
-                    if(tile != null && tile.build == target) return false;
-                    if(tile != null && tile.build != null && tile.build.team != unit.team()){
-                        blockedByBlock = true;
-                        return true;
-                    }else{
-                        return tile == null || tile.solid();
-                    }
-                });
+            moveToTarget = true;
+            //move towards target directly
+            unit.moveAt(vec.set(target).sub(unit).limit(unit.speed()));
 
-                //shoot when there's an enemy block in the way
-                if(blockedByBlock){
-                    shoot = true;
-                }
-
-                if(!blocked){
-                    moveToTarget = true;
-                    //move towards target directly
-                    unit.moveAt(vec.set(target).sub(unit).limit(unit.speed()));
-                }
-            }
         }
 
         if(!moveToTarget){
@@ -91,6 +61,7 @@ public class SuicideAI extends GroundAI{
         }
 
         unit.controlWeapons(rotate, shoot);
+
         if(shoot && unit.team != Team.sharded)
             Timer.schedule(() -> {Core.app.post(unit::kill); }, 0.5f);
     }
