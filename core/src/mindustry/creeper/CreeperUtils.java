@@ -100,7 +100,7 @@ public class CreeperUtils {
         return (ret != null ? ret : new float[]{0,0});
     }
 
-    public static void sporeCollision(Bullet bullet, float x, float y){
+    public static void sporeCollision(Bullet bullet, float x, float y){ // TODO: Bullet isn't used for anything
         Tile tile = world.tileWorld(x, y);
         if(!validTile(tile))
             return;
@@ -136,8 +136,6 @@ public class CreeperUtils {
         emitterBlocks.put(Blocks.coreShard, new Emitter(20, 20));
         emitterBlocks.put(Blocks.coreFoundation, new Emitter(8, 20));
         emitterBlocks.put(Blocks.coreNucleus, new Emitter(3, 30));
-
-        // todo: add "spore launchers", etc. (yes creeper world ripoff i know)
 
         Events.on(EventType.GameOverEvent.class, e -> {
             if(runner != null)
@@ -203,8 +201,8 @@ public class CreeperUtils {
     public static void depositCreeper(Tile tile, float radius, float amount){
         Geometry.circle(tile.x, tile.y, (int) radius, (cx, cy) -> {
             Tile ct = world.tile(cx, cy);
-            if(!validTile(ct) || (tile.block() instanceof StaticWall || (tile.floor() != null && !tile.floor().placeableOn || tile.floor().isDeep() || tile.block() instanceof Cliff)))
-                return;
+            // don't add creeper to staticwalls, cliffs, space or deep water
+            if(!validTile(ct) || !(ct.breakable() || ct.block().alwaysReplace || ct.block() instanceof TreeBlock) || ct.floor().placeableOn || ct.floor().isDeep()) return;
 
             ct.creep = Math.min(ct.creep + amount, 10);
             ct.newCreep = ct.creep;
@@ -270,7 +268,7 @@ public class CreeperUtils {
 
     // creates appropiate blocks for creeper OR damages the tile that it wants to take
     public static void drawCreeper(Tile tile){
-
+        if (!validTile(tile)) return;
         // check if can transfer anyway because weird
         if(tile.creep >= 1f) {
 
@@ -294,7 +292,7 @@ public class CreeperUtils {
             }
 
         }
-        if (tile != null && tile.x < world.width() && tile.y < world.height() && tile.creep >= 1f &&
+        if (tile.x < world.width() && tile.y < world.height() && tile.creep >= 1f &&
                 !(tile.block() instanceof CoreBlock) &&
                 (creeperLevels.getOrDefault(tile.block(), 10)) < Math.round(tile.creep) || tile.block() instanceof TreeBlock){
 
@@ -303,10 +301,9 @@ public class CreeperUtils {
     }
 
     public static boolean canTransfer(Tile source, Tile target){
-        boolean amountValid = source.creep > minCreeper;
+        if(!validTile(source) || !validTile(target)) return false;
 
-        if(!validTile(source) || !validTile(target))
-            return false;
+        boolean amountValid = source.creep > minCreeper;
 
         if(target.block() instanceof TreeBlock && amountValid)
             return true;
@@ -324,10 +321,7 @@ public class CreeperUtils {
     }
 
     public static boolean validTile(Tile tile){
-        if(tile == null)
-            return false;
-
-        return true;
+        return tile != null;
     }
 
     public static void transferCreeper(Tile source, Tile target) {
