@@ -46,6 +46,7 @@ abstract class UnitComp implements Healthc, Physicsc, Hitboxc, Statusc, Teamc, I
 
     transient Seq<Ability> abilities = new Seq<>(0);
     private transient float resupplyTime = Mathf.random(10f);
+    private transient boolean wasPlayer;
 
     public void moveAt(Vec2 vector){
         moveAt(vector, type.accel);
@@ -104,11 +105,14 @@ abstract class UnitComp implements Healthc, Physicsc, Hitboxc, Statusc, Teamc, I
 
     @Override
     public float range(){
-        return type.range;
+        return type.maxRange;
     }
 
     @Replace
     public float clipSize(){
+        if(isBuilding()){
+            return state.rules.infiniteResources ? Float.MAX_VALUE : Math.max(type.clipSize, type.region.width) + buildingRange + tilesize*4f;
+        }
         return Math.max(type.region.width * 2f, type.clipSize);
     }
 
@@ -269,7 +273,7 @@ abstract class UnitComp implements Healthc, Physicsc, Hitboxc, Statusc, Teamc, I
         team.data().updateCount(type, 1);
 
         //check if over unit cap
-        if(count() > cap() && !spawnedByCore && !dead){
+        if(count() > cap() && !spawnedByCore && !dead && !state.rules.editor){
             Call.unitCapDeath(self());
             team.data().updateCount(type, -1);
         }
@@ -420,7 +424,7 @@ abstract class UnitComp implements Healthc, Physicsc, Hitboxc, Statusc, Teamc, I
 
         Events.fire(new UnitDestroyEvent(self()));
 
-        if(explosiveness > 7f && isLocal()){
+        if(explosiveness > 7f && (isLocal() || wasPlayer)){
             Events.fire(Trigger.suicideBomb);
         }
 
@@ -443,6 +447,15 @@ abstract class UnitComp implements Healthc, Physicsc, Hitboxc, Statusc, Teamc, I
         }
 
         remove();
+    }
+
+    /** @return name of direct or indirect player controller. */
+    @Override
+    public @Nullable String getControllerName(){
+        if(isPlayer()) return getPlayer().name;
+        if(controller instanceof LogicAI ai && ai.controller != null) return ai.controller.lastAccessed;
+        if(controller instanceof FormationAI ai && ai.leader != null && ai.leader.isPlayer()) return ai.leader.getPlayer().name;
+        return null;
     }
 
     @Override
@@ -472,6 +485,7 @@ abstract class UnitComp implements Healthc, Physicsc, Hitboxc, Statusc, Teamc, I
 
     @Override
     public void killed(){
+        wasPlayer = isLocal();
         health = 0;
         dead = true;
 

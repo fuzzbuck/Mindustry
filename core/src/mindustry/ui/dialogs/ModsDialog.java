@@ -8,6 +8,7 @@ import arc.graphics.*;
 import arc.graphics.g2d.*;
 import arc.input.*;
 import arc.scene.style.*;
+import arc.scene.ui.*;
 import arc.scene.ui.TextButton.*;
 import arc.struct.*;
 import arc.util.*;
@@ -23,12 +24,15 @@ import mindustry.mod.Mods.*;
 import mindustry.ui.*;
 
 import java.io.*;
+import java.text.*;
+import java.util.*;
 
 import static mindustry.Vars.*;
 
 public class ModsDialog extends BaseDialog{
     private String searchtxt = "";
     private @Nullable Seq<ModListing> modList;
+    private boolean orderDate = true;
 
     public ModsDialog(){
         super("@mods");
@@ -37,6 +41,9 @@ public class ModsDialog extends BaseDialog{
         buttons.button("@mods.guide", Icon.link, () -> Core.app.openURI(modGuideURL)).size(210, 64f);
 
         shown(this::setup);
+        if(mobile){
+            onResize(this::setup);
+        }
 
         hidden(() -> {
             if(mods.requiresReload()){
@@ -71,12 +78,25 @@ public class ModsDialog extends BaseDialog{
                     if(status != HttpStatus.OK){
                         ui.showErrorMessage(Core.bundle.format("connectfail", status));
                     }else{
-                        modList = new Json().fromJson(Seq.class, ModListing.class, strResult);
+                        try{
+                            modList = new Json().fromJson(Seq.class, ModListing.class, strResult);
 
-                        //potentially sort mods by game version compatibility, or other criteria
-                        //modList.sort(Structs.comparingBool(m -> !Version.isAtLeast(m.minGameVersion)));
+                            var d = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
+                            Func<String, Date> parser = text -> {
+                                try{
+                                    return d.parse(text);
+                                }catch(Exception e){
+                                    throw new RuntimeException(e);
+                                }
+                            };
 
-                        listener.get(modList);
+                            modList.sortComparing(m -> parser.get(m.lastUpdated)).reverse();
+                            listener.get(modList);
+                        }catch(Exception e){
+                            e.printStackTrace();
+                            ui.showException(e);
+                        }
+
                     }
                 });
             }, error -> Core.app.post(() -> ui.showException(error)));
@@ -158,6 +178,11 @@ public class ModsDialog extends BaseDialog{
                                 searchtxt = res;
                                 rebuildBrowser[0].run();
                             }).growX().get();
+                            table.button(Icon.list, Styles.clearPartiali, 32f, () -> {
+                                orderDate = !orderDate;
+                                rebuildBrowser[0].run();
+                            }).update(b -> b.getStyle().imageUp = (orderDate ? Icon.list : Icon.star)).size(40f).get()
+                                .addListener(new Tooltip(tip -> tip.label(() -> orderDate ? "@mods.browser.sortdate" : "@mods.browser.sortstars").left()));
                         }).fillX().padBottom(4);
 
                         browser.cont.row();
@@ -168,11 +193,17 @@ public class ModsDialog extends BaseDialog{
                                 tablebrow.clear();
                                 tablebrow.add("@loading");
 
-                                getModList(listings -> {
+                                getModList(rlistings -> {
                                     tablebrow.clear();
 
+                                    Seq<ModListing> listings = rlistings;
+                                    if(!orderDate){
+                                        listings = rlistings.copy();
+                                        listings.sortComparing(m1 -> -m1.stars);
+                                    }
+
                                     for(ModListing mod : listings){
-                                        if(mod.hasJava || !searchtxt.isEmpty() && !mod.repo.contains(searchtxt) || (Vars.ios && mod.hasScripts)) continue;
+                                        if(mod.hasJava || !searchtxt.isEmpty() && !mod.repo.toLowerCase().contains(searchtxt.toLowerCase()) || (Vars.ios && mod.hasScripts)) continue;
 
                                         tablebrow.button(btn -> {
                                             btn.top().left();
@@ -203,13 +234,13 @@ public class ModsDialog extends BaseDialog{
                                             sel.keyDown(KeyCode.escape, sel::hide);
                                             sel.keyDown(KeyCode.back, sel::hide);
                                             sel.show();
-                                        }).width(480f).growX().left().fillY();
+                                        }).width(460f).growX().left().fillY();
                                         tablebrow.row();
                                     }
                                 });
                             };
                             rebuildBrowser[0].run();
-                        });
+                        }).get().setScrollingDisabled(true, false);
                         browser.addCloseButton();
                         browser.show();
                     }).margin(12f);
@@ -228,14 +259,12 @@ public class ModsDialog extends BaseDialog{
         cont.row();
 
         if(!mods.list().isEmpty()){
-            cont.pane(table -> {
-                table.margin(10f).top();
-
-                boolean anyDisabled = false;
-                for(LoadedMod mod : mods.list()){
-
-                    if(!mod.enabled() && !anyDisabled && mods.list().size > 0){
-                        anyDisabled = true;
+            boolean[] anyDisabled = {false};
+            SearchBar.add(cont, mods.list(),
+                mod -> mod.meta.displayName(),
+                (table, mod) -> {
+                    if(!mod.enabled() && !anyDisabled[0] && mods.list().size > 0){
+                        anyDisabled[0] = true;
                         table.row();
                         table.image().growX().height(4f).pad(6f).color(Pal.gray);
                         table.row();
@@ -309,20 +338,14 @@ public class ModsDialog extends BaseDialog{
                                 }).size(50f);
                             }
                         }).growX().right().padRight(-8f).padTop(-8f);
-
-
                     }, Styles.clearPartialt, () -> showMod(mod)).size(w, h).growX().pad(4f);
                     table.row();
-                }
-            });
-
+                }, !mobile || Core.graphics.isPortrait()).margin(10f).top();
         }else{
             cont.table(Styles.black6, t -> t.add("@mods.none")).height(80f);
         }
 
         cont.row();
-
-
     }
 
     private void reload(){

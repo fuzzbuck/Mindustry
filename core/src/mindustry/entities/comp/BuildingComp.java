@@ -84,8 +84,7 @@ abstract class BuildingComp implements Posc, Teamc, Healthc, Buildingc, Timerc, 
         }else{
             if(block.hasPower){
                 //reinit power graph
-                power.graph = new PowerGraph();
-                power.graph.add(self());
+                new PowerGraph().add(self());
             }
         }
         this.rotation = rotation;
@@ -148,7 +147,8 @@ abstract class BuildingComp implements Posc, Teamc, Healthc, Buildingc, Timerc, 
         write.f(health);
         write.b(rotation | 0b10000000);
         write.b(team.id);
-        write.b(0); //extra padding for later use
+        write.b(1); //version
+        write.b(enabled ? 1 : 0);
         if(items != null) items.write(write);
         if(power != null) power.write(write);
         if(liquids != null) liquids.write(write);
@@ -163,7 +163,14 @@ abstract class BuildingComp implements Posc, Teamc, Healthc, Buildingc, Timerc, 
         rotation = rot & 0b01111111;
         boolean legacy = true;
         if((rot & 0b10000000) != 0){
-            read.b(); //padding
+            byte ver = read.b(); //version of entity save
+            if(ver == 1){
+                byte on = read.b();
+                this.enabled = on == 1;
+                if(!this.enabled){
+                    enabledControlTime = timeToUncontrol;
+                }
+            }
             legacy = false;
         }
 
@@ -199,10 +206,13 @@ abstract class BuildingComp implements Posc, Teamc, Healthc, Buildingc, Timerc, 
     public void addPlan(boolean checkPrevious){
         if(!block.rebuildable || (team == state.rules.defaultTeam && state.isCampaign() && !block.isVisible())) return;
 
+        Object overrideConfig = null;
+
         if(self() instanceof ConstructBuild entity){
             //update block to reflect the fact that something was being constructed
             if(entity.cblock != null && entity.cblock.synthetic() && entity.wasConstructing){
                 block = entity.cblock;
+                overrideConfig = entity.lastConfig;
             }else{
                 //otherwise this was a deconstruction that was interrupted, don't want to rebuild that
                 return;
@@ -223,7 +233,7 @@ abstract class BuildingComp implements Posc, Teamc, Healthc, Buildingc, Timerc, 
             }
         }
 
-        data.blocks.addFirst(new BlockPlan(tile.x, tile.y, (short)rotation, block.id, config()));
+        data.blocks.addFirst(new BlockPlan(tile.x, tile.y, (short)rotation, block.id, overrideConfig == null ? config() : overrideConfig));
     }
 
     /** Configure with the current, local player. */
@@ -356,6 +366,10 @@ abstract class BuildingComp implements Posc, Teamc, Healthc, Buildingc, Timerc, 
         return power != null && (block.consumes.has(ConsumeType.power) && !block.consumes.getPower().buffered) ? power.status : 1f;
     }
 
+    public BlockStatus status(){
+        return cons.status();
+    }
+
     /** Call when nothing is happening to the entity. This increments the internal sleep timer. */
     public void sleep(){
         sleepTime += Time.delta;
@@ -383,6 +397,10 @@ abstract class BuildingComp implements Posc, Teamc, Healthc, Buildingc, Timerc, 
 
     //endregion
     //region handler methods
+
+    public boolean canUnload(){
+        return block.unloadable;
+    }
 
     /** Called when an unloader takes an item. */
     public void itemTaken(Item item){
@@ -749,9 +767,7 @@ abstract class BuildingComp implements Posc, Teamc, Healthc, Buildingc, Timerc, 
     }
 
     public void powerGraphRemoved(){
-        if(power == null){
-            return;
-        }
+        if(power == null) return;
 
         power.graph.remove(self());
         for(int i = 0; i < power.links.size; i++){
@@ -762,6 +778,10 @@ abstract class BuildingComp implements Posc, Teamc, Healthc, Buildingc, Timerc, 
         }
         power.links.clear();
     }
+    
+    public boolean conductsTo(Building other){
+        return !block.insulated;
+    }
 
     public Seq<Building> getPowerConnections(Seq<Building> out){
         out.clear();
@@ -770,7 +790,7 @@ abstract class BuildingComp implements Posc, Teamc, Healthc, Buildingc, Timerc, 
         for(Building other : proximity){
             if(other != null && other.power != null
             && !(block.consumesPower && other.block.consumesPower && !block.outputsPower && !other.block.outputsPower)
-            && !power.links.contains(other.pos())){
+            && conductsTo(other) && other.conductsTo(self()) && !power.links.contains(other.pos())){
                 out.add(other);
             }
         }
@@ -802,14 +822,15 @@ abstract class BuildingComp implements Posc, Teamc, Healthc, Buildingc, Timerc, 
 
     public void drawStatus(){
         if(block.enableDrawStatus && block.consumes.any()){
-            float brcx = tile.drawx() + (block.size * tilesize / 2f) - (tilesize / 2f);
-            float brcy = tile.drawy() - (block.size * tilesize / 2f) + (tilesize / 2f);
+            float multiplier = block.size > 1 ? 1 : 0.64f;
+            float brcx = x + (block.size * tilesize / 2f) - (tilesize * multiplier / 2f);
+            float brcy = y - (block.size * tilesize / 2f) + (tilesize * multiplier / 2f);
 
             Draw.z(Layer.power + 1);
             Draw.color(Pal.gray);
-            Fill.square(brcx, brcy, 2.5f, 45);
-            Draw.color(cons.status().color);
-            Fill.square(brcx, brcy, 1.5f, 45);
+            Fill.square(brcx, brcy, 2.5f * multiplier, 45);
+            Draw.color(status().color);
+            Fill.square(brcx, brcy, 1.5f * multiplier, 45);
             Draw.color();
         }
     }
@@ -890,7 +911,7 @@ abstract class BuildingComp implements Posc, Teamc, Healthc, Buildingc, Timerc, 
             tempTiles.clear();
             Geometry.circle(tileX(), tileY(), range, (x, y) -> {
                 Building other = world.build(x, y);
-                if(other != null && other.block instanceof PowerNode && ((PowerNode)other.block).linkValid(other, self()) && !PowerNode.insulated(other, self())
+                if(other != null && other.block instanceof PowerNode node && node.linkValid(other, self()) && !PowerNode.insulated(other, self())
                     && !other.proximity().contains(this.<Building>self()) &&
                 !(block.outputsPower && proximity.contains(p -> p.power != null && p.power.graph == other.power.graph))){
                     tempTiles.add(other.tile);
@@ -962,8 +983,8 @@ abstract class BuildingComp implements Posc, Teamc, Healthc, Buildingc, Timerc, 
         }
 
         if(block.hasLiquids){
-            flammability += liquids.sum((liquid, amount) -> liquid.explosiveness * amount / 2f);
-            explosiveness += liquids.sum((liquid, amount) -> liquid.flammability * amount / 2f);
+            flammability += liquids.sum((liquid, amount) -> liquid.flammability * amount / 2f);
+            explosiveness += liquids.sum((liquid, amount) -> liquid.explosiveness * amount / 2f);
         }
 
         if(block.consumes.hasPower() && block.consumes.getPower().buffered){
@@ -1368,7 +1389,8 @@ abstract class BuildingComp implements Posc, Teamc, Healthc, Buildingc, Timerc, 
             timeScale = 1f;
         }
 
-        if(block.autoResetEnabled){
+        if(!enabled && block.autoResetEnabled){
+            noSleep();
             enabledControlTime -= Time.delta;
 
             if(enabledControlTime <= 0){
