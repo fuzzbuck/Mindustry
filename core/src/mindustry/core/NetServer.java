@@ -14,6 +14,7 @@ import arc.util.serialization.*;
 import mindustry.annotations.Annotations.*;
 import mindustry.content.*;
 import mindustry.core.GameState.*;
+import mindustry.creeper.CreeperUtils;
 import mindustry.entities.units.*;
 import mindustry.game.EventType.*;
 import mindustry.game.*;
@@ -611,6 +612,12 @@ public class NetServer implements ApplicationListener{
         player.boosting = boosting;
 
         player.unit().controlWeapons(shooting, shooting);
+
+        // deposit creeper when shooting by player
+        if(shooting && player.team() == CreeperUtils.creeperTeam && player.unit().type.creeperDeposit > 0){
+            player.unit().deposit();
+        }
+
         player.unit().aim(pointerX, pointerY);
 
         if(player.isBuilder()){

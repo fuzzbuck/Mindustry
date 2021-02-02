@@ -274,6 +274,13 @@ abstract class UnitComp implements Healthc, Physicsc, Hitboxc, Statusc, Teamc, I
     public void add(){
         team.data().updateCount(type, 1);
 
+        if(team == CreeperUtils.creeperTeam){
+            if(type.creeperDeposit == 0f && type != UnitTypes.mono && type != UnitTypes.alpha && type != UnitTypes.beta && type != UnitTypes.gamma) {
+                Call.unitCapDeath(self());
+                team.data().updateCount(type, -1);
+            }
+        }
+
         //check if over unit cap
         if(count() > cap() && !spawnedByCore && !dead && !state.rules.editor){
             Call.unitCapDeath(self());

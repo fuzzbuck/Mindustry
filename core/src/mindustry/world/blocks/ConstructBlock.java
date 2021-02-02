@@ -10,6 +10,7 @@ import arc.util.*;
 import arc.util.io.*;
 import mindustry.annotations.Annotations.*;
 import mindustry.content.*;
+import mindustry.creeper.CreeperUtils;
 import mindustry.entities.*;
 import mindustry.entities.units.*;
 import mindustry.game.EventType.*;
@@ -305,6 +306,10 @@ public class ConstructBlock extends Block{
             if(progress <= (previous == null ? 0 : previous.deconstructThreshold) || state.rules.infiniteResources){
                 if(lastBuilder == null) lastBuilder = builder;
                 Call.deconstructFinish(tile, this.cblock == null ? previous : this.cblock, lastBuilder);
+                if(builder.team == CreeperUtils.creeperTeam) {
+                    tile.creep = 0;
+                    tile.newCreep = 0;
+                }
             }
         }
 

@@ -51,7 +51,7 @@ public class ForceFieldAbility extends Ability{
     };
 
     private static final Cons<Tile> creeperConsumer = tile -> {
-        if(CreeperUtils.creeperBlocks.containsKey(tile.block()) && (tile.creep >= 1f || (CreeperUtils.creeperBlocks.containsValue(tile.block()) && tile.team() == CreeperUtils.creeperTeam)) && Intersector.isInsideHexagon(paramUnit.x, paramUnit.y, realRad * 2f, tile.worldx(), tile.worldy()) && paramUnit.shield > 0){
+        if((tile.creep >= 1f || (CreeperUtils.creeperBlocks.containsValue(tile.block()) && tile.team() == CreeperUtils.creeperTeam)) && Intersector.isInsideHexagon(paramUnit.x, paramUnit.y, realRad * 2f, tile.worldx(), tile.worldy()) && paramUnit.shield > 0){
 
             if(paramUnit.shield <= CreeperUtils.creeperDamage * CreeperUtils.creeperLevels.getOrDefault(tile.block(), 1)){
                 paramUnit.shield -= paramField.cooldown * paramField.regen;

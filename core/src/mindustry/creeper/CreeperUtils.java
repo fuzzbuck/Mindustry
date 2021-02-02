@@ -7,6 +7,8 @@ import arc.func.Intc;
 import arc.graphics.Color;
 import arc.math.Mathf;
 import arc.math.geom.Geometry;
+import arc.math.geom.Vec2;
+import arc.math.geom.Vector;
 import arc.struct.Seq;
 import arc.util.Log;
 import arc.util.Timer;
@@ -14,14 +16,18 @@ import mindustry.Vars;
 import mindustry.content.Blocks;
 import mindustry.content.Bullets;
 import mindustry.content.Fx;
+import mindustry.content.Items;
 import mindustry.entities.bullet.BulletType;
 import mindustry.game.EventType;
 import mindustry.game.Team;
 import mindustry.gen.*;
+import mindustry.net.Administration;
+import mindustry.type.Item;
 import mindustry.world.Block;
 import mindustry.world.Build;
 import mindustry.world.Tile;
 import mindustry.world.blocks.defense.ForceProjector;
+import mindustry.world.blocks.defense.turrets.Turret;
 import mindustry.world.blocks.environment.Cliff;
 import mindustry.world.blocks.environment.StaticWall;
 import mindustry.world.blocks.environment.TreeBlock;
@@ -30,8 +36,7 @@ import mindustry.world.blocks.storage.CoreBlock;
 import java.util.HashMap;
 import java.util.concurrent.CompletableFuture;
 
-import static mindustry.Vars.state;
-import static mindustry.Vars.world;
+import static mindustry.Vars.*;
 
 public class CreeperUtils {
     public static float updateInterval = 0.025f; // Base update interval in seconds
@@ -50,8 +55,8 @@ public class CreeperUtils {
     public static float sporeHealthMultiplier = 10f;
     public static float sporeTargetOffset = 256f;
 
-    public static float unitShieldDamageMultiplier = 1f;
-    public static float buildShieldDamageMultiplier = 1.5f;
+    public static float unitShieldDamageMultiplier = 0.5f;
+    public static float buildShieldDamageMultiplier = 1f;
     public static float shieldBoostProtectionMultiplier = 0.5f;
     public static float shieldCreeperDropAmount = 5f;
     public static float shieldCreeperDropRadius = 3f;
@@ -69,6 +74,8 @@ public class CreeperUtils {
 
     public static HashMap<Integer, Block> creeperBlocks = new HashMap<>();
     public static HashMap<Block, Integer> creeperLevels = new HashMap<>();
+
+    public static HashMap<Item, Vec2> creeperItemWeights = new HashMap<>();
 
     public static HashMap<Block, Emitter> emitterBlocks = new HashMap<>();
 
@@ -90,7 +97,7 @@ public class CreeperUtils {
         while(ret == null && iterations < 100 && Groups.player.size() > 0){
             iterations++;
             Player player = Groups.player.index(Mathf.random(0, Groups.player.size()-1));
-            if(player.unit() == null || player.x == 0 && player.y == 0)
+            if(player.team() == creeperTeam || player.unit() == null || player.x == 0 && player.y == 0)
                 continue;
 
             Unit unit = player.unit();
@@ -132,13 +139,59 @@ public class CreeperUtils {
         creeperBlocks.put(35, Blocks.coreFoundation);
         creeperBlocks.put(50, Blocks.coreNucleus);
 
+        // for creeper pvp
+        // Vec2 : <radius, amt>
+        creeperItemWeights.put(Items.copper, new Vec2(1, 2));
+        creeperItemWeights.put(Items.lead, new Vec2(1, 2));
+        creeperItemWeights.put(Items.coal, new Vec2(1, 3));
+        creeperItemWeights.put(Items.sand, new Vec2(1, 1));
+        creeperItemWeights.put(Items.titanium, new Vec2(2, 1));
+        creeperItemWeights.put(Items.graphite, new Vec2(2, 1));
+        creeperItemWeights.put(Items.silicon, new Vec2(2, 2));
+        creeperItemWeights.put(Items.thorium, new Vec2(2, 1));
+        creeperItemWeights.put(Items.surgeAlloy, new Vec2(2, 8));
+        creeperItemWeights.put(Items.phaseFabric, new Vec2(2, 10));
+        creeperItemWeights.put(Items.metaglass, new Vec2(2, 2));
+        creeperItemWeights.put(Items.plastanium, new Vec2(2, 7));
+        creeperItemWeights.put(Items.blastCompound, new Vec2(2, 8));
+        creeperItemWeights.put(Items.pyratite, new Vec2(2, 3));
+        creeperItemWeights.put(Items.scrap, new Vec2(1, 1));
+        creeperItemWeights.put(Items.sporePod, new Vec2(2, 2));
+
         for(var set : creeperBlocks.entrySet()){
             creeperLevels.put(set.getValue(), set.getKey());
         }
 
-        emitterBlocks.put(Blocks.interplanetaryAccelerator, new Emitter(1, 20));
+        emitterBlocks.put(Blocks.launchPadLarge, new Emitter(1, 20));
 
         // todo: add "spore launchers", etc. (yes creeper world ripoff i know)
+
+        netServer.admins.addActionFilter(new Administration.ActionFilter() {
+            @Override
+            public boolean allow(Administration.PlayerAction action) {
+                if (action.type == Administration.ActionType.breakBlock){
+                    if(action.player != null && action.player.team() == CreeperUtils.creeperTeam && action.block == Blocks.launchPadLarge)
+                        return false;
+                }
+                if (action.type == Administration.ActionType.placeBlock){
+                    if(action.player != null && action.player.team() == CreeperUtils.creeperTeam){
+                        Block block = action.block;
+                        if(block instanceof Turret && block != Blocks.hail && block != Blocks.scatter){
+                            action.player.sendMessage("[#202020]You can only build hails & scatters as defensive blocks.");
+                            return false;
+                        }
+                        if(block == Blocks.navalFactory){
+                            return false;
+                        }
+                        if(block == Blocks.forceProjector){
+                            return false;
+                        }
+                    }
+                }
+
+                return action.type != Administration.ActionType.rotate;
+            }
+        });
 
         Events.on(EventType.GameOverEvent.class, e -> {
             if(runner != null)
@@ -182,6 +235,7 @@ public class CreeperUtils {
             e.tile.newCreep = 0;
         });
 
+        /*
         Timer.schedule(() -> {
 
             Call.infoPopup("\uE88B [" + getTrafficlightColor(Mathf.clamp((CreeperUtils.nullifiedCount / Math.max(1.0, creeperEmitters.size)), 0f, 1f)) + "]" + CreeperUtils.nullifiedCount + "/" + CreeperUtils.creeperEmitters.size + "[] emitters suspended", 10f, 20, 50, 20, 450, 0);
@@ -198,6 +252,7 @@ public class CreeperUtils {
             }
 
             }, 0, 10);
+         */
 
     }
 
@@ -207,7 +262,10 @@ public class CreeperUtils {
             if(!validTile(ct) || (tile.block() instanceof StaticWall || (tile.floor() != null && !tile.floor().placeableOn || tile.floor().isDeep() || tile.block() instanceof Cliff)))
                 return;
 
-            ct.creep = Math.min(ct.creep + amount, 10);
+            if(tile.floor() == Blocks.metalFloor3)
+                return;
+
+            ct.creep = ct.creep + amount;
             ct.newCreep = ct.creep;
         });
     }
@@ -219,11 +277,13 @@ public class CreeperUtils {
 
     public static void fixedUpdate(){
         int newcount = 0;
+        /*
         for(Emitter emitter : creeperEmitters){
             emitter.fixedUpdate();
             if(emitter.nullified)
                 newcount++;
         }
+         */
         for(ForceProjector.ForceBuild shield : shields){
             if(shield == null || shield.dead || shield.health <= 0f || shield.healthLeft <= 0f) {
                 shields.remove(shield);
@@ -243,11 +303,13 @@ public class CreeperUtils {
     }
 
     public static void updateCreeper(){
-        // update emitters
+        // launchpad is auto updated in @update()
+        /*
         for(Emitter emitter : creeperEmitters){
             if(!emitter.update())
                 creeperEmitters.remove(emitter);
         }
+         */
 
         // update creeper flow
         for(Tile tile : world.tiles){
@@ -296,7 +358,7 @@ public class CreeperUtils {
 
         }
         if (tile != null && tile.x < world.width() && tile.y < world.height() && tile.creep >= 1f &&
-                !(tile.block() instanceof CoreBlock) &&
+                !(tile.block() == Blocks.launchPadLarge) &&
                 (creeperLevels.getOrDefault(tile.block(), 10)) < Math.round(tile.creep) || tile.block() instanceof TreeBlock){
 
                 tile.setNet(creeperBlocks.get(Mathf.clamp(Math.round(tile.creep), 0, 10)), creeperTeam, Mathf.random(0, 3));
@@ -309,11 +371,14 @@ public class CreeperUtils {
         if(!validTile(source) || !validTile(target))
             return false;
 
-        if(target.block() instanceof TreeBlock && amountValid)
-            return true;
-
         if(target.block() instanceof StaticWall || (target.floor() != null && !target.floor().placeableOn || target.floor().isDeep() || target.block() instanceof Cliff))
             return false;
+
+        if(source.floor() == Blocks.metalFloor3 || target.floor() == Blocks.metalFloor3)
+            return false;
+
+        if(target.block() instanceof TreeBlock && amountValid)
+            return true;
 
         if(source.build != null && source.build.team != creeperTeam) {
             // wall or something, decline transfer but damage the wall

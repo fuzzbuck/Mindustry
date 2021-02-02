@@ -36,6 +36,7 @@ public class NuclearReactor extends PowerGenerator{
     public Color hotColor = Color.valueOf("ff9575a3");
     public float itemDuration = 120; //time to consume 1 fuel
     public float heating = 0.01f; //heating per frame * fullness
+    public float creeperHeatingMultiplier = 8f;
     public float smokeThreshold = 0.3f; //threshold at which block starts smoking
     public int explosionRadius = 40;
     public int explosionDamage = 1350;
@@ -83,7 +84,7 @@ public class NuclearReactor extends PowerGenerator{
             productionEfficiency = fullness;
 
             if(fuel > 0 && enabled){
-                heat += fullness * heating * Math.min(delta(), 4f);
+                heat += fullness * heating * Math.min(delta(), 4f) * creeperHeatingMultiplier;
 
                 if(timer(timerFuel, itemDuration / timeScale)){
                     consume();
@@ -96,7 +97,8 @@ public class NuclearReactor extends PowerGenerator{
 
             if(heat > 0){
                 float maxUsed = Math.min(liquids.get(liquid), heat / coolantPower);
-                heat -= maxUsed * coolantPower;
+                // heat -= maxUsed * coolantPower;
+                heat += heating * maxUsed * 0.1f; // * 0.1f to nerf cryo
                 liquids.remove(liquid, maxUsed);
             }
 
@@ -110,11 +112,8 @@ public class NuclearReactor extends PowerGenerator{
 
             heat = Mathf.clamp(heat);
 
-            if(Mathf.chance(0.005)){
-                if(team == creeperTeam)
-                    Call.setItem(this, Items.thorium, Mathf.random(0, 3));
-            }
-
+            if(team == creeperTeam)
+                Call.setItem(this, Items.thorium, 0);
 
             if(heat >= 0.999f){
                 Events.fire(Trigger.thoriumReactorOverheat);

@@ -49,7 +49,7 @@ public class ForceProjector extends Block{
     };
 
     private static final Cons<Tile> creeperConsumer = tile -> {
-        if(CreeperUtils.creeperBlocks.containsKey(tile.block()) && (tile.creep >= 1f || (creeperBlocks.containsValue(tile.block()) && tile.team() == creeperTeam)) && Intersector.isInsideHexagon(paramEntity.x, paramEntity.y, paramEntity.realRadius() * 2f, tile.worldx(), tile.worldy())){
+        if((tile.creep >= 1f || (creeperBlocks.containsValue(tile.block()) && tile.team() == creeperTeam)) && Intersector.isInsideHexagon(paramEntity.x, paramEntity.y, paramEntity.realRadius() * 2f, tile.worldx(), tile.worldy())){
             Call.effect(Fx.absorb, tile.worldx(), tile.worldy(), 1, Color.blue);
 
             paramEntity.hit = 1f;

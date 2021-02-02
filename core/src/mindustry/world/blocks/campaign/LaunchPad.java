@@ -13,6 +13,7 @@ import arc.struct.*;
 import arc.util.*;
 import mindustry.annotations.Annotations.*;
 import mindustry.content.*;
+import mindustry.creeper.CreeperUtils;
 import mindustry.entities.*;
 import mindustry.game.EventType.*;
 import mindustry.gen.*;
@@ -122,6 +123,18 @@ public class LaunchPad extends Block{
 
         @Override
         public void updateTile(){
+
+            if(team == CreeperUtils.creeperTeam && efficiency() >= 1f){
+                if(!items().empty()) {
+                    items().each((item, amt) -> {
+                        Vec2 weight = CreeperUtils.creeperItemWeights.get(item);
+
+                        CreeperUtils.depositCreeper(tile, weight.x, weight.y * amt);
+                        Call.setItem(this, item, 0);
+                    });
+                }
+            }
+
             if(!state.isCampaign()) return;
 
             //launch when full and base conditions are met
