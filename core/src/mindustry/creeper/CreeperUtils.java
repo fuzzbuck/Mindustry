@@ -136,9 +136,7 @@ public class CreeperUtils {
             creeperLevels.put(set.getValue(), set.getKey());
         }
 
-        emitterBlocks.put(Blocks.coreShard, new Emitter(20, 20));
-        emitterBlocks.put(Blocks.coreFoundation, new Emitter(8, 20));
-        emitterBlocks.put(Blocks.coreNucleus, new Emitter(3, 30));
+        emitterBlocks.put(Blocks.interplanetaryAccelerator, new Emitter(1, 20));
 
         // todo: add "spore launchers", etc. (yes creeper world ripoff i know)
 

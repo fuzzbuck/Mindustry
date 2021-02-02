@@ -1289,7 +1289,8 @@ abstract class BuildingComp implements Posc, Teamc, Healthc, Buildingc, Timerc, 
     public void damage(float damage){
         if(dead()) return;
 
-        // nullify
+        // dont nullify
+        /*
         if(block instanceof CoreBlock && team == CreeperUtils.creeperTeam){
             nullifyDamage += damage;
             if(nullifyDamage >= CreeperUtils.nullifyDamage){
@@ -1299,6 +1300,7 @@ abstract class BuildingComp implements Posc, Teamc, Healthc, Buildingc, Timerc, 
 
             return;
         }
+         */
 
 
 

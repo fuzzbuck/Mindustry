@@ -21,7 +21,8 @@ public class Emitter {
         if(build == null || build != null && build.health <= 1f)
             return false;
 
-        nullified = build.nullifyTimeout > 0f;
+        // no nullification for team blue
+        // nullified = build.nullifyTimeout > 0f;
 
         if(counter >= interval && !nullified) {
             counter = 0;
