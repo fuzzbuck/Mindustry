@@ -11,6 +11,7 @@ import arc.scene.ui.*;
 import arc.scene.ui.layout.*;
 import arc.struct.*;
 import arc.util.*;
+import mindustry.*;
 import mindustry.ai.types.*;
 import mindustry.annotations.Annotations.*;
 import mindustry.content.*;
@@ -293,10 +294,15 @@ public class UnitType extends UnlockableContent{
 
         if(maxRange < 0){
             maxRange = 0f;
+            maxRange = Math.max(maxRange, range);
 
             for(Weapon weapon : weapons){
                 maxRange = Math.max(maxRange, weapon.bullet.range() + hitSize / 2f);
             }
+        }
+
+        if(weapons.isEmpty()){
+            range = maxRange = miningRange;
         }
 
         if(mechStride < 0){

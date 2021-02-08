@@ -788,6 +788,7 @@ public class Blocks implements ContentList{
             health = 130 * wallHealthMultiplier;
             insulated = true;
             absorbLasers = true;
+            schematicPriority = 10;
         }};
 
         plastaniumWallLarge = new Wall("plastanium-wall-large"){{
@@ -796,6 +797,7 @@ public class Blocks implements ContentList{
             size = 2;
             insulated = true;
             absorbLasers = true;
+            schematicPriority = 10;
         }};
 
         thoriumWall = new Wall("thorium-wall"){{
@@ -1398,6 +1400,7 @@ public class Blocks implements ContentList{
             size = 3;
             itemCapacity = 1000;
             flags = EnumSet.of(BlockFlag.storage);
+            group = BlockGroup.transportation;
         }};
 
         container = new StorageBlock("container"){{
@@ -1405,6 +1408,7 @@ public class Blocks implements ContentList{
             size = 2;
             itemCapacity = 300;
             flags = EnumSet.of(BlockFlag.storage);
+            group = BlockGroup.transportation;
         }};
 
         unloader = new Unloader("unloader"){{
@@ -1661,6 +1665,7 @@ public class Blocks implements ContentList{
             shootEffect = Fx.shootLiquid;
             range = 190f;
             health = 250 * size * size;
+            flags = EnumSet.of(BlockFlag.turret, BlockFlag.extinguisher);
         }};
 
         fuse = new ItemTurret("fuse"){{
