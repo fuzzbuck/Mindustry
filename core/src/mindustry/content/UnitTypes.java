@@ -1422,7 +1422,7 @@ public class UnitTypes implements ContentList{
                     lifetime = 70f;
                     shootEffect = Fx.shootSmall;
                     smokeEffect = Fx.shootSmallSmoke;
-                    tileDamageMultiplier = 2f;
+                    tileDamageMultiplier = 0.5f;
                     homingPower = 0.04f;
                 }};
             }});
