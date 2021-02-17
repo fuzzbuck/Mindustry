@@ -156,7 +156,10 @@ public class MapEditorDialog extends Dialog implements Disposable{
                 }
 
                 platform.publish(map);
-            }).padTop(-3).size(swidth * 2f + 10, 60f).update(b -> b.setText(editor.tags.containsKey("steamid") ? editor.tags.get("author").equals(player.name) ? "@workshop.listing" : "@view.workshop" : "@editor.publish.workshop"));
+            }).padTop(-3).size(swidth * 2f + 10, 60f).update(b ->
+                b.setText(editor.tags.containsKey("steamid") ?
+                    editor.tags.get("author", "").equals(steamPlayerName) ? "@workshop.listing" : "@view.workshop" :
+                "@editor.publish.workshop"));
 
             menu.cont.row();
         }
@@ -258,11 +261,14 @@ public class MapEditorDialog extends Dialog implements Disposable{
             player.clearUnit();
             Groups.unit.clear();
             Groups.build.clear();
+            Groups.weather.clear();
             logic.play();
 
             if(player.team().core() == null){
                 player.set(world.width() * tilesize/2f, world.height() * tilesize/2f);
-                player.unit(UnitTypes.alpha.spawn(player.team(), player.x, player.y));
+                var unit = UnitTypes.alpha.spawn(player.team(), player.x, player.y);
+                unit.spawnedByCore = true;
+                player.unit(unit);
             }
         });
     }
@@ -700,8 +706,6 @@ public class MapEditorDialog extends Dialog implements Disposable{
             if(core != 0) return core;
             int synth = Boolean.compare(b1.synthetic(), b2.synthetic());
             if(synth != 0) return synth;
-            int editorVis = Boolean.compare(b1.buildVisibility == BuildVisibility.editorOnly, b2.buildVisibility == BuildVisibility.editorOnly);
-            if(editorVis != 0) return editorVis;
             int ore = Boolean.compare(b1 instanceof OverlayFloor, b2 instanceof OverlayFloor);
             if(ore != 0) return ore;
             return Integer.compare(b1.id, b2.id);

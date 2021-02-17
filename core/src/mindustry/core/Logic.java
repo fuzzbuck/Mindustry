@@ -57,6 +57,8 @@ public class Logic implements ApplicationListener{
         //when loading a 'damaged' sector, propagate the damage
         Events.on(SaveLoadEvent.class, e -> {
             if(state.isCampaign()){
+                state.rules.coreIncinerates = true;
+
                 SectorInfo info = state.rules.sector.info;
                 info.write();
 
@@ -79,13 +81,6 @@ public class Logic implements ApplicationListener{
                     state.wavetime = state.rules.waveSpacing;
 
                     SectorDamage.applyCalculatedDamage();
-
-                    //make sure damaged buildings are counted
-                    for(Tile tile : world.tiles){
-                        if(tile.build != null && tile.build.damaged()){
-                            indexer.notifyTileDamaged(tile.build);
-                        }
-                    }
                 }
 
                 //reset values
@@ -107,6 +102,7 @@ public class Logic implements ApplicationListener{
                 if(!(state.getSector().preset != null && !state.getSector().preset.useAI)){
                     state.rules.waveTeam.rules().ai = true;
                 }
+                state.rules.coreIncinerates = true;
                 state.rules.waveTeam.rules().aiTier = state.getSector().threat * 0.8f;
                 state.rules.waveTeam.rules().infiniteResources = true;
 
@@ -204,7 +200,7 @@ public class Logic implements ApplicationListener{
     }
 
     public void skipWave(){
-        state.wavetime = 0;
+        runWave();
     }
 
     public void runWave(){
@@ -275,15 +271,20 @@ public class Logic implements ApplicationListener{
     public static void sectorCapture(){
         //the sector has been conquered - waves get disabled
         state.rules.waves = false;
-        //disable attack mode
-        state.rules.attackMode = false;
 
-        if(state.rules.sector == null) return;
+        if(state.rules.sector == null){
+            //disable attack mode
+            state.rules.attackMode = false;
+            return;
+        }
 
         state.rules.sector.info.wasCaptured = true;
 
         //fire capture event
         Events.fire(new SectorCaptureEvent(state.rules.sector));
+
+        //disable attack mode
+        state.rules.attackMode = false;
 
         //save, just in case
         if(!headless && !net.client()){
@@ -383,7 +384,7 @@ public class Logic implements ApplicationListener{
                 Time.update();
 
                 //weather is serverside
-                if(!net.client()){
+                if(!net.client() && !state.isEditor()){
                     updateWeather();
 
                     for(TeamData data : state.teams.getActive()){

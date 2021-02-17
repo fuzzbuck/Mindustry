@@ -54,13 +54,18 @@ public class RailBulletType extends BulletType{
         super.init(b);
 
         b.fdata = length;
-        Damage.collideLine(b, b.team, b.type.hitEffect, b.x, b.y, b.rotation(), length, false);
+        Damage.collideLine(b, b.team, b.type.hitEffect, b.x, b.y, b.rotation(), length, false, false);
         float resultLen = b.fdata;
 
         Vec2 nor = Tmp.v1.set(b.vel).nor();
         for(float i = 0; i <= resultLen; i += updateEffectSeg){
             updateEffect.at(b.x + nor.x * i, b.y + nor.y * i, b.rotation());
         }
+    }
+
+    @Override
+    public boolean testCollision(Bullet bullet, Building tile){
+        return bullet.team != tile.team;
     }
 
     @Override

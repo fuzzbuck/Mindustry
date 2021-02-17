@@ -92,8 +92,8 @@ public class StackConveyor extends Block implements Autotiler{
     @Override
     public boolean rotatedOutput(int x, int y){
         Building tile = world.build(x, y);
-        if(tile instanceof StackConveyorBuild){
-            return ((StackConveyorBuild)tile).state != stateUnload;
+        if(tile instanceof StackConveyorBuild s){
+            return s.state != stateUnload;
         }
         return super.rotatedOutput(x, y);
     }
@@ -109,6 +109,8 @@ public class StackConveyor extends Block implements Autotiler{
 
         @Override
         public void draw(){
+            Draw.z(Layer.block - 0.2f);
+
             Draw.rect(regions[state], x, y, rotdeg());
 
             for(int i = 0; i < 4; i++){
@@ -117,7 +119,7 @@ public class StackConveyor extends Block implements Autotiler{
                 }
             }
 
-            Draw.z(Layer.blockOver);
+            Draw.z(Layer.block - 0.1f);
 
             Tile from = world.tile(link);
 
@@ -146,6 +148,12 @@ public class StackConveyor extends Block implements Autotiler{
         }
 
         @Override
+        public void drawCracks(){
+            Draw.z(Layer.block - 0.15f);
+            super.drawCracks();
+        }
+
+        @Override
         public void onProximityUpdate(){
             super.onProximityUpdate();
 
@@ -167,6 +175,16 @@ public class StackConveyor extends Block implements Autotiler{
                 }
             }
 
+            //cannot load when facing
+            if(state == stateLoad){
+                for(Building near : proximity){
+                    if(near instanceof StackConveyorBuild && near.front() == this){
+                        state = stateMove;
+                        break;
+                    }
+                }
+            }
+
             //update other conveyor state when this conveyor's state changes
             if(state != lastState){
                 proxUpdating = true;
@@ -180,21 +198,33 @@ public class StackConveyor extends Block implements Autotiler{
         }
 
         @Override
+        public boolean canUnload(){
+            return state != stateLoad;
+        }
+
+        @Override
+        public float efficiency(){
+            return 1f;
+        }
+
+        @Override
         public void updateTile(){
-            // reel in crater
+            //reel in crater
             if(cooldown > 0f) cooldown = Mathf.clamp(cooldown - speed * edelta(), 0f, recharge);
 
-            if(link == -1){
-                return;
-            }
+            //indicates empty state
+            if(link == -1) return;
 
-            // crater needs to be centered
+            //crater needs to be centered
             if(cooldown > 0f) return;
 
-            // get current item
-            if(lastItem == null){
+            //get current item
+            if(lastItem == null || !items.has(lastItem)){
                 lastItem = items.first();
             }
+
+            //do not continue if disabled, will still allow one to be reeled in to prevent visual stacking
+            if(!enabled) return;
 
             if(state == stateUnload){ //unload
                 while(lastItem != null && (!splitOut ? moveForward(lastItem) : dump(lastItem))){
@@ -203,12 +233,12 @@ public class StackConveyor extends Block implements Autotiler{
             }else{ //transfer
                 if(state != stateLoad || (items.total() >= getMaximumAccepted(lastItem))){
                     if(front() instanceof StackConveyorBuild e && e.team == team){
-                        // sleep if its occupied
+                        //sleep if its occupied
                         if(e.link == -1){
                             e.items.add(items);
                             e.lastItem = lastItem;
                             e.link = tile.pos();
-                            // ▲ to | from ▼
+                            //▲ to | from ▼
                             link = -1;
                             items.clear();
 
@@ -232,7 +262,7 @@ public class StackConveyor extends Block implements Autotiler{
 
         @Override
         public boolean shouldAmbientSound(){
-            return false; // has no moving parts;
+            return false; //has no moving parts;
         }
 
         protected void poofIn(){
@@ -246,6 +276,12 @@ public class StackConveyor extends Block implements Autotiler{
         }
 
         @Override
+        public int acceptStack(Item item, int amount, Teamc source){
+            if(items.any() && !items.has(item)) return 0;
+            return super.acceptStack(item, amount, source);
+        }
+
+        @Override
         public void handleItem(Building source, Item item){
             if(items.empty()) poofIn();
             super.handleItem(source, item);
@@ -254,6 +290,7 @@ public class StackConveyor extends Block implements Autotiler{
 
         @Override
         public void handleStack(Item item, int amount, Teamc source){
+            if(amount <= 0) return;
             if(items.empty()) poofIn();
             super.handleStack(item, amount, source);
             lastItem = item;
@@ -275,11 +312,11 @@ public class StackConveyor extends Block implements Autotiler{
 
         @Override
         public boolean acceptItem(Building source, Item item){
-            if(this == source) return true;                 // player threw items
-            if(cooldown > recharge - 1f) return false;      // still cooling down
-            return !((state != stateLoad)                   // not a loading dock
-            ||  (items.total() > 0 && !items.has(item))     // incompatible items
-            ||  (items.total() >= getMaximumAccepted(item)) // filled to capacity
+            if(this == source) return true; //player threw items
+            if(cooldown > recharge - 1f) return false; //still cooling down
+            return !((state != stateLoad) //not a loading dock
+            ||  (items.any() && !items.has(item)) //incompatible items
+            ||  (items.total() >= getMaximumAccepted(item)) //filled to capacity
             ||  (front()  == source));
         }
 

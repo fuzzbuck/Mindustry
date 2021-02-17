@@ -128,7 +128,15 @@ public class LogicAI extends AIController{
             vec.setZero();
         }
 
+        //do not move when infinite vectors are used.
+        if(vec.isNaN() || vec.isInfinite()) return;
+
         unit.approach(vec);
+    }
+
+    @Override
+    protected boolean checkTarget(Teamc target, float x, float y, float range){
+        return false;
     }
 
     //always retarget

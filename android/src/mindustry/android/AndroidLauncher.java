@@ -45,6 +45,7 @@ public class AndroidLauncher extends AndroidApplication{
                 handler.uncaughtException(thread, error);
             }else{
                 error.printStackTrace();
+                Log.err(error);
                 System.exit(1);
             }
         });
@@ -161,7 +162,6 @@ public class AndroidLauncher extends AndroidApplication{
         }, new AndroidApplicationConfiguration(){{
             useImmersiveMode = true;
             hideStatusBar = true;
-            stencil = 8;
         }});
         checkFiles(getIntent());
 

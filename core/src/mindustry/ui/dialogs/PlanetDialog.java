@@ -44,7 +44,6 @@ public class PlanetDialog extends BaseDialog implements PlanetInterfaceRenderer{
     public final PlanetRenderer planets = renderer.planets;
     public final LaunchLoadoutDialog loadouts = new LaunchLoadoutDialog();
 
-    public int launchRange;
     public float zoom = 1f, selectAlpha = 1f;
     public @Nullable Sector selected, hovered, launchSector;
     public Mode mode = look;
@@ -209,11 +208,11 @@ public class PlanetDialog extends BaseDialog implements PlanetInterfaceRenderer{
     }
 
     void addBack(){
-        buttons.button("@back", Icon.left, this::hide).size(200, 54).pad(2).bottom();
+        buttons.button("@back", Icon.left, this::hide).size(200f, 54f).pad(2).bottom();
     }
 
     void addTech(){
-        buttons.button("@techtree", Icon.tree, () -> ui.research.show()).size(200, 54).pad(2).bottom();
+        buttons.button("@techtree", Icon.tree, () -> ui.research.show()).size(200f, 54f).pad(2).bottom();
     }
 
     public void showOverview(){
@@ -511,7 +510,7 @@ public class PlanetDialog extends BaseDialog implements PlanetInterfaceRenderer{
             hoverLabel.touchable = Touchable.disabled;
 
             Vec3 pos = planets.cam.project(Tmp.v31.set(hovered.tile.v).setLength(PlanetRenderer.outlineRad).rotate(Vec3.Y, -planets.planet.getRotation()).add(planets.planet.position));
-            hoverLabel.setPosition(pos.x, pos.y - Core.scene.marginBottom, Align.center);
+            hoverLabel.setPosition(pos.x - Core.scene.marginLeft, pos.y - Core.scene.marginBottom, Align.center);
 
             hoverLabel.getText().setLength(0);
             if(hovered != null){
@@ -678,7 +677,7 @@ public class PlanetDialog extends BaseDialog implements PlanetInterfaceRenderer{
                     setFillParent(true);
                     cont.pane(t -> {
                         t.marginRight(19f);
-                        t.defaults().size(48);
+                        t.defaults().size(48f);
 
                         t.button(Icon.none, Styles.clearTogglei, () -> {
                             sector.info.icon = null;
@@ -702,6 +701,7 @@ public class PlanetDialog extends BaseDialog implements PlanetInterfaceRenderer{
                             if(++i % 8 == 0) t.row();
                         }
                     });
+                    buttons.button("@back", Icon.left, this::hide).size(210f, 64f);
                 }}.show();
             }).size(40f);
         }).row();
