@@ -335,7 +335,11 @@ public class Block extends UnlockableContent{
         super.setStats();
 
         stats.add(Stat.size, "@x@", size, size);
-        stats.add(Stat.health, health, StatUnit.none);
+
+        if(synthetic()){
+            stats.add(Stat.health, health, StatUnit.none);
+        }
+
         if(canBeBuilt()){
             stats.add(Stat.buildTime, buildCost / 60, StatUnit.seconds);
             stats.add(Stat.buildCost, new ItemListValue(false, requirements));
@@ -396,6 +400,11 @@ public class Block extends UnlockableContent{
 
     /** Mutates the given list of points used during line placement. */
     public void changePlacementPath(Seq<Point2> points, int rotation){
+
+    }
+
+    /** Mutates the given list of requests used during line placement. */
+    public void handlePlacementLine(Seq<BuildPlan> plans){
 
     }
 
