@@ -45,6 +45,7 @@ public class ItemBridge extends Block{
         unloadable = false;
         group = BlockGroup.transportation;
         noUpdateDisabled = true;
+        copyConfig = false;
 
         //point2 config is relative
         config(Point2.class, (ItemBridgeBuild tile, Point2 i) -> tile.link = Point2.pack(i.x + tile.tileX(), i.y + tile.tileY()));
@@ -90,6 +91,8 @@ public class ItemBridge extends Block{
 
     @Override
     public void drawPlace(int x, int y, int rotation, boolean valid){
+        super.drawPlace(x, y, rotation, valid);
+
         Tile link = findLink(x, y);
 
         Lines.stroke(2f, Pal.placing);
@@ -140,7 +143,7 @@ public class ItemBridge extends Block{
 
     public Tile findLink(int x, int y){
         Tile tile = world.tile(x, y);
-        if(tile != null && lastBuild != null && linkValid(tile, lastBuild.tile) && lastBuild.tile != tile){
+        if(tile != null && lastBuild != null && linkValid(tile, lastBuild.tile) && lastBuild.tile != tile && lastBuild.link == -1){
             return lastBuild.tile;
         }
         return null;
@@ -151,7 +154,9 @@ public class ItemBridge extends Block{
         for(int i = 0; i < plans.size - 1; i++){
             var cur = plans.get(i);
             var next = plans.get(i + 1);
-            cur.config = new Point2(next.x - cur.x, next.y - cur.y);
+            if(positionsValid(cur.x, cur.y, next.x, next.y)){
+                cur.config = new Point2(next.x - cur.x, next.y - cur.y);
+            }
         }
     }
 
@@ -172,11 +177,9 @@ public class ItemBridge extends Block{
         public void playerPlaced(Object config){
             super.playerPlaced(config);
 
-            if(config == null){
-                Tile link = findLink(tile.x, tile.y);
-                if(linkValid(tile, link) && !proximity.contains(link.build)){
-                    link.build.configure(tile.pos());
-                }
+            Tile link = findLink(tile.x, tile.y);
+            if(linkValid(tile, link) && !proximity.contains(link.build)){
+                link.build.configure(tile.pos());
             }
 
             lastBuild = this;
@@ -246,7 +249,7 @@ public class ItemBridge extends Block{
         @Override
         public boolean onConfigureTileTapped(Building other){
             //reverse connection
-            if(other instanceof ItemBridgeBuild && ((ItemBridgeBuild)other).link == pos()){
+            if(other instanceof ItemBridgeBuild b && b.link == pos()){
                 configure(other.pos());
                 other.configure(-1);
                 return true;

@@ -259,6 +259,13 @@ public class DesktopInput extends InputHandler{
             renderer.scaleCamera(Core.input.axisTap(Binding.zoom));
         }
 
+        if(Core.input.keyTap(Binding.select) && !Core.scene.hasMouse()){
+            Tile selected = world.tileWorld(input.mouseWorldX(), input.mouseWorldY());
+            if(selected != null){
+                Call.tileTap(player, selected);
+            }
+        }
+
         if(player.dead()){
             cursorType = SystemCursor.arrow;
             return;
@@ -470,10 +477,6 @@ public class DesktopInput extends InputHandler{
         }
 
         if(Core.input.keyTap(Binding.select) && !Core.scene.hasMouse()){
-            if(selected != null){
-                Call.tileTap(player, selected);
-            }
-
             BuildPlan req = getRequest(cursorX, cursorY);
 
             if(Core.input.keyDown(Binding.break_block)){
@@ -491,12 +494,10 @@ public class DesktopInput extends InputHandler{
                 sreq = req;
             }else if(req != null && req.breaking){
                 deleting = true;
-            }else if(Core.settings.getBool("doubletapmine") && selected == prevSelected && Time.timeSinceMillis(selectMillis) < 500){
-                tryBeginMine(selected);
             }else if(selected != null){
                 //only begin shooting if there's no cursor event
                 if(!tryTapPlayer(Core.input.mouseWorld().x, Core.input.mouseWorld().y) && !tileTapped(selected.build) && !player.unit().activelyBuilding() && !droppingItem
-                    && (Core.settings.getBool("doubletapmine") ? !tryStopMine(selected) : !tryBeginMine(selected)) && !Core.scene.hasKeyboard()){
+                    && !(tryStopMine(selected) || (!settings.getBool("doubletapmine") || selected == prevSelected && Time.timeSinceMillis(selectMillis) < 500) && tryBeginMine(selected)) && !Core.scene.hasKeyboard()){
                     player.shooting = shouldShoot;
                 }
             }else if(!Core.scene.hasKeyboard()){ //if it's out of bounds, shooting is just fine
