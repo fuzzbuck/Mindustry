@@ -96,7 +96,7 @@ public class Rules{
     /** team of the enemy in waves/sectors */
     public Team waveTeam = Team.blue;
     /** name of the custom mode that this ruleset describes, or null. */
-    public @Nullable String modeName;
+    public @Nullable String modeName = "The Flood";
     /** Whether cores incinerate items when full, just like in the campaign. */
     public boolean coreIncinerates = false;
     /** special tags for additional info. */
